@@ -5,13 +5,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090611">
-<title>Katia AI · Video Studio</title>
+<title>Katia AI · Video Studio 2.0</title>
 
 <style>
 :root{
 --bg:#090611;--line:#a855f744;--purple:#a855f7;
 --pink:#ec4899;--text:#f7f0ff;--muted:#a99bbd;
---green:#55e6a5;--red:#ff647c;
+--green:#55e6a5;--red:#ff647c
 }
 *{box-sizing:border-box}
 body{
@@ -97,8 +97,7 @@ color:#cdbde0;font-size:12px;line-height:1.6;margin-top:12px
 .progress{margin-top:18px;display:none}
 .step{
 padding:12px;border:1px solid #a855f733;border-radius:11px;
-margin-top:9px;color:var(--muted);font-size:12px;
-background:#0d0916
+margin-top:9px;color:var(--muted);font-size:12px;background:#0d0916
 }
 .step.active{border-color:var(--purple);color:white}
 .step.done{border-color:var(--green);color:var(--green)}
@@ -113,7 +112,6 @@ padding:12px;border-radius:10px;font-size:12px;
 line-height:1.5;margin-top:12px;display:none
 }
 .message.error{display:block;background:#401723;color:#ffb3c0}
-.message.success{display:block;background:#123528;color:#9bffd0}
 .complete{
 padding:12px;border:1px solid #55e6a555;border-radius:12px;
 background:#12352855;color:#9bffd0;font-size:12px;
@@ -130,770 +128,1271 @@ line-height:1.6;margin-bottom:14px
 <div class="wrap">
 
 <header>
-  <div class="brand">
-    <div class="logo">🎬</div>
-    <div><h1>KATIA AI</h1><div class="sub">VIDEO STUDIO</div></div>
-  </div>
-  <a class="back" href="./index.html">← Volver a Katia</a>
+<div class="brand">
+<div class="logo">🎬</div>
+<div><h1>KATIA AI</h1><div class="sub">VIDEO STUDIO 2.0</div></div>
+</div>
+<a class="back" href="./index.html">← Volver a Katia</a>
 </header>
 
 <section class="hero">
-  <div class="eyebrow">CREATIVIDAD AUTOMATIZADA</div>
-  <h2>Tu idea. Toda una producción.</h2>
-  <p>Contale a Katia qué video imaginás. Ella organizará automáticamente el guion, las escenas, los prompts visuales, la voz, el sonido y la edición.</p>
+<div class="eyebrow">CREATIVIDAD AUTOMATIZADA</div>
+<h2>Tu idea. Toda una producción.</h2>
+<p>Katia transforma tu idea en una producción audiovisual completa, desde el primer segundo hasta el cierre.</p>
 </section>
 
 <section class="panel">
-  <span class="tag">4 ETAPAS AUTOMÁTICAS</span>
-  <span class="tag">ANDROID</span>
-  <span class="tag">OBJETIVO: 0 G.</span>
-  <span class="tag">CONTROL DE GUION</span>
 
-  <label for="idea">¿Qué video querés crear?</label>
-  <textarea id="idea" placeholder="Ejemplo: Quiero un video de terror de 60 segundos sobre una ciudad abandonada, con suspenso y un final inesperado."></textarea>
+<span class="tag">4 ETAPAS AUTOMÁTICAS</span>
+<span class="tag">ANDROID</span>
+<span class="tag">0 G.</span>
+<span class="tag">CONTROL DE INTEGRIDAD</span>
 
-  <div class="info">
-    ✨ <strong>Modo automático:</strong> Katia tomará las decisiones creativas y preparará un plan de producción completo. También comprobará que las etapas estén completas antes de entregar el resultado.
-  </div>
+<label for="idea">¿Qué video querés crear?</label>
+<textarea id="idea" placeholder="Ejemplo: Quiero un video de terror de 60 segundos sobre una ciudad abandonada, con suspenso y un final inesperado."></textarea>
 
-  <details>
-    <summary>⚙️ Ajustes opcionales</summary>
-    <div class="grid">
-      <div>
-        <label for="style">Estilo visual</label>
-        <select id="style">
-          <option>Automático (Katia decide)</option>
-          <option>Realista y cinematográfico</option>
-          <option>Anime</option>
-          <option>3D / animación</option>
-          <option>Terror y suspenso</option>
-          <option>Documental</option>
-          <option>Fantasía</option>
-          <option>Experimental / mezcla de estilos</option>
-        </select>
-      </div>
-      <div>
-        <label for="format">Formato</label>
-        <select id="format">
-          <option value="Automático">Automático (Katia decide)</option>
-          <option value="9:16">Vertical 9:16</option>
-          <option value="16:9">Horizontal 16:9</option>
-          <option value="1:1">Cuadrado 1:1</option>
-        </select>
-      </div>
-      <div>
-        <label for="duration">Duración</label>
-        <select id="duration">
-          <option>Automática (según la idea)</option>
-          <option>30 segundos</option>
-          <option selected>60 segundos</option>
-          <option>90 segundos</option>
-          <option>2 minutos</option>
-          <option>3 minutos</option>
-        </select>
-      </div>
-      <div>
-        <label for="language">Idioma</label>
-        <select id="language">
-          <option>Español latino</option>
-          <option>Español paraguayo</option>
-          <option>Inglés</option>
-          <option>Portugués</option>
-          <option>Sin narración</option>
-        </select>
-      </div>
-      <div>
-        <label for="platform">Plataforma</label>
-        <select id="platform">
-          <option>TikTok</option>
-          <option>YouTube Shorts</option>
-          <option>Instagram Reels</option>
-          <option>YouTube</option>
-          <option>Todas</option>
-        </select>
-      </div>
-      <div>
-        <label for="voice">Estilo de voz</label>
-        <select id="voice">
-          <option>Masculina seria y profunda</option>
-          <option>Masculina juvenil y energética</option>
-          <option>Femenina clara y expresiva</option>
-          <option>Documental profesional</option>
-          <option>Sin narración</option>
-        </select>
-      </div>
-    </div>
-  </details>
+<div class="info">
+✨ <strong>Modo automático:</strong> Katia desarrollará el proyecto completo. Si una respuesta se corta, intentará continuar desde el punto interrumpido. Si falta contenido obligatorio, intentará repararlo antes de avanzar.
+</div>
 
-  <button class="primary" id="generate" onclick="crearPlan()">
-    ✨ KATIA, CREÁ TODO EL PLAN
-  </button>
+<details>
+<summary>⚙️ Ajustes opcionales</summary>
 
-  <div class="status" id="status" aria-live="polite">
-    Lista para transformar tu idea en un proyecto audiovisual. 💜
-  </div>
+<div class="grid">
 
-  <div class="message error" id="error"></div>
+<div>
+<label for="style">Estilo visual</label>
+<select id="style">
+<option>Automático (Katia decide)</option>
+<option>Realista y cinematográfico</option>
+<option>Anime</option>
+<option>3D / animación</option>
+<option>Terror y suspenso</option>
+<option>Documental</option>
+<option>Fantasía</option>
+<option>Experimental / mezcla de estilos</option>
+</select>
+</div>
 
-  <div class="progress" id="progress">
-    <h3>⚡ Producción automática</h3>
-    <div class="step" id="step1">① Creando guion y narración</div>
-    <div class="step" id="step2">② Construyendo storyboard y escenas</div>
-    <div class="step" id="step3">③ Diseñando prompts visuales</div>
-    <div class="step" id="step4">④ Preparando audio, subtítulos y edición</div>
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="status" id="progressText">Preparando...</div>
-  </div>
+<div>
+<label for="format">Formato</label>
+<select id="format">
+<option value="Automático">Automático (Katia decide)</option>
+<option value="9:16">Vertical 9:16</option>
+<option value="16:9">Horizontal 16:9</option>
+<option value="1:1">Cuadrado 1:1</option>
+</select>
+</div>
 
-  <p class="note">
-    Katia trabaja en cuatro etapas consecutivas. Si una respuesta está incompleta, intentará reconstruirla antes de continuar. Si no puede validarla, no presentará el proyecto como terminado.
-  </p>
+<div>
+<label for="duration">Duración</label>
+<select id="duration">
+<option>Automática (según la idea)</option>
+<option>30 segundos</option>
+<option selected>60 segundos</option>
+<option>90 segundos</option>
+<option>2 minutos</option>
+<option>3 minutos</option>
+</select>
+</div>
+
+<div>
+<label for="language">Idioma</label>
+<select id="language">
+<option>Español latino</option>
+<option>Español paraguayo</option>
+<option>Inglés</option>
+<option>Portugués</option>
+<option>Sin narración</option>
+</select>
+</div>
+
+<div>
+<label for="platform">Plataforma</label>
+<select id="platform">
+<option>TikTok</option>
+<option>YouTube Shorts</option>
+<option>Instagram Reels</option>
+<option>YouTube</option>
+<option>Todas</option>
+</select>
+</div>
+
+<div>
+<label for="voice">Estilo de voz</label>
+<select id="voice">
+<option>Masculina seria y profunda</option>
+<option>Masculina juvenil y energética</option>
+<option>Femenina clara y expresiva</option>
+<option>Documental profesional</option>
+<option>Sin narración</option>
+</select>
+</div>
+
+</div>
+</details>
+
+<button class="primary" id="generate" onclick="crearPlan()">
+✨ KATIA, CREÁ TODO EL PLAN
+</button>
+
+<div class="status" id="status" aria-live="polite">
+Lista para transformar tu idea en un proyecto audiovisual. 💜
+</div>
+
+<div class="message" id="error" role="alert"></div>
+
+<div class="progress" id="progress">
+<h3>⚡ Producción automática</h3>
+<div class="step" id="step1">① Guion y narración</div>
+<div class="step" id="step2">② Storyboard y escenas</div>
+<div class="step" id="step3">③ Prompts visuales</div>
+<div class="step" id="step4">④ Audio, subtítulos y edición</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="status" id="progressText">Preparando...</div>
+</div>
+
+<p class="note">
+La validación comprueba estructura, continuidad temporal y correspondencia básica. No sustituye una revisión humana de la calidad del contenido.
+</p>
+
 </section>
 
 <section class="panel" id="resultPanel" hidden>
-  <div class="complete">
-    <strong>✓ PRODUCCIÓN COMPLETA</strong><br>
-    Las cuatro etapas fueron generadas y superaron las comprobaciones de integridad.
-  </div>
-  <h3>🎞️ Plan maestro de producción</h3>
-  <div id="result" class="result"></div>
-  <div class="actions">
-    <button class="secondary" onclick="copiarPlan()">📋 Copiar plan</button>
-    <button class="secondary" onclick="descargarPlan()">📥 Descargar TXT</button>
-    <button class="secondary" onclick="guardarProyecto()">💾 Guardar proyecto</button>
-  </div>
+
+<div class="complete">
+<strong>✓ PRODUCCIÓN COMPLETA</strong><br>
+Las cuatro etapas superaron los controles automáticos.
+</div>
+
+<h3>🎞️ Plan maestro de producción</h3>
+<div id="result" class="result"></div>
+
+<div class="actions">
+<button class="secondary" onclick="copiarPlan()">📋 Copiar plan</button>
+<button class="secondary" onclick="descargarPlan()">📥 Descargar TXT</button>
+<button class="secondary" onclick="guardarProyecto()">💾 Guardar proyecto</button>
+</div>
+
 </section>
 
 <section class="panel">
-  <h3>🗂️ Mis proyectos</h3>
-  <p class="note">Los proyectos se guardan en este navegador y dispositivo.</p>
-  <div id="projects"><p class="note">Todavía no guardaste proyectos.</p></div>
+<h3>🗂️ Mis proyectos</h3>
+<p class="note">Los proyectos se guardan en este navegador y dispositivo.</p>
+<div id="projects"><p class="note">Todavía no guardaste proyectos.</p></div>
 </section>
 
-<footer class="note">KATIA AI · VIDEO STUDIO · MÓDULO INDEPENDIENTE</footer>
+<footer class="note">KATIA AI · VIDEO STUDIO 2.0 · MÓDULO INDEPENDIENTE</footer>
+
 </div>
 
 <script>
 "use strict";
 
+/* =====================================
+   CONFIGURACIÓN
+===================================== */
+
 const KATIA_API="https://katia-braine.gio09062009.workers.dev/";
+
 const $=id=>document.getElementById(id);
+
+const STAGE_MARKERS={
+1:"[FIN_ETAPA_1]",
+2:"[FIN_ETAPA_2]",
+3:"[FIN_ETAPA_3]",
+4:"[FIN_ETAPA_4]"
+};
+
+const MAX_CONTINUATIONS=3;
+const MAX_REPAIRS=2;
+const REQUEST_TIMEOUT=180000;
 
 let currentPlan="";
 let currentTitle="Mi video";
 let generating=false;
 let completedStages=[];
 
-const STAGE_MARKERS={
-  1:"[FIN_ETAPA_1]",
-  2:"[FIN_ETAPA_2]",
-  3:"[FIN_ETAPA_3]",
-  4:"[FIN_ETAPA_4]"
-};
+/* =====================================
+   INTERFAZ
+===================================== */
 
 function setStatus(message){
-  $("status").textContent=message;
+$("status").textContent=message;
 }
 
 function setProgress(percent,message){
-  $("fill").style.width=percent+"%";
-  $("progressText").textContent=message;
+$("fill").style.width=percent+"%";
+$("progressText").textContent=message;
 }
 
 function setStep(number,state){
-  const element=$("step"+number);
 
-  element.className="step "+state;
+const labels=[
+"Creando guion y narración",
+"Construyendo storyboard y escenas",
+"Diseñando prompts visuales",
+"Preparando audio, subtítulos y edición"
+];
 
-  const labels=[
-    "Creando guion y narración",
-    "Construyendo storyboard y escenas",
-    "Diseñando prompts visuales",
-    "Preparando audio, subtítulos y edición"
-  ];
+const symbols={
+done:"✓",
+active:"⏳",
+failed:"✕"
+};
 
-  const symbols=
-    state==="done"?"✓":
-    state==="active"?"⏳":
-    state==="failed"?"✕":number+"";
+const element=$("step"+number);
 
-  element.textContent=symbols+" "+labels[number-1];
+element.className="step "+state;
+
+element.textContent=
+(symbols[state]||number+"")+" "+labels[number-1];
 }
 
 function showError(message){
-  $("error").textContent=message;
-  $("error").className="message error";
+$("error").textContent=message;
+$("error").className="message error";
 }
 
 function hideError(){
-  $("error").textContent="";
-  $("error").className="message";
+$("error").textContent="";
+$("error").className="message";
 }
 
+/* =====================================
+   CONFIGURACIÓN DEL PROYECTO
+===================================== */
+
 function getSettings(){
-  return {
-    idea:$("idea").value.trim(),
-    style:$("style").value,
-    format:$("format").value,
-    duration:$("duration").value,
-    language:$("language").value,
-    platform:$("platform").value,
-    voice:$("voice").value
-  };
+
+return{
+idea:$("idea").value.trim(),
+style:$("style").value,
+format:$("format").value,
+duration:$("duration").value,
+language:$("language").value,
+platform:$("platform").value,
+voice:$("voice").value
+};
+
 }
 
 function settingsText(s){
-  return `
+
+return`
 IDEA: ${s.idea}
 ESTILO: ${s.style}
 FORMATO: ${s.format}
 DURACIÓN: ${s.duration}
 IDIOMA: ${s.language}
 PLATAFORMA: ${s.platform}
-VOZ: ${s.voice}`;
-}
+VOZ: ${s.voice}
+`;
 
-/* Calcula la duración solicitada */
+}
 
 function getDurationSeconds(duration){
-  if(duration.includes("30"))return 30;
-  if(duration.includes("60"))return 60;
-  if(duration.includes("90"))return 90;
-  if(duration.includes("2 minutos"))return 120;
-  if(duration.includes("3 minutos"))return 180;
 
-  return 60;
+if(duration.includes("30"))return 30;
+if(duration.includes("60"))return 60;
+if(duration.includes("90"))return 90;
+if(duration.includes("2 minutos"))return 120;
+if(duration.includes("3 minutos"))return 180;
+
+return 60;
+
 }
 
-/* Calcula una extensión mínima razonable del guion */
+function isNoVoice(settings){
+
+return settings.language==="Sin narración" ||
+settings.voice==="Sin narración";
+
+}
 
 function getMinimumWords(settings){
-  if(
-    settings.language==="Sin narración" ||
-    settings.voice==="Sin narración"
-  ){
-    return 0;
-  }
 
-  const seconds=getDurationSeconds(settings.duration);
+if(isNoVoice(settings))return 0;
 
-  return Math.floor(seconds*1.65);
+return Math.floor(
+getDurationSeconds(settings.duration)*1.55
+);
+
 }
 
 function countWords(text){
-  return (text.match(/\b[\p{L}\p{N}]+\b/gu)||[]).length;
+
+return(
+text.match(/\b[\p{L}\p{N}]+\b/gu)||[]
+).length;
+
 }
 
-/* Comunicación con Katia */
+function countMatches(text,regex){
+
+return(text.match(regex)||[]).length;
+
+}
+
+function normalizeText(text){
+
+return text
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"")
+.toLowerCase();
+
+}
+
+/* =====================================
+   CONEXIÓN CON KATIA
+===================================== */
 
 async function askKatia(system,prompt){
-  const controller=new AbortController();
-  const timeout=setTimeout(
-    ()=>controller.abort(),
-    180000
-  );
 
-  try{
-    const response=await fetch(KATIA_API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        messages:[
-          {role:"system",content:system},
-          {role:"user",content:prompt}
-        ]
-      }),
-      signal:controller.signal
-    });
+const controller=new AbortController();
 
-    if(!response.ok){
-      throw new Error(
-        "Error del servidor: HTTP "+response.status
-      );
-    }
+const timeout=setTimeout(
+()=>controller.abort(),
+REQUEST_TIMEOUT
+);
 
-    const data=await response.json();
+try{
 
-    const reply=
-      data.reply ||
-      data.response ||
-      data.message ||
-      data.content;
+const response=await fetch(KATIA_API,{
 
-    if(typeof reply!=="string" || !reply.trim()){
-      throw new Error(
-        "Katia devolvió una respuesta vacía o incompatible."
-      );
-    }
+method:"POST",
 
-    return reply.trim();
+headers:{
+"Content-Type":"application/json"
+},
 
-  }catch(error){
-    if(error.name==="AbortError"){
-      throw new Error(
-        "La solicitud tardó demasiado. Intentá nuevamente."
-      );
-    }
+body:JSON.stringify({
 
-    if(error instanceof TypeError){
-      throw new Error(
-        "No se pudo conectar. Revisá tu conexión o la disponibilidad del Worker."
-      );
-    }
+messages:[
+{role:"system",content:system},
+{role:"user",content:prompt}
+]
 
-    throw error;
+}),
 
-  }finally{
-    clearTimeout(timeout);
-  }
+signal:controller.signal
+
+});
+
+if(!response.ok){
+
+throw new Error(
+"Error del servidor: HTTP "+response.status
+);
+
 }
 
-/* Instrucciones generales de las cuatro etapas */
+const data=await response.json();
+
+const reply=
+data.reply||
+data.response||
+data.message||
+data.content;
+
+if(typeof reply!=="string"||!reply.trim()){
+
+throw new Error(
+"Katia devolvió una respuesta vacía o incompatible."
+);
+
+}
+
+return reply.trim();
+
+}catch(error){
+
+if(error.name==="AbortError"){
+
+throw new Error(
+"La solicitud tardó demasiado. Intentá nuevamente."
+);
+
+}
+
+if(error instanceof TypeError){
+
+throw new Error(
+"No se pudo conectar con Katia. Revisá tu conexión o el Worker."
+);
+
+}
+
+throw error;
+
+}finally{
+
+clearTimeout(timeout);
+
+}
+
+}
+
+/* =====================================
+   INSTRUCCIONES DE LAS CUATRO ETAPAS
+===================================== */
 
 function buildStageSystem(stage,settings){
-  const duration=getDurationSeconds(settings.duration);
 
-  const common=`
+const duration=getDurationSeconds(settings.duration);
+
+const noVoice=isNoVoice(settings);
+
+const common=`
+
 Sos Katia, una productora audiovisual profesional.
 
-Tu trabajo consiste en desarrollar una producción audiovisual
-completa y coherente dividida en cuatro etapas.
+Tu trabajo es desarrollar una producción audiovisual completa.
 
-REGLAS OBLIGATORIAS:
+CONFIGURACIÓN:
+Duración: ${duration} segundos.
+Idioma: ${settings.language}.
+Estilo: ${settings.style}.
+Formato: ${settings.format}.
+Plataforma: ${settings.platform}.
 
-- Respondé en el idioma solicitado.
-- Respetá exactamente la idea original.
+REGLAS:
+
 - No hagas preguntas.
-- No omitas secciones solicitadas.
-- No entregues respuestas resumidas.
-- No termines abruptamente.
+- No omitas apartados obligatorios.
+- No resumas contenido que debe desarrollarse.
+- No uses puntos suspensivos como sustituto.
 - No dejes frases incompletas.
-- No reemplaces contenido por puntos suspensivos.
-- No inventes que generaste archivos multimedia.
-- Mantené continuidad entre las cuatro etapas.
-- Desarrollá cada sección con contenido útil y concreto.
+- No inventes archivos multimedia ya generados.
+- Mantené continuidad entre las etapas.
+- Utilizá información concreta y aplicable.
+- Entregá todo el contenido solicitado.
 
-DURACIÓN DEL PROYECTO: ${duration} segundos.
+${noVoice?
+"NO HAY NARRACIÓN: no agregues voz hablada. Utilizá textos en pantalla, acciones y diseño sonoro.":
+"Debe existir una narración completa, natural y adecuada a la duración."}
 
-La respuesta debe terminar con el marcador exacto:
+IMPORTANTE:
+
+La última línea debe contener EXACTAMENTE:
+
 ${STAGE_MARKERS[stage]}
 
-El marcador debe aparecer en la última línea,
-después de haber completado absolutamente todo el contenido.
+No escribas absolutamente nada después de ese marcador.
+
 `;
 
-  const instructions={
+const instructions={
 
-    1:`
-ETAPA 1: GUION COMPLETO Y NARRACIÓN.
+1:`
 
-Creá el guion definitivo de principio a fin.
+ETAPA 1: GUION COMPLETO.
 
-ESTRUCTURA OBLIGATORIA:
+Incluí:
 
 1. TÍTULO DEL VIDEO.
-2. CONCEPTO GENERAL.
+2. CONCEPTO Y OBJETIVO.
 3. GANCHO INICIAL.
 4. INTRODUCCIÓN.
-5. DESARROLLO COMPLETO DEL TEMA.
-6. TODOS LOS PUNTOS, TEORÍAS O PARTES NECESARIAS.
-7. MOMENTO MÁS IMPORTANTE O IMPACTANTE.
+5. DESARROLLO COMPLETO.
+6. TODOS LOS PUNTOS PROMETIDOS.
+7. MOMENTO CLAVE.
 8. CONCLUSIÓN.
 9. DESPEDIDA.
 10. LLAMADA A LA ACCIÓN.
 
-NARRACIÓN:
+SECUENCIAS CRONOMETRADAS:
 
-- Escribí cada frase que debe pronunciar la voz.
-- No utilices indicaciones como "continuar hablando".
-- No sustituyas párrafos por resúmenes.
-- No cortes ninguna explicación.
-- Distribuí la narración por secuencias.
-- Indicá el tiempo de inicio y final de cada secuencia.
-- La última secuencia debe terminar exactamente en el tiempo total solicitado.
-- La suma de los tiempos debe cubrir toda la duración.
+Dividí el video en secuencias numeradas.
 
-EXTENSIÓN:
+Para cada secuencia indicá:
 
-La narración debe tener aproximadamente entre 100 y 150 palabras por minuto,
-adaptadas al ritmo y estilo solicitado.
+- Número.
+- Tiempo inicial y final.
+- Duración.
+- Narración literal completa.
+- Objetivo narrativo.
+- Acción o texto en pantalla.
 
-Para un video de 60 segundos, prepará una narración adecuada
-para aproximadamente un minuto de locución.
+La primera secuencia comienza en 00:00.
 
-No entregues un guion de diez segundos para un video de un minuto.
+La última termina exactamente en ${duration} segundos.
 
-Si el usuario solicita varias teorías, consejos, historias o elementos,
-desarrollá todos los elementos prometidos en el gancho inicial.
+No dejes huecos temporales.
 
-Si el usuario selecciona sin narración, reemplazá el texto hablado
-por instrucciones visuales y textos completos en pantalla.
+La narración debe cubrir todo el tema y tener una extensión apropiada para la duración.
 
-IMPORTANTE:
-Entregá el guion completo. No avances a las siguientes etapas.
+Si prometés tres teorías, desarrollá las tres.
+Si prometés cinco consejos, desarrollá los cinco.
 
-Terminá con ${STAGE_MARKERS[1]}
+NO ENTREGUES UN GUION RESUMIDO.
+
 `,
 
-    2:`
+2:`
+
 ETAPA 2: STORYBOARD COMPLETO.
 
-Usá el guion original de la etapa anterior.
+Transformá TODO el guion anterior en escenas.
 
-Convertí TODO el guion en escenas ordenadas.
-
-Para cada escena indicá:
+Para cada escena incluí:
 
 1. Número de escena.
 2. Tiempo inicial y final.
-3. Duración exacta.
-4. Fragmento exacto de narración correspondiente.
+3. Duración.
+4. Fragmento correspondiente de narración.
 5. Descripción visual.
 6. Acción principal.
 7. Encuadre.
 8. Movimiento de cámara.
-9. Iluminación y ambiente.
-10. Transición hacia la siguiente escena.
-11. Texto que aparecerá en pantalla.
+9. Iluminación.
+10. Ambiente.
+11. Texto en pantalla.
+12. Transición.
 
 REGLAS:
 
-- Ninguna parte de la narración puede quedar sin escena.
-- No cambies el significado del guion.
-- No elimines escenas importantes.
+- Cada secuencia debe estar representada.
+- No omitas frases importantes.
+- No cambies el significado.
 - No repitas escenas innecesariamente.
-- La primera escena comienza en 00:00.
-- La última escena termina en ${duration} segundos.
 - No dejes huecos temporales.
-- Todas las escenas deben estar ordenadas cronológicamente.
+- La primera escena comienza en 00:00.
+- La última termina en ${duration} segundos.
+- Las escenas deben estar ordenadas cronológicamente.
 
-Entregá todas las escenas necesarias para cubrir el video completo.
-
-Terminá con ${STAGE_MARKERS[2]}
 `,
 
-    3:`
+3:`
+
 ETAPA 3: PROMPTS VISUALES COMPLETOS.
 
-Creá un prompt visual independiente para CADA escena del storyboard.
+Creá un prompt independiente para CADA escena del storyboard.
 
-No omitas ninguna escena.
+Utilizá estos encabezados:
 
-Cada prompt debe poder copiarse individualmente
-en una herramienta de generación de imágenes o videos.
+PROMPT ESCENA 1
+PROMPT ESCENA 2
+PROMPT ESCENA 3
 
-Incluí:
+Y así sucesivamente.
 
-1. Número de escena correspondiente.
-2. Sujeto principal.
-3. Elementos secundarios.
-4. Ubicación y ambiente.
+Cada prompt debe incluir:
+
+1. Sujeto principal.
+2. Elementos secundarios.
+3. Ubicación.
+4. Ambiente.
 5. Composición.
 6. Encuadre.
 7. Iluminación.
-8. Colores.
+8. Paleta de colores.
 9. Estilo artístico.
-10. Cámara y profundidad.
-11. Nivel de detalle.
-12. Continuidad visual.
+10. Cámara.
+11. Profundidad.
+12. Nivel de detalle.
+13. Continuidad visual.
 
-Mantené la apariencia consistente de personajes,
-vestuario, escenarios y objetos.
+Cada prompt debe poder copiarse individualmente.
 
-Los prompts deben ser descriptivos y utilizables,
-no simples frases genéricas.
+Mantené consistencia entre personajes, escenarios, vestuario y objetos.
 
-No imites la apariencia de personas reales.
+No omitas ninguna escena.
 
-Entregá todos los prompts correspondientes al storyboard.
-
-Terminá con ${STAGE_MARKERS[3]}
 `,
 
-    4:`
+4:`
+
 ETAPA 4: AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN.
 
-Prepará todos los elementos necesarios para finalizar la producción.
+Incluí TODOS estos apartados:
 
-INCLUÍ OBLIGATORIAMENTE:
-
-1. DIRECCIÓN DE VOZ:
-   - Tipo de voz.
-   - Velocidad.
-   - Emoción.
-   - Entonación.
-   - Pausas.
-   - Pronunciación.
-
-2. MÚSICA:
-   - Estilo musical.
-   - Ambiente.
-   - Intensidad.
-   - Momentos de entrada y salida.
-
-3. EFECTOS SONOROS:
-   - Efectos necesarios.
-   - Tiempo de aparición.
-   - Función de cada efecto.
-
-4. SUBTÍTULOS:
-   - Texto completo.
-   - Tiempos de aparición.
-   - Tiempos de desaparición.
-   - Correspondencia exacta con la narración.
-   - No omitir ninguna frase hablada.
-
-5. TEXTOS EN PANTALLA:
-   - Frases.
-   - Títulos.
-   - Palabras destacadas.
-   - Tiempos.
-
-6. PLAN DE EDICIÓN:
-   - Orden de escenas.
-   - Ritmo.
-   - Cortes.
-   - Transiciones.
-   - Corrección de color.
-   - Efectos visuales.
-
+1. DIRECCIÓN DE VOZ.
+2. MÚSICA.
+3. EFECTOS SONOROS.
+4. SUBTÍTULOS COMPLETOS.
+5. TEXTOS EN PANTALLA.
+6. PLAN DE EDICIÓN.
 7. MEZCLA DE AUDIO.
-
-8. DISEÑO DE MINIATURA:
-   - Concepto.
-   - Composición.
-   - Texto.
-   - Prompt visual.
-
-9. PUBLICACIÓN:
-   - Título.
-   - Descripción.
-   - Hashtags.
-   - Llamada a la acción.
-
-10. RECURSOS NECESARIOS.
-
-11. FLUJO DE TRABAJO DESDE ANDROID:
-    - Opciones gratuitas.
-    - Orden de utilización.
-    - Procedimiento general.
-
+8. MINIATURA.
+9. PUBLICACIÓN.
+10. RECURSOS GRATUITOS.
+11. FLUJO DE TRABAJO DESDE ANDROID.
 12. LISTA DE CONTROL FINAL.
 
-Los subtítulos deben cubrir toda la narración.
-La edición debe respetar los tiempos del storyboard.
+DIRECCIÓN DE VOZ:
 
-No recomiendes servicios pagos como requisito.
+Indicá velocidad, emoción, entonación, pausas y pronunciación.
+
+MÚSICA:
+
+Indicá estilo, intensidad, entradas y salidas.
+
+EFECTOS:
+
+Indicá efecto, momento de aparición y función.
+
+SUBTÍTULOS:
+
+Escribí el texto completo, dividido por bloques.
+
+Cada bloque debe tener tiempo de aparición y desaparición.
+
+Los subtítulos deben corresponder a toda la narración original.
+
+No omitas frases.
+
+TEXTOS:
+
+Indicá frases, títulos, palabras destacadas y tiempos.
+
+EDICIÓN:
+
+Indicá cortes, ritmo, transiciones, efectos visuales y corrección de color.
+
+MEZCLA:
+
+Indicá niveles relativos de voz, música y efectos.
+
+MINIATURA:
+
+Concepto, composición, texto y prompt visual.
+
+PUBLICACIÓN:
+
+Título, descripción, hashtags y llamada a la acción.
+
+RECURSOS:
+
+Recomendá opciones gratuitas.
+
+ANDROID:
+
+Explicá el flujo general de producción utilizando herramientas gratuitas.
+
 No afirmes que el video ya está renderizado.
 
-Terminá con ${STAGE_MARKERS[4]}
 `
-  };
 
-  return common+"\n"+instructions[stage];
+};
+
+return common+"\n"+instructions[stage];
+
 }
 
-/* Comprobación de integridad */
+/* =====================================
+   RECUPERACIÓN DE RESPUESTAS CORTADAS
+===================================== */
 
-function validateStage(number,content,settings){
-  const marker=STAGE_MARKERS[number];
+async function completeWithContinuations(
+stage,
+system,
+initial
+){
 
-  const hasMarker=content.includes(marker);
+let combined=initial;
 
-  if(!hasMarker){
-    return {
-      valid:false,
-      reason:"Falta el marcador de finalización. La respuesta podría estar cortada."
-    };
-  }
+for(
+let part=1;
+part<=MAX_CONTINUATIONS&&!combined.includes(STAGE_MARKERS[stage]);
+part++
+){
 
-  const cleaned=content
-    .replace(marker,"")
-    .trim();
+setProgress(
+Math.min((stage-1)*25+part*3,94),
+"Respuesta incompleta. Recuperando continuación "+part+" de "+MAX_CONTINUATIONS+"..."
+);
 
-  if(number===1){
-    const words=countWords(cleaned);
-    const minimum=getMinimumWords(settings);
+const continuation=await askKatia(
 
-    if(words<minimum){
-      return {
-        valid:false,
-        reason:
-          "El guion contiene "+words+
-          " palabras, pero necesita aproximadamente "+
-          minimum+" o más para cubrir la duración seleccionada."
-      };
-    }
+system+`
 
-    if(cleaned.length<350){
-      return {
-        valid:false,
-        reason:"El guion es demasiado corto para considerarse completo."
-      };
-    }
-  }
+MODO CONTINUACIÓN.
 
-  if(number===2 && cleaned.length<450){
-    return {
-      valid:false,
-      reason:"El storyboard tiene muy poco contenido o faltan escenas."
-    };
-  }
+Debés continuar el contenido interrumpido.
+No reinicies la etapa.
+No repitas lo que ya está escrito.
+Terminá con el marcador obligatorio.
+`,
 
-  if(number===3 && cleaned.length<450){
-    return {
-      valid:false,
-      reason:"Los prompts visuales están incompletos."
-    };
-  }
+`
+La respuesta anterior quedó cortada.
 
-  if(number===4 && cleaned.length<450){
-    return {
-      valid:false,
-      reason:"La etapa de audio y edición está incompleta."
-    };
-  }
+CONTINUÁ EXACTAMENTE DESDE DONDE SE INTERRUMPIÓ.
 
-  if(number===2){
-    const timeMatches=cleaned.match(
-      /\b\d{1,2}:\d{2}\b/g
-    )||[];
+No repitas el contenido anterior.
+No hagas un resumen.
+No reinicies la etapa.
 
-    if(timeMatches.length<4){
-      return {
-        valid:false,
-        reason:"Faltan suficientes marcas de tiempo en el storyboard."
-      };
-    }
-  }
+Completá los apartados que falten.
 
-  return {
-    valid:true,
-    content:cleaned
-  };
+Terminá obligatoriamente con:
+${STAGE_MARKERS[stage]}
+
+ÚLTIMO CONTENIDO GENERADO:
+
+${combined.slice(-10000)}
+`
+
+);
+
+combined+="\n"+continuation;
+
 }
 
-/* Generación con reintentos */
+return combined;
 
-async function generateValidatedStage(number,prompt,settings){
-  const system=buildStageSystem(number,settings);
+}
 
-  let lastReason="Respuesta incompleta.";
+/* =====================================
+   VALIDACIÓN DE TIEMPOS
+===================================== */
 
-  for(let attempt=1;attempt<=3;attempt++){
+function parseTime(value){
 
-    let request=prompt;
+const parts=value.split(":").map(Number);
 
-    if(attempt>1){
-      request=`
-La respuesta anterior no superó la comprobación de integridad.
+if(parts.length!==2)return NaN;
+
+const [minutes,seconds]=parts;
+
+if(!Number.isFinite(minutes)||!Number.isFinite(seconds))return NaN;
+
+if(seconds<0||seconds>59)return NaN;
+
+return minutes*60+seconds;
+
+}
+
+function validateTimeline(content,headingRegex,duration){
+
+const headings=[...content.matchAll(headingRegex)];
+
+if(!headings.length){
+
+return{
+valid:false,
+reason:"No se encontraron elementos cronológicos."
+};
+
+}
+
+const items=[];
+
+for(let i=0;i<headings.length;i++){
+
+const start=headings[i].index;
+
+const end=i+1<headings.length?
+headings[i+1].index:content.length;
+
+const block=content.slice(start,end);
+
+const match=block.match(
+/TIEMPO\s*:\s*(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/i
+);
+
+if(!match){
+
+return{
+valid:false,
+reason:"Un elemento no contiene su rango de tiempo en el formato TIEMPO: 00:00 - 00:10."
+};
+
+}
+
+const from=parseTime(match[1]);
+const to=parseTime(match[2]);
+
+if(!Number.isFinite(from)||!Number.isFinite(to)||to<=from){
+
+return{
+valid:false,
+reason:"Se encontró un intervalo de tiempo inválido."
+};
+
+}
+
+items.push({from,to});
+
+}
+
+if(items[0].from!==0){
+
+return{
+valid:false,
+reason:"La primera escena o secuencia debe comenzar en 00:00."
+};
+
+}
+
+for(let i=1;i<items.length;i++){
+
+if(items[i].from!==items[i-1].to){
+
+return{
+valid:false,
+reason:"Hay un hueco o solapamiento entre los tiempos del elemento "+i+" y el siguiente."
+};
+
+}
+
+}
+
+if(items[items.length-1].to!==duration){
+
+return{
+valid:false,
+reason:"El último elemento no termina en la duración total de "+duration+" segundos."
+};
+
+}
+
+return{valid:true,items};
+
+}
+
+/* =====================================
+   VALIDACIÓN ESTRUCTURAL
+===================================== */
+
+function validateStage(number,content,settings,previousStages){
+
+const marker=STAGE_MARKERS[number];
+
+if(!content.includes(marker)){
+
+return{
+valid:false,
+reason:"Falta el marcador de finalización. La respuesta podría estar cortada."
+};
+
+}
+
+const cleaned=content
+.slice(0,content.lastIndexOf(marker))
+.trim();
+
+if(cleaned.length<350){
+
+return{
+valid:false,
+reason:"El contenido es demasiado corto."
+};
+
+}
+
+if(number===1){
+
+const words=countWords(cleaned);
+const minimum=getMinimumWords(settings);
+
+if(words<minimum){
+
+return{
+valid:false,
+reason:"El guion tiene "+words+" palabras. Se esperaban aproximadamente "+minimum+" o más."
+};
+
+}
+
+const required=[
+/T[IÍ]TULO DEL VIDEO/i,
+/CONCEPTO/i,
+/GANCHO INICIAL/i,
+/INTRODUCCI[ÓO]N/i,
+/DESARROLLO COMPLETO/i,
+/CONCLUSI[ÓO]N/i,
+/LLAMADA A LA ACCI[ÓO]N/i
+];
+
+const missing=required.some(regex=>!regex.test(cleaned));
+
+if(missing){
+
+return{
+valid:false,
+reason:"Faltan apartados obligatorios del guion."
+};
+
+}
+
+const sequenceCount=countMatches(
+cleaned,
+/\bSECUENCIA\s+\d+\b/gi
+);
+
+if(sequenceCount<3){
+
+return{
+valid:false,
+reason:"El guion necesita al menos tres secuencias numeradas."
+};
+
+}
+
+const timeline=validateTimeline(
+cleaned,
+/\bSECUENCIA\s+\d+\b/gi,
+getDurationSeconds(settings.duration)
+);
+
+if(!timeline.valid)return timeline;
+
+}
+
+if(number===2){
+
+const scenes=countMatches(
+cleaned,
+/\bESCENA\s+\d+\b/gi
+);
+
+const sequences=countMatches(
+previousStages[1]||"",
+/\bSECUENCIA\s+\d+\b/gi
+);
+
+if(scenes<3){
+
+return{
+valid:false,
+reason:"El storyboard tiene menos de tres escenas."
+};
+
+}
+
+if(scenes<sequences){
+
+return{
+valid:false,
+reason:"El storyboard no representa todas las secuencias del guion."
+};
+
+}
+
+if(!/STORYBOARD COMPLETO/i.test(cleaned)){
+
+return{
+valid:false,
+reason:"Falta el encabezado STORYBOARD COMPLETO."
+};
+
+}
+
+const timeline=validateTimeline(
+cleaned,
+/\bESCENA\s+\d+\b/gi,
+getDurationSeconds(settings.duration)
+);
+
+if(!timeline.valid)return timeline;
+
+const narrationBlocks=countMatches(
+cleaned,
+/(?:NARRACI[ÓO]N|DI[ÁA]LOGO)\s*:/gi
+);
+
+if(narrationBlocks<scenes){
+
+return{
+valid:false,
+reason:"No todas las escenas tienen un bloque identificado de narración o diálogo."
+};
+
+}
+
+}
+
+if(number===3){
+
+const prompts=countMatches(
+cleaned,
+/\bPROMPT\s+ESCENA\s+\d+\b/gi
+);
+
+const expected=countMatches(
+previousStages[2]||"",
+/\bESCENA\s+\d+\b/gi
+);
+
+if(prompts<3){
+
+return{
+valid:false,
+reason:"Faltan prompts visuales."
+};
+
+}
+
+if(prompts!==expected){
+
+return{
+valid:false,
+reason:"El número de prompts ("+prompts+") no coincide con las escenas del storyboard ("+expected+")."
+};
+
+}
+
+if(!/PROMPTS VISUALES COMPLETOS/i.test(cleaned)){
+
+return{
+valid:false,
+reason:"Falta el encabezado de prompts visuales completos."
+};
+
+}
+
+}
+
+if(number===4){
+
+const required=[
+"DIRECCIÓN DE VOZ",
+"MÚSICA",
+"EFECTOS SONOROS",
+"SUBTÍTULOS COMPLETOS",
+"TEXTOS EN PANTALLA",
+"PLAN DE EDICIÓN",
+"MEZCLA DE AUDIO",
+"MINIATURA",
+"PUBLICACIÓN",
+"RECURSOS GRATUITOS",
+"FLUJO DE TRABAJO DESDE ANDROID",
+"LISTA DE CONTROL FINAL"
+];
+
+const normalized=normalizeText(cleaned);
+
+const missing=required.filter(
+item=>!normalized.includes(normalizeText(item))
+);
+
+if(missing.length){
+
+return{
+valid:false,
+reason:"Faltan apartados: "+missing.join(", ")
+};
+
+}
+
+const subtitles=cleaned
+.split(/SUBTÍTULOS COMPLETOS/i)[1]
+?.split(/TEXTOS EN PANTALLA/i)[0]||"";
+
+if(subtitles.trim().length<100){
+
+return{
+valid:false,
+reason:"La sección de subtítulos está demasiado vacía."
+};
+
+}
+
+const subtitleTimes=countMatches(
+subtitles,
+/\b\d{1,2}:\d{2}\b/g
+);
+
+if(subtitleTimes<2){
+
+return{
+valid:false,
+reason:"Los subtítulos necesitan tiempos de aparición y desaparición."
+};
+
+}
+
+const subtitleWords=countWords(subtitles);
+
+const scriptWords=countWords(previousStages[1]||"");
+
+if(!isNoVoice(settings)&&scriptWords>0){
+
+if(subtitleWords<scriptWords*0.35){
+
+return{
+valid:false,
+reason:"Los subtítulos parecen cubrir solamente una pequeña parte del guion."
+};
+
+}
+
+}
+
+}
+
+return{
+valid:true,
+content:cleaned
+};
+
+}
+
+/* =====================================
+   GENERACIÓN Y REPARACIÓN
+===================================== */
+
+async function generateValidatedStage(
+number,
+prompt,
+settings,
+previousStages
+){
+
+const system=buildStageSystem(number,settings);
+
+let lastReason="Respuesta incompleta.";
+
+for(
+let attempt=1;
+attempt<=MAX_REPAIRS+1;
+attempt++
+){
+
+setProgress(
+Math.min((number-1)*25+2,95),
+"Generando etapa "+number+". Intento "+attempt+" de "+(MAX_REPAIRS+1)+"..."
+);
+
+let response=await askKatia(system,prompt);
+
+/* Primero intenta recuperar cortes. */
+
+response=await completeWithContinuations(
+number,
+system,
+response
+);
+
+/* Después valida la estructura. */
+
+const validation=validateStage(
+number,
+response,
+settings,
+previousStages
+);
+
+if(validation.valid){
+
+return validation.content;
+
+}
+
+lastReason=validation.reason;
+
+/* Si falla, solicita reconstrucción completa. */
+
+if(attempt<=MAX_REPAIRS){
+
+prompt=`
+
+LA RESPUESTA ANTERIOR NO SUPERÓ LA VALIDACIÓN.
 
 MOTIVO:
 ${lastReason}
 
+RECONSTRUÍ LA ETAPA COMPLETA.
+
+No respondas solamente con una explicación.
+No entregues únicamente las partes faltantes.
+Incluí todos los apartados obligatorios.
+Respetá las instrucciones originales.
+Terminá con el marcador correspondiente.
+
 RESPUESTA ANTERIOR:
-${previousResponse}
 
-Necesito que RECONSTRUYAS LA ETAPA COMPLETA DESDE EL PRINCIPIO.
+${response.slice(-14000)}
 
-No entregues solamente un fragmento.
-No resumas el contenido anterior.
-No omitas secciones.
-
-Cumplí todas las instrucciones originales.
-Terminá obligatoriamente con:
-${STAGE_MARKERS[number]}
 `;
-    }
 
-    const response=await askKatia(system,request);
-
-    const validation=validateStage(
-      number,
-      response,
-      settings
-    );
-
-    if(validation.valid){
-      return validation.content;
-    }
-
-    lastReason=validation.reason;
-
-    var previousResponse=response;
-
-    setProgress(
-      Math.min(number*25,95),
-      "Comprobando integridad. Intento "+attempt+" de 3..."
-    );
-  }
-
-  throw new Error(
-    "La etapa "+number+
-    " no pudo completarse después de 3 intentos. "+
-    lastReason
-  );
 }
 
-async function runStage(number,title,prompt,settings){
-  setStep(number,"active");
-  setProgress(
-    (number-1)*25,
-    title
-  );
-
-  const result=await generateValidatedStage(
-    number,
-    prompt,
-    settings
-  );
-
-  completedStages.push({
-    number:number,
-    title:title,
-    content:result
-  });
-
-  setStep(number,"done");
-  setProgress(
-    number*25,
-    "Etapa "+number+" de 4 completada y verificada."
-  );
-
-  return result;
 }
 
-/* Construcción del documento final */
+throw new Error(
+"La etapa "+number+" no pudo completarse. "+lastReason
+);
+
+}
+
+/* =====================================
+   EJECUCIÓN DE CADA ETAPA
+===================================== */
+
+async function runStage(
+number,
+title,
+prompt,
+settings,
+previousStages
+){
+
+setStep(number,"active");
+
+setProgress(
+(number-1)*25,
+title
+);
+
+const result=await generateValidatedStage(
+number,
+prompt,
+settings,
+previousStages
+);
+
+completedStages.push({
+
+number:number,
+title:title,
+content:result
+
+});
+
+setStep(number,"done");
+
+setProgress(
+number*25,
+"Etapa "+number+" completada y validada."
+);
+
+return result;
+
+}
+
+/* =====================================
+   DOCUMENTO FINAL
+===================================== */
 
 function buildFinalPlan(settings,stages){
-  const headings=[
-    "1. GUION COMPLETO Y NARRACIÓN",
-    "2. STORYBOARD Y ESCENAS",
-    "3. PROMPTS VISUALES",
-    "4. AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN"
-  ];
 
-  let output=
-`KATIA AI · VIDEO STUDIO
+const headings=[
+"1. GUION COMPLETO Y NARRACIÓN",
+"2. STORYBOARD Y ESCENAS",
+"3. PROMPTS VISUALES",
+"4. AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN"
+];
+
+let output=`
+
+KATIA AI · VIDEO STUDIO 2.0
 PLAN MAESTRO DE PRODUCCIÓN
 
 ========================================
 FICHA DEL PROYECTO
 ========================================
 
-Idea: ${settings.idea}
-Estilo: ${settings.style}
-Formato: ${settings.format}
-Duración: ${settings.duration}
-Idioma: ${settings.language}
-Plataforma: ${settings.platform}
-Voz: ${settings.voice}
+${settingsText(settings)}
 
 `;
 
-  stages.forEach((stage,index)=>{
-    output+=
-`
+stages.forEach((stage,index)=>{
+
+output+=`
+
 ========================================
 ${headings[index]}
 ========================================
@@ -901,391 +1400,494 @@ ${headings[index]}
 ${stage.content}
 
 `;
-  });
 
-  output+=`
+});
+
+output+=`
+
 ========================================
 CONTROL DE FINALIZACIÓN
 ========================================
 
-✓ Guion completo verificado.
-✓ Storyboard verificado.
-✓ Prompts visuales verificados.
-✓ Audio, subtítulos y edición verificados.
+✓ Guion y secuencias validados.
+✓ Storyboard y tiempos validados.
+✓ Correspondencia de prompts visuales comprobada.
+✓ Apartados de audio y edición comprobados.
+✓ Subtítulos sometidos a comprobación básica.
 
-LAS CUATRO ETAPAS FUERON COMPLETADAS.
+LAS CUATRO ETAPAS SUPERARON LOS CONTROLES AUTOMÁTICOS.
 
 ========================================
 FIN DEL PLAN MAESTRO
 ========================================
 
-Nota: Este documento contiene el plan y las instrucciones de producción.
+NOTA:
+
+Este documento contiene el plan de producción.
 Las imágenes, clips, voz, música y video final todavía deben generarse
 con herramientas externas.
+
+La validación automática comprueba estructura y consistencia básica.
+No garantiza la calidad artística ni sustituye una revisión humana.
+
 `;
 
-  return output;
+return output;
+
 }
 
-/* Generación principal */
+/* =====================================
+   GENERACIÓN PRINCIPAL
+===================================== */
 
 async function crearPlan(){
-  if(generating)return;
 
-  const settings=getSettings();
+if(generating)return;
 
-  if(!settings.idea){
-    setStatus(
-      "Primero contale a Katia qué video querés crear."
-    );
-    $("idea").focus();
-    return;
-  }
+const settings=getSettings();
 
-  generating=true;
-  completedStages=[];
-  currentPlan="";
-  currentTitle=settings.idea.slice(0,65);
+if(!settings.idea){
 
-  const btn=$("generate");
+setStatus(
+"Primero contale a Katia qué video querés crear."
+);
 
-  btn.disabled=true;
-  btn.textContent="⏳ KATIA ESTÁ TRABAJANDO...";
+$("idea").focus();
 
-  $("progress").style.display="block";
-  $("resultPanel").hidden=true;
+return;
 
-  hideError();
+}
 
-  for(let i=1;i<=4;i++){
-    setStep(i,"");
-  }
+generating=true;
 
-  setStatus(
-    "Conectando con Katia. Preparando las cuatro etapas."
-  );
+completedStages=[];
+currentPlan="";
+currentTitle=settings.idea.slice(0,65);
 
-  setProgress(0,"Iniciando producción...");
+const btn=$("generate");
 
-  try{
+btn.disabled=true;
+btn.textContent="⏳ KATIA ESTÁ TRABAJANDO...";
 
-    /* ETAPA 1 */
+$("progress").style.display="block";
+$("resultPanel").hidden=true;
 
-    const stage1=await runStage(
-      1,
-      "Creando guion completo...",
-      `
-Creá el guion audiovisual definitivo para este proyecto.
+hideError();
+
+for(let i=1;i<=4;i++){
+setStep(i,"");
+}
+
+setStatus("Conectando con Katia. Preparando las cuatro etapas.");
+setProgress(0,"Iniciando producción...");
+
+try{
+
+/* ETAPA 1 */
+
+const stage1=await runStage(
+
+1,
+
+"Creando guion completo...",
+
+`
+
+CREÁ EL GUION AUDIOVISUAL DEFINITIVO.
 
 ${settingsText(settings)}
 
-Desarrollá todas las partes necesarias para cumplir la idea.
+Desarrollá absolutamente todos los elementos prometidos.
 
-Si el título promete tres teorías, desarrollá las tres.
-Si promete cinco consejos, desarrollá los cinco.
+Entregá:
 
-No dejes ningún elemento anunciado sin desarrollar.
+- Introducción.
+- Desarrollo completo.
+- Todos los puntos anunciados.
+- Conclusión.
+- Despedida.
+- CTA.
+- Secuencias cronometradas.
+- Narración completa.
 
-Entregá la narración completa y sus tiempos.
-El guion debe tener un principio, desarrollo y final.
-No avances a las siguientes etapas.
+No avances a las otras etapas.
+
 `,
-      settings
-    );
 
-    /* ETAPA 2 */
+settings,
+{}
 
-    const stage2=await runStage(
-      2,
-      "Construyendo storyboard...",
-      `
-PROYECTO:
+);
+
+/* ETAPA 2 */
+
+const stage2=await runStage(
+
+2,
+
+"Construyendo storyboard...",
+
+`
+
+CONFIGURACIÓN:
+
 ${settingsText(settings)}
 
-GUION COMPLETO:
+GUION VALIDADO:
+
 ${stage1}
 
-Construí el storyboard de TODAS las partes del guion.
+Transformá todas las secuencias del guion en escenas.
 
-Cada frase debe estar representada en alguna escena.
+Cada frase debe tener representación visual.
 
-Cubrir desde 00:00 hasta el final de la duración solicitada.
 No inventes un guion diferente.
 No resumas el contenido.
+No omitas secuencias.
+
 `,
-      settings
-    );
 
-    /* ETAPA 3 */
+settings,
+{1:stage1}
 
-    const stage3=await runStage(
-      3,
-      "Diseñando prompts visuales...",
-      `
-GUION:
+);
+
+/* ETAPA 3 */
+
+const stage3=await runStage(
+
+3,
+
+"Diseñando prompts visuales...",
+
+`
+
+GUION VALIDADO:
+
 ${stage1}
 
-STORYBOARD:
+STORYBOARD VALIDADO:
+
 ${stage2}
 
-Generá un prompt visual independiente para CADA escena.
+Generá un prompt individual para cada escena.
 
-No omitas ninguna escena.
-Mantené la continuidad visual del proyecto.
+No omitas ninguna.
+No combines varias escenas en un solo prompt.
+
 `,
-      settings
-    );
 
-    /* ETAPA 4 */
+settings,
+{1:stage1,2:stage2}
 
-    const stage4=await runStage(
-      4,
-      "Preparando audio y edición...",
-      `
-GUION:
+);
+
+/* ETAPA 4 */
+
+const stage4=await runStage(
+
+4,
+
+"Preparando audio y edición...",
+
+`
+
+GUION VALIDADO:
+
 ${stage1}
 
-STORYBOARD:
+STORYBOARD VALIDADO:
+
 ${stage2}
 
-PROMPTS VISUALES:
+PROMPTS VISUALES VALIDADOS:
+
 ${stage3}
 
-Prepará todos los elementos finales de producción.
+Prepará todos los elementos de producción.
 
-Los subtítulos deben corresponder al guion original
-y cubrir toda la narración.
+Los subtítulos deben corresponder al guion original.
 
-No omitas ninguna parte del proyecto.
+No omitas ninguna sección.
+
 `,
-      settings
-    );
 
-    /* Verificación final */
+settings,
+{1:stage1,2:stage2,3:stage3}
 
-    if(completedStages.length!==4){
-      throw new Error(
-        "No se completaron las cuatro etapas."
-      );
-    }
+);
 
-    currentPlan=buildFinalPlan(
-      settings,
-      completedStages
-    );
+/* CONTROL FINAL */
 
-    $("result").textContent=currentPlan;
-    $("resultPanel").hidden=false;
+if(completedStages.length!==4){
 
-    setProgress(
-      100,
-      "¡Las cuatro etapas terminaron correctamente!"
-    );
+throw new Error(
+"No se completaron las cuatro etapas."
+);
 
-    setStatus(
-      "🎉 ¡Proyecto completo! Katia verificó las cuatro etapas."
-    );
-
-    $("resultPanel").scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-
-  }catch(error){
-
-    console.error(error);
-
-    currentPlan="";
-
-    $("resultPanel").hidden=true;
-
-    const next=completedStages.length+1;
-
-    if(next<=4){
-      setStep(next,"failed");
-    }
-
-    showError(
-      "La producción no pudo completarse: "+
-      error.message+
-      "\n\nEtapas verificadas: "+
-      completedStages.length+
-      " de 4."+
-      "\n\nNo se habilitó la descarga porque el plan todavía no está completo."
-    );
-
-    setStatus(
-      "La producción se detuvo para evitar entregar un plan incompleto."
-    );
-
-  }finally{
-
-    generating=false;
-
-    btn.disabled=false;
-
-    btn.textContent="✨ KATIA, CREÁ TODO EL PLAN";
-  }
 }
 
-/* Copiar */
+currentPlan=buildFinalPlan(
+settings,
+completedStages
+);
+
+$("result").textContent=currentPlan;
+$("resultPanel").hidden=false;
+
+setProgress(
+100,
+"¡Las cuatro etapas terminaron correctamente!"
+);
+
+setStatus(
+"🎉 ¡Proyecto completo! Katia verificó las cuatro etapas."
+);
+
+$("resultPanel").scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+
+}catch(error){
+
+console.error(error);
+
+currentPlan="";
+$("resultPanel").hidden=true;
+
+const next=completedStages.length+1;
+
+if(next<=4){
+setStep(next,"failed");
+}
+
+showError(
+
+"La producción no pudo completarse: "+
+error.message+
+
+"\n\nEtapas verificadas: "+
+completedStages.length+
+" de 4."+
+
+"\n\nNo se habilitó la descarga porque el plan todavía no está completo."
+
+);
+
+setStatus(
+"La producción se detuvo para evitar entregar un plan incompleto."
+);
+
+}finally{
+
+generating=false;
+
+btn.disabled=false;
+
+btn.textContent="✨ KATIA, CREÁ TODO EL PLAN";
+
+}
+
+}
+
+/* =====================================
+   COPIAR PLAN
+===================================== */
 
 async function copiarPlan(){
-  if(!currentPlan)return;
 
-  try{
-    await navigator.clipboard.writeText(currentPlan);
+if(!currentPlan)return;
 
-    setStatus(
-      "¡Plan completo copiado correctamente! 💜"
-    );
+try{
 
-  }catch(error){
+await navigator.clipboard.writeText(currentPlan);
 
-    setStatus(
-      "No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente."
-    );
-  }
+setStatus(
+"¡Plan completo copiado correctamente! 💜"
+);
+
+}catch(error){
+
+setStatus(
+"No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente."
+);
+
 }
 
-/* Descargar */
+}
+
+/* =====================================
+   DESCARGAR PLAN
+===================================== */
 
 function descargarPlan(){
-  if(!currentPlan)return;
 
-  const blob=new Blob(
-    [currentPlan],
-    {type:"text/plain;charset=utf-8"}
-  );
+if(!currentPlan)return;
 
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
+const blob=new Blob(
+[currentPlan],
+{type:"text/plain;charset=utf-8"}
+);
 
-  a.href=url;
-  a.download="katia-video-studio-plan-completo.txt";
+const url=URL.createObjectURL(blob);
 
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+const a=document.createElement("a");
 
-  setTimeout(
-    ()=>URL.revokeObjectURL(url),
-    1500
-  );
+a.href=url;
+a.download="katia-video-studio-plan-completo.txt";
+
+document.body.appendChild(a);
+
+a.click();
+a.remove();
+
+setTimeout(
+()=>URL.revokeObjectURL(url),
+1500
+);
+
 }
 
-/* Guardar proyecto */
+/* =====================================
+   GUARDAR PROYECTO
+===================================== */
 
 function guardarProyecto(){
-  if(!currentPlan){
-    setStatus(
-      "Primero necesitás generar un plan completo."
-    );
-    return;
-  }
 
-  try{
+if(!currentPlan){
 
-    let items=JSON.parse(
-      localStorage.getItem(
-        "katia_video_projects_v1"
-      )||"[]"
-    );
+setStatus(
+"Primero necesitás generar un plan completo."
+);
 
-    if(!Array.isArray(items)){
-      items=[];
-    }
+return;
 
-    items.unshift({
-      title:currentTitle,
-      plan:currentPlan,
-      date:new Date().toLocaleString("es"),
-      complete:true
-    });
-
-    localStorage.setItem(
-      "katia_video_projects_v1",
-      JSON.stringify(items.slice(0,30))
-    );
-
-    renderProjects();
-
-    setStatus(
-      "Proyecto completo guardado en este dispositivo. 💜"
-    );
-
-  }catch(error){
-
-    setStatus(
-      "No se pudo guardar. El almacenamiento del navegador podría estar lleno."
-    );
-  }
 }
 
-/* Proyectos guardados */
+try{
 
-function renderProjects(){
-  let items=[];
+let items=JSON.parse(
+localStorage.getItem("katia_video_projects_v1")||"[]"
+);
 
-  try{
-    items=JSON.parse(
-      localStorage.getItem(
-        "katia_video_projects_v1"
-      )||"[]"
-    );
-
-    if(!Array.isArray(items)){
-      items=[];
-    }
-
-  }catch(error){
-    items=[];
-  }
-
-  const box=$("projects");
-  box.innerHTML="";
-
-  if(!items.length){
-    box.innerHTML=
-      '<p class="note">Todavía no guardaste proyectos.</p>';
-    return;
-  }
-
-  items.forEach(project=>{
-
-    const div=document.createElement("div");
-    div.className="project";
-
-    const title=document.createElement("strong");
-    title.textContent=project.title||"Proyecto";
-
-    const date=document.createElement("small");
-    date.textContent=project.date||"";
-
-    const open=document.createElement("button");
-    open.className="secondary";
-    open.textContent="Abrir";
-
-    open.onclick=()=>{
-
-      currentPlan=project.plan||"";
-      currentTitle=project.title||"Proyecto";
-
-      $("result").textContent=currentPlan;
-      $("resultPanel").hidden=false;
-
-      $("resultPanel").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-    };
-
-    div.append(title,date,open);
-    box.appendChild(div);
-  });
+if(!Array.isArray(items)){
+items=[];
 }
+
+items.unshift({
+
+title:currentTitle,
+plan:currentPlan,
+date:new Date().toLocaleString("es"),
+complete:true
+
+});
+
+localStorage.setItem(
+"katia_video_projects_v1",
+JSON.stringify(items.slice(0,30))
+);
 
 renderProjects();
+
+setStatus(
+"Proyecto completo guardado en este dispositivo. 💜"
+);
+
+}catch(error){
+
+setStatus(
+"No se pudo guardar. El almacenamiento del navegador podría estar lleno."
+);
+
+}
+
+}
+
+/* =====================================
+   PROYECTOS GUARDADOS
+===================================== */
+
+function renderProjects(){
+
+let items=[];
+
+try{
+
+items=JSON.parse(
+localStorage.getItem("katia_video_projects_v1")||"[]"
+);
+
+if(!Array.isArray(items)){
+items=[];
+}
+
+}catch(error){
+
+items=[];
+
+}
+
+const box=$("projects");
+
+box.innerHTML="";
+
+if(!items.length){
+
+box.innerHTML=
+'<p class="note">Todavía no guardaste proyectos.</p>';
+
+return;
+
+}
+
+items.forEach(project=>{
+
+const div=document.createElement("div");
+
+div.className="project";
+
+const title=document.createElement("strong");
+
+title.textContent=project.title||"Proyecto";
+
+const date=document.createElement("small");
+
+date.textContent=project.date||"";
+
+const open=document.createElement("button");
+
+open.className="secondary";
+open.textContent="Abrir";
+
+open.onclick=()=>{
+
+currentPlan=project.plan||"";
+currentTitle=project.title||"Proyecto";
+
+$("result").textContent=currentPlan;
+$("resultPanel").hidden=false;
+
+$("resultPanel").scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+
+};
+
+div.append(title,date,open);
+
+box.appendChild(div);
+
+});
+
+}
+
+/* INICIO */
+
+renderProjects();
+
 </script>
 </body>
 </html>
