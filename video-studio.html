@@ -1,240 +1,539 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090611">
-<title>Katia AI · Video Studio</title>
+<meta name="theme-color" content="#100b22">
+<title>Katia AI - Video Studio</title>
 <style>
-:root{--bg:#090611;--line:#a855f744;--purple:#a855f7;--pink:#ec4899;--text:#f7f0ff;--muted:#a99bbd}
+:root {
+  color-scheme: dark;
+  --bg:#090711;
+  --panel:#151126;
+  --line:#49366b;
+  --violet:#a78bfa;
+  --pink:#f0abfc;
+  --text:#f7f2ff;
+  --muted:#b9aecb;
+}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--text);font-family:Arial,sans-serif;background:radial-gradient(ellipse at 50% 0%,#321452 0%,transparent 42%),var(--bg)}
-button,input,textarea,select{font:inherit}button{cursor:pointer}
-.wrap{max-width:950px;margin:auto;padding:18px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 18px;border-bottom:1px solid #c084fc25}
-.brand{display:flex;align-items:center;gap:11px}.logo{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--pink));font-size:22px;box-shadow:0 0 24px #a855f755}
-h1{font-size:18px;margin:0;letter-spacing:1px}.sub{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px}
-.back{color:#e9d5ff;text-decoration:none;border:1px solid var(--line);padding:10px 13px;border-radius:12px;font-size:12px}
-.hero{text-align:center;padding:28px 0 20px}.eyebrow{color:#d8b4fe;font-size:11px;letter-spacing:3px}
-.hero h2{font-size:clamp(27px,6vw,42px);margin:10px 0;background:linear-gradient(90deg,#fff,#c084fc,#f0abfc);background-clip:text;color:transparent}
-.hero p{color:var(--muted);font-size:13px;line-height:1.6;max-width:570px;margin:auto}
-.panel{background:#171022dd;border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 14px 45px #0005}
-label{display:block;color:#d8b4fe;font-size:12px;margin:14px 0 7px}
-textarea,input,select{width:100%;border:1px solid #a855f755;border-radius:12px;background:#0d0916;color:white;padding:13px;outline:none}
-textarea{min-height:145px;resize:vertical;line-height:1.5}
-textarea:focus,input:focus,select:focus{border-color:#c084fc;box-shadow:0 0 15px #a855f722}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.primary{width:100%;border:0;border-radius:13px;padding:15px;color:white;font-weight:bold;background:linear-gradient(120deg,#9333ea,#be36a5);box-shadow:0 8px 25px #9333ea44;margin-top:16px}
-.primary:disabled{opacity:.55;cursor:wait}
-.note{font-size:11px;color:#9584a5;line-height:1.6}
-.status{font-size:12px;color:#c4b5fd;margin-top:12px;white-space:pre-wrap}
-.result{white-space:pre-wrap;line-height:1.7;font-size:13px;color:#eee4fa;overflow-wrap:anywhere}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.secondary{border:1px solid var(--line);border-radius:11px;background:#ffffff0b;color:#e9d5ff;padding:10px 12px;font-size:12px}
-.tag{display:inline-block;border:1px solid #a855f755;border-radius:20px;padding:5px 9px;color:#d8b4fe;font-size:10px;margin:3px}
-.project{padding:12px;border:1px solid #a855f733;border-radius:12px;margin-top:9px;background:#ffffff08}
-.project strong{font-size:12px}.project small{display:block;color:var(--muted);margin-top:5px}
-details{margin-top:14px;border:1px solid #a855f733;border-radius:13px;padding:0 12px 12px}
-summary{padding:13px 0;color:#d8b4fe;font-size:12px;font-weight:bold;cursor:pointer}
-.info{padding:12px;border-radius:12px;background:#ffffff08;color:#cdbde0;font-size:12px;line-height:1.6;margin-top:12px}
-@media(max-width:600px){.wrap{padding:13px}.grid{grid-template-columns:1fr}.panel{padding:15px}.hero{padding-top:22px}}
+body {
+  margin:0;
+  background:radial-gradient(circle at 15% 0%,#34205a,transparent 35%),#090711;
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+  min-height:100vh;
+}
+main{width:min(920px,100%);margin:auto;padding:22px 15px 50px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.orb{
+  width:46px;height:46px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,white,#d8b4fe 20%,#8b5cf6 55%,#4c1d95);
+  box-shadow:0 0 28px #a78bfa88;
+}
+.brand{font-weight:850}
+.brand small{display:block;color:var(--muted);font-size:12px}
+.hero,.panel{
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:21px;
+  background:#151126ed;
+  margin-bottom:17px;
+}
+.hero{background:linear-gradient(135deg,#291747,#100d1e)}
+.eyebrow{color:var(--pink);font-size:12px;font-weight:800;letter-spacing:2px}
+h1{font-size:clamp(28px,6vw,42px);margin:10px 0}
+p{line-height:1.55}
+.muted,.hint{color:var(--muted)}
+label{display:block;font-weight:750;font-size:13px;margin:12px 0 7px}
+textarea,select{
+  width:100%;
+  background:#0d0a18;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px;
+  color:white;
+  font:inherit;
+}
+textarea{min-height:110px;resize:vertical}
+.settings{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+button{
+  border:0;border-radius:12px;padding:13px 17px;
+  font-weight:800;cursor:pointer;
+  color:#160d25;
+  background:linear-gradient(100deg,#c4b5fd,#f0abfc);
+}
+button.secondary{background:#2a2140;color:white;border:1px solid var(--line)}
+button:disabled{opacity:.55}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:17px}
+.status{font-size:13px;color:var(--muted);margin-top:14px;min-height:20px}
+.error{color:#fca5a5}
+.ok{color:#86efac}
+.result{display:none}
+.output{
+  background:#0d0a18;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:17px;
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+.output h1,.output h2,.output h3{color:#e9d5ff}
+.output table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+.output th,.output td{border:1px solid var(--line);padding:8px;text-align:left}
+.output strong{color:#f0abfc}
+.tag{display:inline-block;border:1px solid #634b8b;border-radius:99px;padding:5px 9px;font-size:11px;margin:8px 5px 0 0}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+@media(max-width:600px){
+  .settings{grid-template-columns:1fr}
+  .hero,.panel{padding:17px}
+}
 </style>
 </head>
+
 <body>
-<div class="wrap">
-<header>
-  <div class="brand"><div class="logo">🎬</div><div><h1>KATIA AI</h1><div class="sub">VIDEO STUDIO</div></div></div>
-  <a class="back" href="./index.html">← Volver a Katia</a>
-</header>
+<main>
 
-<section class="hero">
-  <div class="eyebrow">CREATIVIDAD AUTOMATIZADA</div>
-  <h2>Tu idea. Toda una producción.</h2>
-  <p>Contale a Katia qué video imaginás. Ella organizará el proyecto completo: guion, escenas, imágenes, voz, sonido, subtítulos y edición.</p>
-</section>
-
-<section class="panel">
-  <span class="tag">PLAN AUTOMÁTICO</span><span class="tag">ANDROID</span><span class="tag">OBJETIVO: 0 G.</span>
-  <label for="idea">¿Qué video querés crear?</label>
-  <textarea id="idea" placeholder="Ejemplo: Quiero un video de terror de 60 segundos sobre una ciudad abandonada. Que tenga suspenso, una narración misteriosa y un final inesperado."></textarea>
-  <div class="info">✨ <strong>Modo automático:</strong> Katia elegirá el enfoque visual, organizará las escenas y preparará todos los materiales e instrucciones del proyecto. Solo escribí tu idea.</div>
-
-  <details>
-    <summary>⚙️ Ajustes opcionales (podés dejarlos en automático)</summary>
-    <div class="grid">
-      <div><label for="style">Estilo visual</label><select id="style">
-        <option>Automático (Katia decide)</option><option>Realista y cinematográfico</option><option>Anime</option><option>3D / animación</option><option>Terror y suspenso</option><option>Documental</option><option>Fantasía</option><option>Experimental / mezcla de estilos</option>
-      </select></div>
-      <div><label for="format">Formato</label><select id="format">
-        <option value="Automático (Katia decide)">Automático (Katia decide)</option><option value="9:16">Vertical 9:16 · TikTok / Shorts</option><option value="16:9">Horizontal 16:9 · YouTube</option><option value="1:1">Cuadrado 1:1</option>
-      </select></div>
-      <div><label for="duration">Duración</label><select id="duration">
-        <option>Automática (según la idea)</option><option>30 segundos</option><option selected>60 segundos</option><option>90 segundos</option><option>2 minutos</option><option>3 minutos</option>
-      </select></div>
-      <div><label for="language">Idioma</label><select id="language">
-        <option>Español latino</option><option>Español paraguayo</option><option>Inglés</option><option>Sin narración</option>
-      </select></div>
-    </div>
-  </details>
-
-  <button class="primary" id="generate" onclick="crearPlan()">✨ KATIA, CREÁ TODO EL PLAN</button>
-  <div class="status" id="status" aria-live="polite">Lista para transformar tu idea en un proyecto audiovisual completo. 💜</div>
-  <p class="note">Esta versión crea el plan completo con el cerebro actual de Katia. Todavía no renderiza el video ni genera automáticamente imágenes o audios. Esas funciones se incorporarán por etapas usando opciones gratuitas, sin activar servicios pagos.</p>
-</section>
-
-<section class="panel" id="resultPanel" hidden>
-  <h3 style="margin:0 0 12px">🎞️ Plan maestro de producción</h3>
-  <div id="result" class="result"></div>
-  <div class="actions">
-    <button class="secondary" onclick="copiarPlan()">Copiar plan</button>
-    <button class="secondary" onclick="descargarPlan()">Descargar plan .txt</button>
-    <button class="secondary" onclick="guardarProyecto()">Guardar proyecto</button>
+<div class="top">
+  <div class="orb"></div>
+  <div class="brand">
+    KATIA AI
+    <small>VIDEO STUDIO · CREATIVE LAB</small>
   </div>
-</section>
-
-<section class="panel">
-  <h3 style="margin:0 0 8px">🗂️ Mis proyectos</h3>
-  <p class="note">Los proyectos se guardan únicamente en este navegador y dispositivo.</p>
-  <div id="projects"><p class="note">Todavía no guardaste proyectos.</p></div>
-</section>
-<footer class="note" style="text-align:center;padding:10px">KATIA AI · VIDEO STUDIO · MÓDULO INDEPENDIENTE</footer>
 </div>
 
+<section class="hero">
+  <div class="eyebrow">TU IDEA → UNA PRODUCCIÓN COMPLETA</div>
+  <h1>Creá videos con Katia 🎬</h1>
+  <p>
+    Describí tu idea y Katia preparará el guion,
+    storyboard, escenas, imágenes, voz, subtítulos,
+    sonido y edición.
+  </p>
+  <span class="tag">📱 Android</span>
+  <span class="tag">✨ Guion completo</span>
+  <span class="tag">🆓 Gratis</span>
+</section>
+
+<section class="panel">
+  <label for="idea">¿Qué video querés crear?</label>
+  <textarea id="idea" placeholder="Ejemplo: Las teorías más misteriosas del universo..."></textarea>
+
+  <div class="settings">
+    <div>
+      <label for="style">Estilo visual</label>
+      <select id="style">
+        <option>Automático</option>
+        <option>Realista cinematográfico</option>
+        <option>Anime</option>
+        <option>Animación 3D</option>
+        <option>Historieta / cómic</option>
+        <option>Documental</option>
+        <option>Terror y misterio</option>
+        <option>Fantasía</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="format">Formato</label>
+      <select id="format">
+        <option>9:16 vertical</option>
+        <option>16:9 horizontal</option>
+        <option>1:1 cuadrado</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="duration">Duración</label>
+      <select id="duration">
+        <option>60 segundos</option>
+        <option>30 segundos</option>
+        <option>90 segundos</option>
+        <option>2 minutos</option>
+        <option>3 minutos</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="language">Idioma</label>
+      <select id="language">
+        <option>Español latino, tono paraguayo-argentino</option>
+        <option>Español latino neutro</option>
+        <option>Inglés</option>
+        <option>Sin narración</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btnrow">
+    <button id="generate">✨ CREAR PLAN COMPLETO</button>
+    <button class="secondary" id="clear">Limpiar</button>
+  </div>
+
+  <div class="status" id="status"></div>
+</section>
+
+<section class="panel result" id="result">
+  <h2>🎞️ Plan de producción</h2>
+  <div class="btnrow">
+    <button class="secondary" id="copy">Copiar plan</button>
+    <button class="secondary" id="download">Descargar TXT</button>
+  </div>
+  <article class="output" id="output"></article>
+</section>
+
+<footer>
+  Katia Video Studio · Proyecto experimental gratuito.<br>
+  Esta versión genera planes de producción, no archivos de video renderizados.
+</footer>
+
+</main>
+
 <script>
-const KATIA_API="https://katia-braine.gio09062009.workers.dev/";
-const $=id=>document.getElementById(id);
-let currentPlan="";
-let currentTitle="Mi video";
+const WORKER_URL =
+"https://katia-braine.gio09062009.workers.dev/";
 
-async function crearPlan(){
-  const idea=$("idea").value.trim();
-  if(!idea){$("status").textContent="Primero contale a Katia qué video querés crear."; $("idea").focus();return;}
-  const btn=$("generate");
-  btn.disabled=true;
-  btn.textContent="KATIA ESTÁ DISEÑANDO TODA LA PRODUCCIÓN...";
-  $("status").textContent="Conectando con Katia y preparando el plan maestro…";
-  $("resultPanel").hidden=true;
+const $ = id => document.getElementById(id);
 
-  const style=$("style").value;
-  const format=$("format").value;
-  const duration=$("duration").value;
-  const language=$("language").value;
+let latestPlan = "";
 
-  const system=`Sos Katia, directora creativa, guionista y productora audiovisual experta. Tu trabajo es convertir la idea del usuario en un PLAN MAESTRO DE PRODUCCIÓN audiovisual completo, detallado y listo para pasar a herramientas de creación y edición.
+const systemPrompt = `
+Sos Katia, una directora creativa, guionista,
+productora audiovisual y especialista en videos
+cortos para TikTok, Instagram Reels y YouTube Shorts.
 
-REGLAS:
-- Tomá decisiones creativas por tu cuenta cuando una preferencia esté en automático. No hagas preguntas antes de entregar el plan; resolvé los detalles con criterio y explicá brevemente las decisiones.
-- Respetá el tema y la intención del usuario. Adaptá el estilo, ritmo, duración y formato a la idea.
-- Si el usuario no indica duración o formato, elegí una opción razonable para el contenido.
-- Todo debe ser coherente: duración total, escenas, narración, música y subtítulos deben coincidir.
-- Escribí prompts visuales específicos para cada escena, con continuidad de personajes, vestuario, lugares, iluminación y estilo.
-- No afirmes que generaste imágenes, clips, voces, música ni un archivo de video. Estás entregando el plan y los prompts, no los archivos finales.
-- Evitá instrucciones vagas. El plan debe poder utilizarse como guía de producción.
-- Respondé en español claro, salvo que el usuario solicite otro idioma.
+Tu misión es convertir CUALQUIER IDEA del usuario
+en un PLAN AUDIOVISUAL COMPLETO Y PROFESIONAL.
 
-ENTREGÁ ESTAS SECCIONES EN ESTE ORDEN:
+REGLA PRINCIPAL:
+NUNCA entregues solamente objetivos, público,
+concepto o especificaciones técnicas.
 
-1. FICHA DEL PROYECTO: título, idea central, objetivo, público sugerido, estilo visual elegido, formato, duración estimada e idioma.
-2. CONCEPTO CREATIVO: resumen, tono, emoción principal, ritmo y gancho inicial.
-3. GUION COMPLETO: narración o diálogos completos, con marcas de tiempo aproximadas. Si no lleva voz, indicá qué comunica la imagen y el sonido.
-4. STORYBOARD: tabla o lista numerada de escenas. Para cada escena incluí: tiempo de inicio y fin, duración, qué aparece, acción, encuadre, movimiento de cámara, transición y continuidad visual.
-5. PROMPTS VISUALES: un prompt listo para generar la imagen o clip de cada escena. Incluí estilo, composición, iluminación, ambiente, detalles importantes y relación con las otras escenas. Si hay personajes, describí rasgos visuales ficticios consistentes.
-6. VOZ Y NARRACIÓN: tipo de voz, edad adulta aproximada si aplica, tono, emoción, velocidad, pausas y texto dividido por fragmentos. No imites la voz de una persona real.
-7. MÚSICA Y SONIDO: ambiente musical, instrumentos o textura sonora, efectos por escena, momentos de silencio y niveles relativos sugeridos. No incluyas canciones protegidas específicas.
-8. SUBTÍTULOS Y TEXTOS EN PANTALLA: texto exacto, escena o tiempo, estilo y palabras que conviene destacar.
-9. PLAN DE EDICIÓN: orden de montaje, ritmo, transiciones, corrección de color, mezcla de audio, subtítulos, pantalla final y recomendaciones de exportación.
-10. MINIATURA Y PUBLICACIÓN: idea de miniatura, prompt para crearla, título para publicar, descripción breve y etiquetas sugeridas.
-11. LISTA DE MATERIALES: imágenes/clips por escena, voz, música, efectos, tipografías y cualquier otro recurso necesario.
-12. ORDEN DE PRODUCCIÓN: pasos concretos para llevar el plan desde cero hasta un video terminado, priorizando herramientas gratuitas y opciones que funcionen desde Android.
-13. CONTROL FINAL: lista breve para comprobar continuidad, audio, subtítulos, duración, formato y calidad.
+EL GUION COMPLETO ES OBLIGATORIO.
 
-Usá encabezados claros. Sé creativo, completo y práctico. No recortes el plan a un resumen.`;
+No digas que generaste imágenes, videos o audios
+si solamente estás entregando instrucciones.
 
-  const prompt=`IDEA DEL USUARIO:
+REGLAS DE PRODUCCIÓN:
+
+1. Respetá exactamente la duración solicitada.
+2. Para 60 segundos creá exactamente 6 escenas
+   de aproximadamente 10 segundos.
+3. Para 30 segundos creá 3 escenas.
+4. Para 90 segundos creá 9 escenas.
+5. Para 2 o 3 minutos usá escenas de aproximadamente
+   10 segundos.
+6. Escribí toda la narración, sin dejar frases
+   pendientes ni espacios vacíos.
+7. La narración debe tener una extensión adecuada
+   para el tiempo disponible.
+8. Cada escena debe incluir instrucciones visuales
+   concretas.
+9. Mantené consistencia visual entre escenas.
+10. Los subtítulos deben coincidir con la narración.
+11. No inventes hechos científicos.
+12. Presentá teorías no demostradas como teorías,
+    no como verdades confirmadas.
+13. Evitá contenido peligroso o gráfico.
+14. Si el usuario elige estilo automático,
+    seleccioná el estilo más apropiado.
+
+FORMATO OBLIGATORIO:
+
+# 🎬 TÍTULO DEL VIDEO
+
+## 1. FICHA TÉCNICA
+- Tema.
+- Duración.
+- Formato.
+- Idioma.
+- Estilo.
+- Tono.
+- Plataforma recomendada.
+
+## 2. GANCHO INICIAL
+Escribí la frase exacta de los primeros 3 segundos.
+Incluí el texto que aparecerá en pantalla.
+
+## 3. GUION NARRADO COMPLETO
+Escribí TODA la narración seguida.
+Debe estar lista para grabarse.
+No uses resúmenes ni frases incompletas.
+
+## 4. STORYBOARD COMPLETO
+
+Creá una tabla con una fila por escena.
+
+Columnas:
+- Número de escena.
+- Tiempo de inicio y final.
+- Voz en off exacta.
+- Texto en pantalla.
+- Acción visual.
+- Movimiento de cámara.
+- Transición.
+- Efecto de sonido.
+
+## 5. PROMPTS VISUALES
+
+Creá un prompt independiente para CADA escena.
+
+Cada prompt debe describir:
+- Personajes u objetos.
+- Ambiente.
+- Iluminación.
+- Colores.
+- Composición.
+- Estilo artístico.
+- Cámara.
+- Formato solicitado.
+
+Los prompts deben poder copiarse individualmente
+en una herramienta de generación visual.
+
+## 6. VOZ Y NARRACIÓN
+- Tipo de voz.
+- Emoción.
+- Velocidad.
+- Entonación.
+- Pausas.
+- Pronunciación.
+
+## 7. MÚSICA Y SONIDOS
+- Música de fondo.
+- Efectos por escena.
+- Intensidad.
+- Momentos de silencio.
+- Volumen relativo de música y narración.
+
+## 8. SUBTÍTULOS COMPLETOS
+Separá los subtítulos por escena.
+Usá frases cortas y legibles.
+
+## 9. EDICIÓN
+- Orden de escenas.
+- Ritmo.
+- Transiciones.
+- Efectos.
+- Corrección de color.
+- Tipografía.
+- Ubicación de textos.
+- Zona segura para formato vertical.
+
+## 10. PORTADA Y PUBLICACIÓN
+- Título de portada.
+- Descripción.
+- Llamada a la acción.
+- Hashtags.
+
+## 11. RECURSOS NECESARIOS
+Enumerá imágenes, clips, sonidos y elementos
+necesarios para realizar el video.
+
+## 12. PRODUCCIÓN GRATUITA DESDE ANDROID
+Explicá un flujo de trabajo con opciones gratuitas.
+No recomiendes compras ni suscripciones.
+Advertí si existen límites o marcas de agua.
+
+## 13. CONTROL DE CALIDAD
+Lista de comprobación final.
+
+## 14. RESUMEN DE PRODUCCIÓN
+Explicá brevemente cómo unir todos los elementos.
+
+FINALIZÁ EXACTAMENTE CON:
+ESTADO: PLAN COMPLETO — LISTO PARA PRODUCCIÓN.
+
+IMPORTANTE:
+No omitas secciones.
+No reemplaces el guion por una descripción.
+No termines después de la ficha técnica.
+Entregá el contenido solicitado de principio a fin.
+`;
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
+function renderMarkdown(md) {
+  let s = escapeHTML(md);
+
+  s = s.replace(/^### (.*)$/gm,"<h3>$1</h3>");
+  s = s.replace(/^## (.*)$/gm,"<h2>$1</h2>");
+  s = s.replace(/^# (.*)$/gm,"<h1>$1</h1>");
+
+  s = s.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
+  s = s.replace(/\*(.*?)\*/g,"<em>$1</em>");
+
+  s = s.replace(/^\|(.+)\|$/gm,line => {
+    if (/^\|[\s:|-]+\|$/.test(line)) return "";
+    const cells = line.split("|").slice(1,-1);
+    const tag = line.includes("Tiempo") ||
+                line.includes("Escena") ? "th":"td";
+    return "<tr>"+cells.map(cell =>
+      `<${tag}>${cell.trim()}</${tag}>`
+    ).join("")+"</tr>";
+  });
+
+  s = s.replace(/(?:<tr>.*<\/tr>\n?)+/gs,
+    table => "<table>"+table+"</table>");
+
+  s = s.replace(/^\s*[-*] (.*)$/gm,"<li>$1</li>");
+  s = s.replace(/(?:<li>.*<\/li>\n?)+/gs,
+    list => "<ul>"+list+"</ul>");
+
+  return s.replace(/\n/g,"<br>");
+}
+
+function status(message,type="") {
+  $("status").textContent = message;
+  $("status").className = "status "+type;
+}
+
+async function generatePlan() {
+  const idea = $("idea").value.trim();
+
+  if (!idea) {
+    status("Primero escribí una idea para tu video.");
+    return;
+  }
+
+  const button = $("generate");
+  button.disabled = true;
+  button.textContent = "KATIA ESTÁ CREANDO...";
+
+  status("Katia está desarrollando el guion y las escenas...");
+  $("result").style.display = "none";
+
+  const userPrompt = `
+CREÁ EL PLAN COMPLETO PARA ESTE PROYECTO:
+
+IDEA:
 ${idea}
 
-PREFERENCIAS (si dicen automático, decidí vos):
-- Estilo visual: ${style}
-- Formato: ${format}
-- Duración: ${duration}
-- Idioma: ${language}
+ESTILO:
+${$("style").value}
 
-Creá ahora el plan maestro completo siguiendo todas las secciones solicitadas. No preguntes nada antes de entregarlo.`;
+FORMATO:
+${$("format").value}
 
-  try{
-    const response=await fetch(KATIA_API,{
+DURACIÓN:
+${$("duration").value}
+
+IDIOMA:
+${$("language").value}
+
+Antes de responder, comprobá que:
+- El guion narrado esté completo.
+- Todas las escenas estén desarrolladas.
+- Los tiempos cubran toda la duración.
+- Cada escena tenga su prompt visual.
+- Los subtítulos estén completos.
+- Ninguna sección esté vacía.
+
+No entregues solamente una ficha técnica.
+Necesito el plan audiovisual completo.
+`;
+
+  try {
+    const response = await fetch(WORKER_URL,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({messages:[
-        {role:"system",content:system},
-        {role:"user",content:prompt}
-      ]})
+      body:JSON.stringify({
+        messages:[
+          {role:"system",content:systemPrompt},
+          {role:"user",content:userPrompt}
+        ]
+      })
     });
-    if(!response.ok)throw new Error("El Worker respondió con estado "+response.status);
-    const data=await response.json();
-    if(!data.reply)throw new Error("La respuesta de Katia no contiene el campo reply.");
-    currentPlan=data.reply;
-    currentTitle=idea.slice(0,65);
-    $("result").textContent=currentPlan;
-    $("resultPanel").hidden=false;
-    $("status").textContent="¡Plan maestro creado! Revisalo y guardalo cuando quieras. 💜";
-    $("resultPanel").scrollIntoView({behavior:"smooth",block:"start"});
-  }catch(error){
-    $("status").textContent="No se pudo crear el plan: "+error.message+". Revisá tu conexión e intentá nuevamente.";
-    console.error(error);
-  }finally{
-    btn.disabled=false;
-    btn.textContent="✨ KATIA, CREÁ TODO EL PLAN";
+
+    if (!response.ok) {
+      throw new Error("Error del servidor: "+response.status);
+    }
+
+    const data = await response.json();
+    const reply = data.reply;
+
+    if (!reply || typeof reply !== "string") {
+      throw new Error("Katia no devolvió un plan válido.");
+    }
+
+    latestPlan = reply.trim();
+
+    $("output").innerHTML = renderMarkdown(latestPlan);
+    $("result").style.display = "block";
+
+    status("¡Plan recibido correctamente! 🎉","ok");
+
+    try {
+      localStorage.setItem(
+        "katia_video_studio_last_plan",
+        latestPlan
+      );
+    } catch(e) {}
+
+    $("result").scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+  } catch(error) {
+    status(
+      "No se pudo generar el plan: "+
+      error.message+
+      ". Revisá tu conexión e intentá otra vez.",
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "✨ CREAR PLAN COMPLETO";
   }
 }
 
-function copiarPlan(){
-  if(!currentPlan)return;
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(currentPlan)
-      .then(()=>$("status").textContent="Plan copiado. 💜")
-      .catch(()=>$("status").textContent="No se pudo copiar automáticamente; mantené presionado el texto para copiarlo.");
-  }else{
-    $("status").textContent="Mantené presionado el texto del plan para copiarlo.";
+$("generate").addEventListener("click",generatePlan);
+
+$("clear").addEventListener("click",()=>{
+  $("idea").value = "";
+  $("result").style.display = "none";
+  latestPlan = "";
+  status("Listo para crear otro video.");
+});
+
+$("copy").addEventListener("click",async()=>{
+  if (!latestPlan) return;
+
+  try {
+    await navigator.clipboard.writeText(latestPlan);
+    status("Plan copiado correctamente. 📋","ok");
+  } catch(e) {
+    status("No se pudo copiar automáticamente.","error");
   }
-}
-function descargarPlan(){
-  if(!currentPlan)return;
-  const blob=new Blob([currentPlan],{type:"text/plain;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="katia-video-studio-plan-maestro.txt";a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-function guardarProyecto(){
-  if(!currentPlan)return;
-  let items=[];
-  try{items=JSON.parse(localStorage.getItem("katia_video_projects_v1")||"[]");if(!Array.isArray(items))items=[];}catch(e){items=[];}
-  items.unshift({title:currentTitle,plan:currentPlan,date:new Date().toLocaleString("es")});
-  localStorage.setItem("katia_video_projects_v1",JSON.stringify(items.slice(0,30)));
-  renderProjects();
-  $("status").textContent="Proyecto guardado en este dispositivo. 💜";
-}
-function renderProjects(){
-  let items=[];
-  try{items=JSON.parse(localStorage.getItem("katia_video_projects_v1")||"[]");if(!Array.isArray(items))items=[];}catch(e){items=[];}
-  const box=$("projects");
-  box.innerHTML="";
-  if(!items.length){box.innerHTML='<p class="note">Todavía no guardaste proyectos.</p>';return;}
-  items.forEach(p=>{
-    const div=document.createElement("div");div.className="project";
-    const strong=document.createElement("strong");strong.textContent=p.title||"Proyecto";
-    const small=document.createElement("small");small.textContent=p.date||"";
-    const open=document.createElement("button");open.className="secondary";open.textContent="Abrir";
-    open.onclick=()=>{
-      currentPlan=p.plan||"";currentTitle=p.title||"Proyecto";
-      $("result").textContent=currentPlan;$("resultPanel").hidden=false;
-      $("resultPanel").scrollIntoView({behavior:"smooth",block:"start"});
-    };
-    div.append(strong,small,open);box.appendChild(div);
-  });
-}
-renderProjects();
+});
+
+$("download").addEventListener("click",()=>{
+  if (!latestPlan) return;
+
+  const blob = new Blob(
+    [latestPlan],
+    {type:"text/plain;charset=utf-8"}
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "katia-plan-de-video.txt";
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
 </script>
 </body>
 </html>
