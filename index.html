@@ -217,6 +217,28 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  font-size:12px;color:#d8c5e8;line-height:1.6
 }
 .mode-description{color:#a99bbd;font-size:11px;line-height:1.5;margin-top:5px}
+
+/* NUEVO: SELECTOR DE PROVEEDOR */
+.provider-status{
+ color:#c4b5fd;font-size:10px;margin-top:6px;
+ letter-spacing:.5px
+}
+.provider-box{
+ margin-top:15px;padding:13px;
+ border:1px solid #a855f744;
+ border-radius:13px;background:#a855f70d
+}
+.provider-box label{
+ display:block;color:#d8b4fe;font-size:12px;margin-bottom:8px
+}
+.provider-box select{
+ width:100%;padding:12px;border-radius:10px;
+ border:1px solid #a855f755;background:#1b102b;color:white
+}
+.provider-info{
+ color:var(--muted);font-size:11px;
+ margin-top:8px;line-height:1.5
+}
 @media(max-width:760px){
  .app{padding:14px}
  main{grid-template-columns:1fr;gap:10px;padding:12px 0}
@@ -266,14 +288,18 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 
  <section class="chat-panel">
   <div class="chat-top">
-   <div><strong>CONVERSACIÓN</strong><br><small>Un espacio entre vos y Katia 💜</small></div>
+   <div>
+    <strong>CONVERSACIÓN</strong><br>
+    <small>Un espacio entre vos y Katia 💜</small>
+    <div class="provider-status" id="activeProvider">Modo: AUTOMÁTICO</div>
+   </div>
    <button class="icon-btn" onclick="limpiarChat()">🗑️</button>
   </div>
   <div class="messages" id="messages"></div>
   <div class="composer">
    <button class="mic-btn" id="micButton" onclick="alternarMicrofono()">🎙️</button>
    <input id="userInput" placeholder="Escribile algo a Katia..." autocomplete="off">
-   <button class="send-btn" onclick="enviarMensaje()">➤</button>
+   <button class="send-btn" id="sendButton" onclick="enviarMensaje()">➤</button>
   </div>
  </section>
 </main>
@@ -415,6 +441,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 /* ==========================================
    KATIA AI - CONFIGURACIÓN PRINCIPAL
 ========================================== */
+
 const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
 
 const STORAGE = {
@@ -436,6 +463,11 @@ let reconociendo = false;
 let reconocimiento = null;
 let typingElement = null;
 
+/* NUEVO: ESTADO DE PROVEEDOR Y SOLICITUD */
+let ultimoProveedorRespuesta = "";
+let ultimoFallback = false;
+let enviandoMensaje = false;
+
 function cargar(key,fallback){
  try{
   const data=localStorage.getItem(key);
@@ -448,6 +480,31 @@ function guardar(key,value){
 }
 function nombreUsuario(){return localStorage.getItem(STORAGE.username)||""}
 
+/* NUEVO: CONFIGURACIÓN DEL PROVEEDOR */
+function obtenerProveedor(){
+ const proveedor=localStorage.getItem(STORAGE.provider)||"auto";
+ return ["groq","gemini","auto"].includes(proveedor)?proveedor:"auto";
+}
+function guardarProveedor(){
+ const selector=document.getElementById("providerSelect");
+ if(!selector)return;
+ const proveedor=selector.value;
+ if(!["groq","gemini","auto"].includes(proveedor))return;
+ localStorage.setItem(STORAGE.provider,proveedor);
+ actualizarProveedorVisible();
+ alert("Preferencia de proveedor guardada 💜");
+}
+function actualizarProveedorVisible(){
+ const elemento=document.getElementById("activeProvider");
+ if(!elemento)return;
+ const nombres={
+  groq:"GROQ",
+  gemini:"GEMINI",
+  auto:"AUTOMÁTICO"
+ };
+ elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
+}
+
 function estadoOrb(estado,texto){
  const orb=document.getElementById("orb");
  const status=document.getElementById("statusText");
@@ -457,13 +514,27 @@ function estadoOrb(estado,texto){
  status.textContent=texto||"🟢 En línea";
 }
 
-function agregarMensaje(tipo,texto,guardarEnHistorial=true){
+function agregarMensaje(tipo,texto,guardarEnHistorial=true,infoProveedor=null){
  const messages=document.getElementById("messages");
  const div=document.createElement("div");
  div.className="message "+tipo;
+
  const sender=document.createElement("span");
  sender.className="sender";
- sender.textContent=tipo==="user"?"VOS":"KATIA 💜";
+
+ if(tipo==="user"){
+  sender.textContent="VOS";
+ }else{
+  let etiqueta="KATIA 💜";
+  const info=infoProveedor||{};
+  const proveedor=info.provider||"";
+  if(proveedor){
+   etiqueta+=" · "+String(proveedor).toUpperCase();
+   if(info.fallback)etiqueta+=" (RESPALDO)";
+  }
+  sender.textContent=etiqueta;
+ }
+
  const content=document.createElement("div");
  content.textContent=texto;
  div.append(sender,content);
@@ -533,52 +604,100 @@ No inventes datos. Si no sabés algo, explicalo honestamente.
  return [{role:"system",content:contexto},...recent];
 }
 
-/* SE CONSERVA EL CONTRATO DEL WORKER ORIGINAL */
+/* NUEVO: LLAMADA AL WORKER CON INFORMACIÓN DEL PROVEEDOR */
 async function llamarWorker(messages){
+ ultimoProveedorRespuesta="";
+ ultimoFallback=false;
+
  const response=await fetch(KATIA_API,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({messages})
+  body:JSON.stringify({
+   messages,
+   provider:obtenerProveedor()
+  })
  });
+
  if(!response.ok)throw new Error("Error del servidor: "+response.status);
+
  const data=await response.json();
+
+ /* El proveedor solo se identifica si el Worker lo informa */
+ ultimoProveedorRespuesta=typeof data.provider==="string"?data.provider:"";
+ ultimoFallback=data.fallback===true;
+
  const resultado=data.reply||data.response||data.message;
+
  if(typeof resultado!=="string"||!resultado.trim()){
   throw new Error("El servidor no devolvió una respuesta reconocible.");
  }
+
  return resultado;
 }
+
 async function responderConIA(){
  return await llamarWorker(construirMensajesIA());
 }
 
+/* NUEVO: BLOQUEO DE MENSAJES SIMULTÁNEOS */
 async function enviarMensaje(){
+ if(enviandoMensaje)return;
+
  const input=document.getElementById("userInput");
+ const boton=document.getElementById("sendButton");
+ const mic=document.getElementById("micButton");
  const texto=input.value.trim();
+
  if(!texto)return;
+
+ enviandoMensaje=true;
  input.value="";
+ input.disabled=true;
+ boton.disabled=true;
+ mic.disabled=true;
+
  agregarMensaje("user",texto);
  mostrarTyping();
  estadoOrb("thinking","🧠 Katia está pensando...");
+
  try{
   const respuesta=await responderConIA();
+  const proveedorInfo={
+   provider:ultimoProveedorRespuesta,
+   fallback:ultimoFallback
+  };
+
   quitarTyping();
-  agregarMensaje("katia",respuesta);
+  agregarMensaje("katia",respuesta,true,proveedorInfo);
   estadoOrb("","🟢 En línea · Lista para hablar");
+
  }catch(error){
   quitarTyping();
-  agregarMensaje("katia","Tuve un problema al conectarme con mi cerebro. 💜\n\nRevisá tu conexión o el Worker e intentá nuevamente.\n\nDetalle: "+error.message);
+  agregarMensaje(
+   "katia",
+   "Tuve un problema al conectarme con mi cerebro. 💜\n\nRevisá tu conexión o el Worker e intentá nuevamente.\n\nDetalle: "+error.message
+  );
   estadoOrb("","⚠️ Problema de conexión");
   console.error(error);
+
+ }finally{
+  enviandoMensaje=false;
+  input.disabled=false;
+  boton.disabled=false;
+  mic.disabled=false;
+  input.focus();
  }
 }
+
 document.getElementById("userInput").addEventListener("keydown",e=>{
  if(e.key==="Enter")enviarMensaje();
 });
+
 function saludar(){
  document.getElementById("userInput").value="Hola Katia, ¿cómo estás hoy?";
  enviarMensaje();
 }
+
 function limpiarChat(){
  if(!confirm("¿Querés borrar el historial de conversación?"))return;
  historial=[];
@@ -705,47 +824,94 @@ function mostrarGustos(){
 
 /* CONFIGURACIÓN */
 function abrirConfiguracion(){
+ const proveedor=obtenerProveedor();
+
  document.getElementById("panelContent").innerHTML=`
  <h3>⚙️ Configuración</h3>
+
  <label>¿Cómo querés que te llame Katia?</label>
  <input id="userNameInput" placeholder="Tu nombre">
  <button class="action" onclick="guardarNombre()">Guardar nombre</button>
+
  <hr style="border-color:#ffffff22;margin:20px 0">
- <label>Clave API de Gemini (opcional)</label>
- <input id="geminiKeyInput" type="password" placeholder="API Key">
- <button class="action" onclick="guardarApiKey()">Guardar clave</button>
- <p class="small-note">La conexión principal de Katia utiliza el Worker configurado. No compartas tu clave API.</p>
- <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>`;
+
+ <div class="provider-box">
+  <label>🧠 Proveedor de inteligencia artificial</label>
+
+  <select id="providerSelect">
+   <option value="auto">Automático (Groq + Gemini)</option>
+   <option value="groq">Groq</option>
+   <option value="gemini">Gemini</option>
+  </select>
+
+  <button class="action" onclick="guardarProveedor()">Guardar proveedor</button>
+
+  <div class="provider-info">
+   Automático: permite que el Worker utilice su sistema de selección y respaldo.<br><br>
+   Groq: solicita utilizar Groq.<br>
+   Gemini: solicita utilizar Gemini.<br><br>
+   La selección requiere que el Worker esté actualizado para respetarla.
+  </div>
+ </div>
+
+ <hr style="border-color:#ffffff22;margin:20px 0">
+
+ <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
+ `;
+
  document.getElementById("userNameInput").value=nombreUsuario();
- document.getElementById("geminiKeyInput").value=localStorage.getItem(STORAGE.apiKey)||"";
+ document.getElementById("providerSelect").value=proveedor;
 }
+
 function guardarNombre(){
- localStorage.setItem(STORAGE.username,document.getElementById("userNameInput").value.trim());
+ localStorage.setItem(
+  STORAGE.username,
+  document.getElementById("userNameInput").value.trim()
+ );
  alert("Nombre guardado 💜");
 }
-function guardarApiKey(){
- localStorage.setItem(STORAGE.apiKey,document.getElementById("geminiKeyInput").value.trim());
- alert("Configuración guardada.");
-}
+
 function abrirPanel(tipo){
  const overlay=document.getElementById("overlay");
  const title=document.getElementById("panelTitle");
+
  overlay.classList.add("open");
- if(tipo==="memory"){title.textContent="🧠 Memoria";abrirMemoria()}
- else if(tipo==="diary"){title.textContent="📖 Diario";abrirDiario()}
- else if(tipo==="likes"){title.textContent="✨ Mis gustos";abrirGustos()}
- else{title.textContent="⚙️ Configuración";abrirConfiguracion()}
+
+ if(tipo==="memory"){
+  title.textContent="🧠 Memoria";
+  abrirMemoria();
+ }else if(tipo==="diary"){
+  title.textContent="📖 Diario";
+  abrirDiario();
+ }else if(tipo==="likes"){
+  title.textContent="✨ Mis gustos";
+  abrirGustos();
+ }else{
+  title.textContent="⚙️ Configuración";
+  abrirConfiguracion();
+ }
 }
+
 function cerrarPanel(event){
  if(event&&event.target.id!=="overlay")return;
  document.getElementById("overlay").classList.remove("open");
 }
-function abrirOffice(){document.getElementById("officeOverlay").classList.add("open")}
-function cerrarOffice(){document.getElementById("officeOverlay").classList.remove("open")}
+
+function abrirOffice(){
+ document.getElementById("officeOverlay").classList.add("open");
+}
+function cerrarOffice(){
+ document.getElementById("officeOverlay").classList.remove("open");
+}
 
 function exportarDatos(){
- const datos={historial,memorias,diario,gustos,exportado:new Date().toISOString()};
- const blob=new Blob([JSON.stringify(datos,null,2)],{type:"application/json"});
+ const datos={
+  historial,memorias,diario,gustos,
+  exportado:new Date().toISOString()
+ };
+ const blob=new Blob([JSON.stringify(datos,null,2)],{
+  type:"application/json"
+ });
  descargarBlob(blob,"katia-datos.json");
 }
 
@@ -756,47 +922,74 @@ function hablar(texto){
  }
  speechSynthesis.cancel();
  const utterance=new SpeechSynthesisUtterance(texto);
- utterance.lang="es-ES";utterance.rate=1;utterance.pitch=1.05;
+ utterance.lang="es-ES";
+ utterance.rate=1;
+ utterance.pitch=1.05;
+
  utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
  utterance.onend=()=>estadoOrb("","🟢 En línea · Lista para hablar");
  utterance.onerror=()=>estadoOrb("","🟢 En línea");
+
  speechSynthesis.speak(utterance);
 }
+
 function leerUltimo(){
- if(!ultimoMensaje){alert("Todavía no hay ningún mensaje de Katia.");return}
+ if(!ultimoMensaje){
+  alert("Todavía no hay ningún mensaje de Katia.");
+  return;
+ }
  hablar(ultimoMensaje);
 }
+
 function detenerVoz(){
  if("speechSynthesis" in window)speechSynthesis.cancel();
  estadoOrb("","🟢 En línea");
 }
+
 function alternarMicrofono(){
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SpeechRecognition){alert("El reconocimiento de voz no está disponible en este navegador.");return}
- if(reconociendo){reconocimiento.stop();return}
+
+ if(!SpeechRecognition){
+  alert("El reconocimiento de voz no está disponible en este navegador.");
+  return;
+ }
+
+ if(reconociendo){
+  reconocimiento.stop();
+  return;
+ }
+
  reconocimiento=new SpeechRecognition();
  reconocimiento.lang="es-ES";
  reconocimiento.interimResults=false;
  reconocimiento.continuous=false;
+
  reconocimiento.onstart=()=>{
   reconociendo=true;
   estadoOrb("listening","🎙️ Te estoy escuchando...");
   document.getElementById("micButton").textContent="⏹️";
  };
+
  reconocimiento.onresult=event=>{
   document.getElementById("userInput").value=event.results[0][0].transcript;
   enviarMensaje();
  };
+
  reconocimiento.onerror=event=>console.warn("Error de micrófono:",event.error);
+
  reconocimiento.onend=()=>{
   reconociendo=false;
   document.getElementById("micButton").textContent="🎙️";
   estadoOrb("","🟢 En línea · Lista para hablar");
  };
+
  reconocimiento.start();
 }
+
 document.addEventListener("DOMContentLoaded",()=>{
  restaurarHistorial();
+ actualizarProveedorVisible();
+
  if(window.pdfjsLib){
   pdfjsLib.GlobalWorkerOptions.workerSrc=
    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -830,6 +1023,7 @@ function estadoOffice(id,mensaje){
  const elemento=document.getElementById(id);
  if(elemento)elemento.textContent=mensaje;
 }
+
 function nombreSeguro(nombre){
  return (nombre||"Documento_Katia")
  .replace(/[\\/:*?"<>|]/g,"_")
@@ -837,33 +1031,46 @@ function nombreSeguro(nombre){
  .replace(/\.[^.]+$/,"")
  .slice(0,70)||"Documento_Katia";
 }
+
 function descargarBlob(blob,nombre){
  const url=URL.createObjectURL(blob);
  const enlace=document.createElement("a");
- enlace.href=url;enlace.download=nombre;
+ enlace.href=url;
+ enlace.download=nombre;
  document.body.appendChild(enlace);
- enlace.click();enlace.remove();
+ enlace.click();
+ enlace.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
+
 function limitarTexto(texto,limite=OFFICE_CONFIG.maxCaracteresLectura){
  if(texto.length<=limite)return texto;
  return texto.slice(0,limite)+
  "\n\n[AVISO: Se alcanzó el límite de lectura. El resto no fue incluido.]";
 }
+
 function actualizarDescripcionModo(){
  const modo=document.getElementById("documentMode").value;
+
  const descripciones={
   auto:"Katia analizará el documento y decidirá si necesita dividirlo en partes.",
   parts:"Katia analizará el documento por secciones y preparará una síntesis.",
   question:"Podés hacer preguntas sobre el documento y el análisis anterior.",
   modify:"Katia preparará una versión nueva del contenido para descargar."
  };
- document.getElementById("modeDescription").textContent=descripciones[modo]||"";
+
+ document.getElementById("modeDescription").textContent=
+  descripciones[modo]||"";
 }
+
 function actualizarOpcionesCreacion(){
  const tipo=document.getElementById("newFileType").value;
- document.getElementById("pptxOptions").style.display=tipo==="pptx"?"block":"none";
- document.getElementById("xlsxOptions").style.display=tipo==="xlsx"?"block":"none";
+
+ document.getElementById("pptxOptions").style.display=
+  tipo==="pptx"?"block":"none";
+
+ document.getElementById("xlsxOptions").style.display=
+  tipo==="xlsx"?"block":"none";
 }
 
 /* LLAMADA DOCUMENTAL */
@@ -878,6 +1085,7 @@ async function consultarWorkerDocumental(instruccion,contenido,contextoExtra="")
    content:"INSTRUCCIÓN:\n"+instruccion+"\n\nCONTENIDO DEL DOCUMENTO:\n"+contenido
   }
  ];
+
  return await llamarWorker(mensajes);
 }
 
@@ -885,76 +1093,114 @@ async function consultarWorkerDocumental(instruccion,contenido,contextoExtra="")
 document.getElementById("documentFile").addEventListener("change",async function(event){
  const archivo=event.target.files[0];
  if(!archivo)return;
+
  documentoActual=archivo;
  nombreDocumentoActual=archivo.name;
  tipoDocumentoActual=archivo.name.split(".").pop().toLowerCase();
+
  textoDocumento="";
  contenidoModificado="";
  resultadoAnalisis="";
  historialDocumento=[];
  documentoCargado=false;
+
  estadoOffice("fileStatus","⏳ Leyendo "+archivo.name+"...");
  estadoOffice("documentStatus","");
  document.getElementById("documentPreview").textContent="";
+
  try{
   if(tipoDocumentoActual==="docx")await leerWord(archivo);
   else if(tipoDocumentoActual==="xlsx")await leerExcel(archivo);
   else if(tipoDocumentoActual==="pptx")await leerPowerPoint(archivo);
   else if(tipoDocumentoActual==="pdf")await leerPDF(archivo);
   else throw new Error("Formato no compatible.");
+
   textoDocumento=limitarTexto(textoDocumento);
+
   if(!textoDocumento.trim())throw new Error("No se encontró texto legible.");
+
   documentoCargado=true;
-  estadoOffice("fileStatus","✅ Archivo leído: "+archivo.name+
+
+  estadoOffice(
+   "fileStatus",
+   "✅ Archivo leído: "+archivo.name+
    "\nFormato: "+tipoDocumentoActual.toUpperCase()+
    "\nCaracteres: "+textoDocumento.length.toLocaleString()+
-   "\n\nYa podés trabajar con Katia.");
+   "\n\nYa podés trabajar con Katia."
+  );
+
  }catch(error){
   console.error(error);
-  documentoActual=null;textoDocumento="";documentoCargado=false;
+  documentoActual=null;
+  textoDocumento="";
+  documentoCargado=false;
   estadoOffice("fileStatus","❌ No se pudo leer: "+error.message);
  }
 });
 
 async function leerWord(archivo){
  if(!window.mammoth)throw new Error("Biblioteca Word no disponible.");
- const resultado=await mammoth.extractRawText({arrayBuffer:await archivo.arrayBuffer()});
+
+ const resultado=await mammoth.extractRawText({
+  arrayBuffer:await archivo.arrayBuffer()
+ });
+
  textoDocumento=resultado.value;
 }
+
 async function leerExcel(archivo){
  if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
+
  const libro=XLSX.read(await archivo.arrayBuffer(),{type:"array"});
  let contenido="";
+
  libro.SheetNames.forEach(nombre=>{
   contenido+="\n\n===== HOJA: "+nombre+" =====\n";
   contenido+=XLSX.utils.sheet_to_csv(libro.Sheets[nombre]);
  });
+
  textoDocumento=contenido;
 }
+
 async function leerPowerPoint(archivo){
  if(!window.JSZip)throw new Error("Biblioteca PPTX no disponible.");
+
  const zip=await JSZip.loadAsync(archivo);
+
  const slides=Object.keys(zip.files)
  .filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n))
  .sort((a,b)=>Number(a.match(/slide(\d+)/)[1])-Number(b.match(/slide(\d+)/)[1]));
+
  let contenido="";
+
  for(let i=0;i<slides.length;i++){
   const xml=await zip.file(slides[i]).async("string");
   const dom=new DOMParser().parseFromString(xml,"application/xml");
   const textos=Array.from(dom.getElementsByTagName("a:t")).map(n=>n.textContent);
+
   contenido+="\n\nDIAPOSITIVA "+(i+1)+"\n"+textos.join(" ");
  }
+
  textoDocumento=contenido;
 }
+
 async function leerPDF(archivo){
  if(!window.pdfjsLib)throw new Error("Biblioteca PDF no disponible.");
- const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await archivo.arrayBuffer())}).promise;
+
+ const pdf=await pdfjsLib.getDocument({
+  data:new Uint8Array(await archivo.arrayBuffer())
+ }).promise;
+
  let contenido="";
+
  for(let i=1;i<=pdf.numPages;i++){
   const pagina=await pdf.getPage(i);
   const datos=await pagina.getTextContent();
-  contenido+="\n\nPÁGINA "+i+"\n"+datos.items.map(x=>x.str).join(" ");
+
+  contenido+="\n\nPÁGINA "+i+"\n"+
+   datos.items.map(x=>x.str).join(" ");
  }
+
  textoDocumento=contenido;
 }
 
@@ -964,97 +1210,167 @@ function dividirEnPartes(texto){
  const tam=OFFICE_CONFIG.tamanoParte;
  const overlap=OFFICE_CONFIG.solapamiento;
  let inicio=0;
+
  while(inicio<texto.length&&partes.length<OFFICE_CONFIG.maxPartes){
   let fin=Math.min(inicio+tam,texto.length);
+
   if(fin<texto.length){
    const corte=texto.lastIndexOf("\n",fin);
    if(corte>inicio+tam*.65)fin=corte;
   }
-  partes.push({numero:partes.length+1,contenido:texto.slice(inicio,fin)});
+
+  partes.push({
+   numero:partes.length+1,
+   contenido:texto.slice(inicio,fin)
+  });
+
   if(fin>=texto.length)break;
+
   inicio=Math.max(fin-overlap,inicio+1);
  }
- return {partes,completo:partes.length>0&&
-  (partes[partes.length-1].contenido.length>=texto.length-(partes[partes.length-1].numero-1)*(tam-overlap))};
+
+ return {
+  partes,
+  completo:partes.length>0&&
+   (partes[partes.length-1].contenido.length>=
+   texto.length-(partes[partes.length-1].numero-1)*(tam-overlap))
+ };
 }
+
 async function analizarPorPartes(instruccion){
  const division=dividirEnPartes(textoDocumento);
  const resultados=[];
+
  for(let i=0;i<division.partes.length;i++){
-  estadoOffice("documentStatus","🧠 Analizando parte "+(i+1)+" de "+division.partes.length+"...");
+  estadoOffice(
+   "documentStatus",
+   "🧠 Analizando parte "+(i+1)+" de "+division.partes.length+"..."
+  );
+
   const r=await consultarWorkerDocumental(
    "Analizá esta sección. Instrucción del usuario: "+instruccion+
    ". Identificá puntos importantes sin asumir que es todo el documento.",
    division.partes[i].contenido
   );
+
   resultados.push("PARTE "+(i+1)+":\n"+r);
  }
+
  estadoOffice("documentStatus","✨ Preparando síntesis general...");
+
  const sintesis=await consultarWorkerDocumental(
   "Unificá estos análisis, evitá repeticiones y respondé la instrucción original: "+instruccion,
   resultados.join("\n\n")
  );
- return sintesis+(division.completo?"":"\n\n⚠️ Se alcanzó el máximo de partes; algunas secciones pueden haber quedado fuera.");
+
+ return sintesis+(division.completo?"":
+  "\n\n⚠️ Se alcanzó el máximo de partes; algunas secciones pueden haber quedado fuera."
+ );
 }
+
 async function consultarDocumento(){
  if(!documentoActual||!textoDocumento||!documentoCargado){
-  alert("Primero seleccioná un documento.");return;
+  alert("Primero seleccioná un documento.");
+  return;
  }
+
  const instruccion=document.getElementById("documentPrompt").value.trim();
- if(!instruccion){alert("Escribí qué querés que Katia haga.");return}
+
+ if(!instruccion){
+  alert("Escribí qué querés que Katia haga.");
+  return;
+ }
+
  const boton=document.getElementById("analyzeButton");
  const modo=document.getElementById("documentMode").value;
- boton.disabled=true;boton.textContent="⏳ Katia está trabajando...";
+
+ boton.disabled=true;
+ boton.textContent="⏳ Katia está trabajando...";
+
  if(modo!=="modify")contenidoModificado="";
+
  try{
   let resultado="";
+
   if(modo==="question"){
    const contexto=historialDocumento.slice(-3).join("\n\n");
+
    resultado=await consultarWorkerDocumental(
     instruccion+"\nRespondé solo con información del documento. Si no está, decilo.",
     textoDocumento.slice(0,30000),
     "Contexto previo: "+contexto
    );
+
   }else if(modo==="modify"){
    if(textoDocumento.length>OFFICE_CONFIG.limiteModificacion){
     throw new Error("El archivo es demasiado grande para reconstruirlo completo. Trabajá con una sección más pequeña.");
    }
+
    estadoOffice("documentStatus","✍️ Modificando contenido...");
+
    resultado=await consultarWorkerDocumental(
     "Entregá el contenido completo ya modificado. No des sugerencias: devolvé la nueva versión. Conservá los datos, no inventes información. Instrucción: "+instruccion,
     textoDocumento
    );
+
    contenidoModificado=resultado;
-  }else if(modo==="parts"||(modo==="auto"&&textoDocumento.length>OFFICE_CONFIG.limiteAnalisisSimple)){
+
+  }else if(modo==="parts"||
+   (modo==="auto"&&textoDocumento.length>OFFICE_CONFIG.limiteAnalisisSimple)){
+
    resultado=await analizarPorPartes(instruccion);
+
   }else{
    estadoOffice("documentStatus","🧠 Analizando documento...");
    resultado=await consultarWorkerDocumental(instruccion,textoDocumento);
   }
+
   resultadoAnalisis=resultado;
-  historialDocumento.push("INSTRUCCIÓN: "+instruccion+"\nRESULTADO: "+resultado.slice(0,9000));
-  if(historialDocumento.length>6)historialDocumento=historialDocumento.slice(-6);
+
+  historialDocumento.push(
+   "INSTRUCCIÓN: "+instruccion+"\nRESULTADO: "+resultado.slice(0,9000)
+  );
+
+  if(historialDocumento.length>6){
+   historialDocumento=historialDocumento.slice(-6);
+  }
+
   document.getElementById("documentPreview").textContent=resultado;
-  estadoOffice("documentStatus",modo==="modify"?
-   "✅ Modificación lista. Revisá antes de descargar.":
-   "✅ Análisis terminado. Podés hacer otra pregunta.");
+
+  estadoOffice(
+   "documentStatus",
+   modo==="modify"?
+    "✅ Modificación lista. Revisá antes de descargar.":
+    "✅ Análisis terminado. Podés hacer otra pregunta."
+  );
+
  }catch(error){
   console.error(error);
   estadoOffice("documentStatus","❌ Error: "+error.message);
+
  }finally{
   boton.disabled=false;
   boton.textContent="✨ Trabajar con Katia";
  }
 }
+
 function limpiarDocumento(){
- documentoActual=null;textoDocumento="";contenidoModificado="";
- resultadoAnalisis="";tipoDocumentoActual="";nombreDocumentoActual="";
- historialDocumento=[];documentoCargado=false;
+ documentoActual=null;
+ textoDocumento="";
+ contenidoModificado="";
+ resultadoAnalisis="";
+ tipoDocumentoActual="";
+ nombreDocumentoActual="";
+ historialDocumento=[];
+ documentoCargado=false;
+
  document.getElementById("documentFile").value="";
  document.getElementById("documentPrompt").value="";
  document.getElementById("documentPreview").textContent="";
  document.getElementById("documentMode").value="auto";
+
  actualizarDescripcionModo();
+
  estadoOffice("fileStatus","Todavía no seleccionaste ningún archivo.");
  estadoOffice("documentStatus","Documento eliminado de la sesión.");
 }
@@ -1062,15 +1378,28 @@ function limpiarDocumento(){
 /* WORD */
 async function generarWord(texto,nombre){
  if(!window.docx)throw new Error("Biblioteca Word no disponible.");
+
  const {Document,Packer,Paragraph,TextRun,HeadingLevel}=window.docx;
+
  const parrafos=texto.split(/\r?\n/).map(linea=>{
   const t=linea.trim();
+
   if(/^#{1,2}\s/.test(t)){
-   return new Paragraph({text:t.replace(/^#{1,2}\s/,""),heading:HeadingLevel.HEADING_1});
+   return new Paragraph({
+    text:t.replace(/^#{1,2}\s/,""),
+    heading:HeadingLevel.HEADING_1
+   });
   }
-  return new Paragraph({children:[new TextRun({text:t})]});
+
+  return new Paragraph({
+   children:[new TextRun({text:t})]
+  });
  });
- const documento=new Document({sections:[{children:parrafos}]});
+
+ const documento=new Document({
+  sections:[{children:parrafos}]
+ });
+
  const blob=await Packer.toBlob(documento);
  descargarBlob(blob,nombre+".docx");
 }
@@ -1079,72 +1408,101 @@ async function generarWord(texto,nombre){
    EXCEL INTELIGENTE 2.0
 ========================================== */
 
-/* Permite crear varias hojas con:
-   ### HOJA: Ventas
-   Producto    Cantidad    Precio
-   Cuaderno    10          5000
-
-   Las columnas numéricas se reconocen.
-   Las fórmulas que empiezan con = se conservan.
-*/
 function separarHojasExcel(texto){
  const partes=texto.split(/^\s*###\s*HOJA\s*:\s*(.+)\s*$/im);
  const hojas=[];
+
  if(partes.length===1){
   hojas.push({nombre:"Datos",contenido:texto});
   return hojas;
  }
+
  for(let i=1;i<partes.length;i+=2){
   hojas.push({
    nombre:partes[i].trim(),
    contenido:partes[i+1]||""
   });
  }
+
  return hojas.length?hojas:[{nombre:"Datos",contenido:texto}];
 }
+
 function convertirCeldaExcel(valor){
  const v=String(valor??"").trim();
+
  if(!v)return "";
+
  if(/^[-+]?\d+([.,]\d+)?$/.test(v)){
   return Number(v.replace(",","."));
  }
+
  if(v.startsWith("="))return {f:v.slice(1)};
+
  return v;
 }
+
 function generarExcel(texto,nombre){
  if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
+
  const estilo=document.getElementById("xlsxStyle")?.value||"purple";
+
  const paletas={
   purple:{header:"6D28D9",light:"EDE9FE"},
   blue:{header:"1D4ED8",light:"DBEAFE"},
   green:{header:"15803D",light:"DCFCE7"},
   gray:{header:"374151",light:"E5E7EB"}
  };
+
  const paleta=paletas[estilo]||paletas.purple;
  const libro=XLSX.utils.book_new();
  const hojas=separarHojasExcel(texto);
+
  hojas.slice(0,20).forEach((hojaInfo,index)=>{
   const filas=hojaInfo.contenido.split(/\r?\n/)
    .map(linea=>linea.trim())
    .filter(Boolean)
-   .map(linea=>linea.includes("\t")?linea.split("\t"):linea.split(/\s*\|\s*|;/))
+   .map(linea=>linea.includes("\t")?
+    linea.split("\t"):linea.split(/\s*\|\s*|;/))
    .map(fila=>fila.map(convertirCeldaExcel));
+
   if(!filas.length)return;
+
   const hoja=XLSX.utils.aoa_to_sheet(filas);
   const rango=XLSX.utils.decode_range(hoja["!ref"]||"A1");
+
   hoja["!cols"]=Array.from({length:rango.e.c+1},(_,c)=>{
    let max=12;
-   filas.forEach(f=>{max=Math.max(max,String(f[c]??"").length)});
+   filas.forEach(f=>{
+    max=Math.max(max,String(f[c]??"").length);
+   });
    return {wch:Math.min(max+3,34)};
   });
-  hoja["!autofilter"]={ref:XLSX.utils.encode_range({
-   s:{r:0,c:0},e:{r:rango.e.r,c:rango.e.c}
-  })};
-  hoja["!freeze"]={xSplit:0,ySplit:1,topLeftCell:"A2",activePane:"bottomLeft",state:"frozen"};
-  XLSX.utils.book_append_sheet(libro,hoja,
-   (hojaInfo.nombre||"Hoja"+(index+1)).replace(/[\\/?*[\]:]/g," ").slice(0,31)||"Datos");
+
+  hoja["!autofilter"]={
+   ref:XLSX.utils.encode_range({
+    s:{r:0,c:0},
+    e:{r:rango.e.r,c:rango.e.c}
+   })
+  };
+
+  hoja["!freeze"]={
+   xSplit:0,ySplit:1,topLeftCell:"A2",
+   activePane:"bottomLeft",state:"frozen"
+  };
+
+  XLSX.utils.book_append_sheet(
+   libro,
+   hoja,
+   (hojaInfo.nombre||"Hoja"+(index+1))
+    .replace(/[\\/?*[\]:]/g," ")
+    .slice(0,31)||"Datos"
+  );
  });
- if(!libro.SheetNames.length)throw new Error("No se encontraron datos para Excel.");
+
+ if(!libro.SheetNames.length){
+  throw new Error("No se encontraron datos para Excel.");
+ }
+
  XLSX.writeFile(libro,nombre+".xlsx");
 }
 
@@ -1154,6 +1512,7 @@ function generarExcel(texto,nombre){
 
 function obtenerPaletaPPTX(){
  const tema=document.getElementById("pptxTheme")?.value||"purple";
+
  const paletas={
   purple:{bg:"100B1D",panel:"211339",accent:"A855F7",accent2:"EC4899",text:"F7F0FF",muted:"C4B5FD"},
   blue:{bg:"071426",panel:"102B4C",accent:"38BDF8",accent2:"2563EB",text:"F0F9FF",muted:"BAE6FD"},
@@ -1161,17 +1520,26 @@ function obtenerPaletaPPTX(){
   dark:{bg:"111111",panel:"262626",accent:"F59E0B",accent2:"D97706",text:"FAFAFA",muted:"D4D4D4"},
   light:{bg:"F8FAFC",panel:"E2E8F0",accent:"6D28D9",accent2:"9333EA",text:"172033",muted:"475569"}
  };
+
  return paletas[tema]||paletas.purple;
 }
+
 function dividirDiapositivas(texto){
  const secciones=texto.split(/\n(?=#{1,2}\s)|\n(?=DIAPOSITIVA\s+\d+)/i)
   .map(x=>x.trim()).filter(Boolean);
+
  if(secciones.length>1)return secciones;
+
  const lineas=texto.split(/\r?\n/).filter(x=>x.trim());
  const bloques=[];
- for(let i=0;i<lineas.length;i+=5)bloques.push(lineas.slice(i,i+5).join("\n"));
+
+ for(let i=0;i<lineas.length;i+=5){
+  bloques.push(lineas.slice(i,i+5).join("\n"));
+ }
+
  return bloques;
 }
+
 function limpiarTextoSlide(texto){
  return texto
   .replace(/^\s*[-*•]\s*/gm,"")
@@ -1179,22 +1547,29 @@ function limpiarTextoSlide(texto){
   .replace(/`([^`]+)`/g,"$1")
   .trim();
 }
+
 async function generarPowerPoint(texto,nombre){
- if(typeof pptxgen==="undefined")throw new Error("Biblioteca PowerPoint no disponible.");
+ if(typeof pptxgen==="undefined"){
+  throw new Error("Biblioteca PowerPoint no disponible.");
+ }
+
  const pptx=new pptxgen();
  const pal=obtenerPaletaPPTX();
  const estilo=document.getElementById("pptxLayout")?.value||"modern";
+
  pptx.layout="LAYOUT_WIDE";
  pptx.author="Katia AI";
  pptx.subject="Presentación profesional creada con Katia AI";
  pptx.title=nombre;
  pptx.company="Katia AI";
  pptx.lang="es-PY";
+
  pptx.theme={
   headFontFace:"Aptos Display",
   bodyFontFace:"Aptos",
   lang:"es-PY"
  };
+
  pptx.defineSlideMaster({
   title:"KATIA_MASTER",
   background:{color:pal.bg},
@@ -1205,157 +1580,258 @@ async function generarPowerPoint(texto,nombre){
   ],
   slideNumber:{x:12.25,y:7.15,color:pal.muted,fontFace:"Aptos",fontSize:8}
  });
+
  const secciones=dividirDiapositivas(texto);
- if(!secciones.length)throw new Error("No hay contenido para crear diapositivas.");
+
+ if(!secciones.length){
+  throw new Error("No hay contenido para crear diapositivas.");
+ }
+
  const portada=pptx.addSlide();
  portada.background={color:pal.bg};
- portada.addShape(pptx.ShapeType.rect,{x:0,y:0,w:13.333,h:7.5,fill:{color:pal.bg},line:{color:pal.bg}});
- portada.addShape(pptx.ShapeType.rect,{x:0,y:0,w:.22,h:7.5,fill:{color:pal.accent},line:{color:pal.accent}});
- portada.addShape(pptx.ShapeType.ellipse,{x:9.1,y:-1.4,w:5.4,h:5.4,fill:{color:pal.accent,transparency:75},line:{color:pal.accent,transparency:100}});
- portada.addText("KATIA AI  /  PRESENTACIÓN",{x:.85,y:.85,w:7,h:.35,fontFace:"Aptos",fontSize:12,bold:true,charSpacing:2,color:pal.accent,margin:0});
+
+ portada.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:13.333,h:7.5,
+  fill:{color:pal.bg},line:{color:pal.bg}
+ });
+
+ portada.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:.22,h:7.5,
+  fill:{color:pal.accent},line:{color:pal.accent}
+ });
+
+ portada.addShape(pptx.ShapeType.ellipse,{
+  x:9.1,y:-1.4,w:5.4,h:5.4,
+  fill:{color:pal.accent,transparency:75},
+  line:{color:pal.accent,transparency:100}
+ });
+
+ portada.addText("KATIA AI  /  PRESENTACIÓN",{
+  x:.85,y:.85,w:7,h:.35,
+  fontFace:"Aptos",fontSize:12,bold:true,
+  charSpacing:2,color:pal.accent,margin:0
+ });
+
  const primera=secciones[0].split(/\r?\n/).filter(x=>x.trim());
+
  let titulo=primera[0]||nombre;
- titulo=titulo.replace(/^#{1,2}\s/,"").replace(/^DIAPOSITIVA\s+\d+/i,"").trim()||nombre;
+ titulo=titulo.replace(/^#{1,2}\s/,"")
+  .replace(/^DIAPOSITIVA\s+\d+/i,"").trim()||nombre;
+
  portada.addText(titulo,{
   x:.85,y:2.05,w:10.8,h:2.1,
   fontFace:"Aptos Display",fontSize:34,bold:true,
   color:pal.text,breakLine:false,fit:"shrink",margin:0.04,
   valign:"mid"
  });
+
  const subtitulo=primera.slice(1,3).join(" ").slice(0,170);
- if(subtitulo)portada.addText(subtitulo,{
-  x:.9,y:4.45,w:9.5,h:.8,fontFace:"Aptos",
-  fontSize:17,color:pal.muted,breakLine:false,fit:"shrink",margin:0
- });
+
+ if(subtitulo){
+  portada.addText(subtitulo,{
+   x:.9,y:4.45,w:9.5,h:.8,
+   fontFace:"Aptos",fontSize:17,
+   color:pal.muted,breakLine:false,fit:"shrink",margin:0
+  });
+ }
+
  portada.addText(new Date().toLocaleDateString("es-PY"),{
-  x:.9,y:6.55,w:4,h:.3,fontFace:"Aptos",fontSize:10,color:pal.muted
+  x:.9,y:6.55,w:4,h:.3,
+  fontFace:"Aptos",fontSize:10,color:pal.muted
  });
 
  secciones.forEach((seccion,index)=>{
   const slide=pptx.addSlide("KATIA_MASTER");
   slide.background={color:pal.bg};
+
   const lineas=seccion.split(/\r?\n/).filter(x=>x.trim());
+
   let encabezado=(lineas.shift()||"Tema "+(index+1))
    .replace(/^#{1,2}\s/,"")
    .replace(/^DIAPOSITIVA\s+\d+/i,"").trim();
+
   const contenido=lineas.join("\n");
+
   const bullets=contenido.split(/\r?\n/)
    .map(x=>x.trim()).filter(Boolean)
    .map(x=>x.replace(/^[-*•]\s*/,""));
+
   slide.addShape(pptx.ShapeType.roundRect,{
    x:.55,y:.45,w:12.2,h:1.0,
-   rectRadius:.08,fill:{color:pal.panel},
+   rectRadius:.08,
+   fill:{color:pal.panel},
    line:{color:pal.panel,transparency:100}
   });
+
   slide.addText(encabezado||"Ideas principales",{
-   x:.85,y:.68,w:11.5,h:.55,fontFace:"Aptos Display",
-   fontSize:estilo==="minimal"?25:27,bold:true,
-   color:pal.accent,margin:0,fit:"shrink"
+   x:.85,y:.68,w:11.5,h:.55,
+   fontFace:"Aptos Display",
+   fontSize:estilo==="minimal"?25:27,
+   bold:true,color:pal.accent,margin:0,fit:"shrink"
   });
+
   slide.addShape(pptx.ShapeType.line,{
    x:.85,y:1.62,w:11.55,h:0,
    line:{color:pal.accent,width:1.5,transparency:15}
   });
+
   if(bullets.length){
    const usarTarjetas=estilo==="modern"&&bullets.length<=4;
+   const alto=Math.min(1.05,4.2/bullets.length);
+
    if(usarTarjetas){
-    const gap=.18;
-    const alto=Math.min(1.05,4.2/bullets.length);
     bullets.slice(0,6).forEach((item,i)=>{
-     const y=1.92+i*(alto+gap);
+     const y=1.92+i*(alto+.18);
+
      slide.addShape(pptx.ShapeType.roundRect,{
       x:.9,y,w:11.45,h:alto,
-      rectRadius:.06,fill:{color:pal.panel},
+      rectRadius:.06,
+      fill:{color:pal.panel},
       line:{color:pal.panel,transparency:100}
      });
+
      slide.addShape(pptx.ShapeType.ellipse,{
       x:1.12,y:y+.25,w:.18,h:.18,
       fill:{color:pal.accent},line:{color:pal.accent}
      });
+
      slide.addText(item,{
       x:1.5,y:y+.12,w:10.45,h:alto-.2,
-      fontFace:"Aptos",fontSize:Math.min(19,estilo==="corporate"?17:19),
+      fontFace:"Aptos",
+      fontSize:Math.min(19,estilo==="corporate"?17:19),
       color:pal.text,margin:.04,breakLine:false,
       valign:"mid",fit:"shrink"
      });
     });
+
    }else{
     const lista=bullets.slice(0,9).map(item=>({
      text:item,
-     options:{bullet:{indent:18},hanging:4,breakLine:true}
+     options:{
+      bullet:{indent:18},
+      hanging:4,
+      breakLine:true
+     }
     }));
+
     slide.addText(lista,{
      x:1.05,y:1.95,w:11.15,h:4.75,
-     fontFace:"Aptos",fontSize:estilo==="corporate"?18:20,
-     color:pal.text,breakLine:false,paraSpaceAfterPt:14,
+     fontFace:"Aptos",
+     fontSize:estilo==="corporate"?18:20,
+     color:pal.text,breakLine:false,
+     paraSpaceAfterPt:14,
      valign:"top",margin:.08,fit:"shrink"
     });
    }
+
   }else{
    slide.addText(contenido||" ",{
     x:1.0,y:2.0,w:11.2,h:4.7,
-    fontFace:"Aptos",fontSize:20,color:pal.text,
-    margin:.1,breakLine:false,valign:"top",fit:"shrink"
+    fontFace:"Aptos",fontSize:20,
+    color:pal.text,margin:.1,
+    breakLine:false,valign:"top",fit:"shrink"
    });
   }
  });
 
  const final=pptx.addSlide();
+
  final.background={color:pal.bg};
+
  final.addShape(pptx.ShapeType.rect,{
-  x:0,y:0,w:13.333,h:7.5,fill:{color:pal.bg},line:{color:pal.bg}
+  x:0,y:0,w:13.333,h:7.5,
+  fill:{color:pal.bg},line:{color:pal.bg}
  });
+
  final.addText("¡GRACIAS!",{
   x:1,y:2.25,w:11.3,h:1.1,
-  fontFace:"Aptos Display",fontSize:40,bold:true,
-  align:"center",color:pal.accent,margin:0
+  fontFace:"Aptos Display",fontSize:40,
+  bold:true,align:"center",color:pal.accent,margin:0
  });
+
  final.addText("Presentación creada con Katia AI",{
-  x:1,y:3.55,w:11.3,h:.5,fontFace:"Aptos",
-  fontSize:17,align:"center",color:pal.muted,margin:0
+  x:1,y:3.55,w:11.3,h:.5,
+  fontFace:"Aptos",fontSize:17,
+  align:"center",color:pal.muted,margin:0
  });
+
  await pptx.writeFile({fileName:nombre+".pptx"});
 }
 
 /* PDF */
 function generarPDF(texto,nombre){
- if(!window.jspdf||!window.jspdf.jsPDF)throw new Error("Biblioteca PDF no disponible.");
+ if(!window.jspdf||!window.jspdf.jsPDF){
+  throw new Error("Biblioteca PDF no disponible.");
+ }
+
  const {jsPDF}=window.jspdf;
- const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
- const margen=18,ancho=174,altoPagina=280;
- let y=20;
- pdf.setFont("helvetica","normal");pdf.setFontSize(11);
- const lineas=pdf.splitTextToSize(texto,ancho);
- lineas.forEach(linea=>{
-  if(y>altoPagina){pdf.addPage();y=20}
-  pdf.text(linea,margen,y);y+=6;
+ const pdf=new jsPDF({
+  orientation:"portrait",
+  unit:"mm",
+  format:"a4"
  });
+
+ const margen=18;
+ const ancho=174;
+ const altoPagina=280;
+
+ let y=20;
+
+ pdf.setFont("helvetica","normal");
+ pdf.setFontSize(11);
+
+ const lineas=pdf.splitTextToSize(texto,ancho);
+
+ lineas.forEach(linea=>{
+  if(y>altoPagina){
+   pdf.addPage();
+   y=20;
+  }
+  pdf.text(linea,margen,y);
+  y+=6;
+ });
+
  pdf.save(nombre+".pdf");
 }
 
 /* MOTOR GENERAL */
 async function crearArchivo(tipo,texto,nombre){
  nombre=nombreSeguro(nombre);
- if(!texto||!texto.trim())throw new Error("No hay contenido para crear.");
+
+ if(!texto||!texto.trim()){
+  throw new Error("No hay contenido para crear.");
+ }
+
  if(tipo==="docx")await generarWord(texto,nombre);
  else if(tipo==="xlsx")generarExcel(texto,nombre);
  else if(tipo==="pptx")await generarPowerPoint(texto,nombre);
  else if(tipo==="pdf")generarPDF(texto,nombre);
  else throw new Error("Formato desconocido.");
 }
+
 async function descargarDocumentoModificado(){
  if(!contenidoModificado.trim()){
   alert("Todavía no hay una modificación lista. Seleccioná el modo de modificación.");
   return;
  }
- if(!tipoDocumentoActual){alert("No se reconoce el formato original.");return}
+
+ if(!tipoDocumentoActual){
+  alert("No se reconoce el formato original.");
+  return;
+ }
+
  const nombre=nombreSeguro(nombreDocumentoActual)+"_Katia";
+
  try{
   estadoOffice("documentStatus","📦 Preparando archivo...");
+
   await crearArchivo(tipoDocumentoActual,contenidoModificado,nombre);
+
   estadoOffice("documentStatus","📥 Archivo preparado. Revisá tus descargas.");
+
  }catch(error){
-  console.error(error);alert("No se pudo crear: "+error.message);
+  console.error(error);
+  alert("No se pudo crear: "+error.message);
  }
 }
 
@@ -1364,12 +1840,22 @@ async function crearDocumentoNuevo(){
  const tipo=document.getElementById("newFileType").value;
  const nombre=document.getElementById("newFileName").value.trim()||"Documento_Katia";
  const instrucciones=document.getElementById("newFileContent").value.trim();
- if(!instrucciones){alert("Describí qué archivo querés crear.");return}
+
+ if(!instrucciones){
+  alert("Describí qué archivo querés crear.");
+  return;
+ }
+
  const boton=document.getElementById("createButton");
- boton.disabled=true;boton.textContent="⏳ Creando archivo...";
+
+ boton.disabled=true;
+ boton.textContent="⏳ Creando archivo...";
+
  estadoOffice("createStatus","🧠 Katia está preparando el contenido...");
+
  try{
   let formato="";
+
   if(tipo==="xlsx"){
    formato=
     "Prepará datos para Excel. Podés crear varias hojas. " +
@@ -1377,6 +1863,7 @@ async function crearDocumentoNuevo(){
     "Dentro de cada hoja usá tabulaciones entre columnas y saltos de línea entre filas. " +
     "La primera fila debe ser encabezados. Incluí fórmulas cuando sean útiles, comenzando con =. " +
     "No uses tablas Markdown ni explicaciones fuera de los datos.";
+
   }else if(tipo==="pptx"){
    formato=
     "Prepará una presentación profesional para PowerPoint. " +
@@ -1386,22 +1873,32 @@ async function crearDocumentoNuevo(){
     "Usá listas con guiones cuando sea adecuado. " +
     "Creá una diapositiva final de conclusiones o cierre. " +
     "No incluyas explicaciones fuera de las diapositivas.";
+
   }else{
    formato="Prepará un documento completo, organizado, con títulos y párrafos claros.";
   }
+
   const contenido=await llamarWorker([
    {
     role:"system",
     content:"Sos Katia AI, especialista en creación de archivos. Entregá contenido completo, útil y ordenado. "+formato
    },
-   {role:"user",content:instrucciones}
+   {
+    role:"user",
+    content:instrucciones
+   }
   ]);
+
   estadoOffice("createStatus","📦 Generando archivo "+tipo.toUpperCase()+"...");
+
   await crearArchivo(tipo,contenido,nombre);
+
   estadoOffice("createStatus","✅ ¡Archivo creado! Revisá tus descargas.");
+
  }catch(error){
   console.error(error);
   estadoOffice("createStatus","❌ No se pudo crear: "+error.message);
+
  }finally{
   boton.disabled=false;
   boton.textContent="🚀 Crear archivo con Katia";
@@ -1410,6 +1907,7 @@ async function crearDocumentoNuevo(){
 
 actualizarDescripcionModo();
 actualizarOpcionesCreacion();
+actualizarProveedorVisible();
 </script>
 </body>
- </html>
+                                                  </html>
