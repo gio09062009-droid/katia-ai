@@ -246,7 +246,7 @@ line-height:1.6;margin-bottom:14px
   </div>
 
   <p class="note">
-    Katia trabaja en cuatro etapas consecutivas. Si una respuesta está incompleta, intentará reconstruirla antes de continuar. Si no puede validarla, no presentará el proyecto como terminado.
+    Katia trabaja en cuatro etapas consecutivas. Si una respuesta está incompleta, intentará reconstruirla antes de continuar.
   </p>
 </section>
 
@@ -353,7 +353,7 @@ PLATAFORMA: ${s.platform}
 VOZ: ${s.voice}`;
 }
 
-/* Duración del proyecto */
+/* Duración */
 
 function getDurationSeconds(duration){
   if(duration.includes("30"))return 30;
@@ -361,7 +361,6 @@ function getDurationSeconds(duration){
   if(duration.includes("90"))return 90;
   if(duration.includes("2 minutos"))return 120;
   if(duration.includes("3 minutos"))return 180;
-
   return 60;
 }
 
@@ -373,15 +372,65 @@ function getMinimumWords(settings){
     return 0;
   }
 
-  return Math.floor(
-    getDurationSeconds(settings.duration)*1.65
-  );
+  return Math.floor(getDurationSeconds(settings.duration)*1.65);
 }
 
 function countWords(text){
-  return (
-    text.match(/[\p{L}\p{N}]+/gu)||[]
-  ).length;
+  return (text.match(/[\p{L}\p{N}]+/gu)||[]).length;
+}
+
+/* NUEVO: detector flexible de secuencias */
+
+function detectSequences(text){
+
+  const found=new Set();
+  const lines=text.split(/\r?\n/);
+
+  for(const line of lines){
+
+    let match;
+
+    // Formato: SECUENCIA 1, Secuencia 2, etc.
+    match=line.match(
+      /^\s*(?:#{1,6}\s*)?(?:🎬\s*)?(?:SECUENCIA|SEQUENCE)\s*(?:N[.º°]\s*)?#?\s*(\d{1,2})\b/i
+    );
+
+    if(match){
+      found.add(Number(match[1]));
+      continue;
+    }
+
+    // Formato: 1️⃣, 2️⃣, 3️⃣
+    match=line.match(
+      /^\s*([1-9])(?:\uFE0F?\u20E3)\s*/
+    );
+
+    if(match){
+      found.add(Number(match[1]));
+      continue;
+    }
+
+    // Formato: 1. SECUENCIA, 2) ESCENA
+    match=line.match(
+      /^\s*(\d{1,2})[.)]\s*(?:SECUENCIA|ESCENA|SEQUENCE)\b/i
+    );
+
+    if(match){
+      found.add(Number(match[1]));
+      continue;
+    }
+
+    // Formato: 1. 00:00-00:20 / 2) 00:20-00:40
+    match=line.match(
+      /^\s*(\d{1,2})[.)]\s*.*\b\d{1,2}:\d{2}\b.*(?:-|–|—|a\b|hasta\b)/i
+    );
+
+    if(match){
+      found.add(Number(match[1]));
+    }
+  }
+
+  return [...found].sort((a,b)=>a-b);
 }
 
 /* Comunicación con Katia Brain */
@@ -397,30 +446,21 @@ async function askKatia(system,prompt){
 
   try{
 
-    // Comprobar límites antes de enviar
     if(system.length>48000){
-      throw new Error(
-        "Las instrucciones de la etapa superan el límite permitido."
-      );
+      throw new Error("Las instrucciones de la etapa superan el límite permitido.");
     }
 
     if(prompt.length>48000){
-      throw new Error(
-        "El contenido de esta etapa es demasiado largo para enviarlo en una sola solicitud."
-      );
+      throw new Error("El contenido de esta etapa es demasiado largo para enviarlo.");
     }
 
     if(system.length+prompt.length>95000){
-      throw new Error(
-        "La solicitud completa supera el límite de texto permitido."
-      );
+      throw new Error("La solicitud completa supera el límite de texto permitido.");
     }
 
     const response=await fetch(KATIA_API,{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         messages:[
           {role:"system",content:system},
@@ -431,7 +471,6 @@ async function askKatia(system,prompt){
       signal:controller.signal
     });
 
-    // Leer el contenido incluso si el servidor devuelve un error
     const responseText=await response.text();
 
     let data;
@@ -445,16 +484,11 @@ async function askKatia(system,prompt){
       };
     }
 
-    // Mostrar el verdadero motivo del error
     if(!response.ok){
 
-      console.error(
-        "Error de Katia Brain:",
-        data
-      );
+      console.error("Error de Katia Brain:",data);
 
-      let message=
-        "HTTP "+response.status+
+      let message="HTTP "+response.status+
         " | "+(data.error||"Error desconocido");
 
       if(data.status){
@@ -474,13 +508,8 @@ async function askKatia(system,prompt){
       data.message||
       data.content;
 
-    if(
-      typeof reply!=="string"||
-      !reply.trim()
-    ){
-      throw new Error(
-        "Katia devolvió una respuesta vacía o incompatible."
-      );
+    if(typeof reply!=="string"||!reply.trim()){
+      throw new Error("Katia devolvió una respuesta vacía o incompatible.");
     }
 
     return reply.trim();
@@ -488,15 +517,11 @@ async function askKatia(system,prompt){
   }catch(error){
 
     if(error.name==="AbortError"){
-      throw new Error(
-        "La solicitud tardó demasiado. Intentá nuevamente."
-      );
+      throw new Error("La solicitud tardó demasiado. Intentá nuevamente.");
     }
 
     if(error instanceof TypeError){
-      throw new Error(
-        "No se pudo conectar con Katia Brain. Revisá la conexión o el Worker."
-      );
+      throw new Error("No se pudo conectar con Katia Brain. Revisá la conexión o el Worker.");
     }
 
     throw error;
@@ -548,47 +573,89 @@ ETAPA 1: GUION COMPLETO Y NARRACIÓN.
 
 Creá el guion definitivo de principio a fin.
 
-ESTRUCTURA OBLIGATORIA:
+ESTRUCTURA GENERAL:
 
 1. TÍTULO DEL VIDEO.
 2. CONCEPTO GENERAL.
-3. GANCHO INICIAL.
+3. OBJETIVO Y GANCHO INICIAL.
 4. INTRODUCCIÓN.
-5. DESARROLLO COMPLETO DEL TEMA.
-6. TODOS LOS PUNTOS, TEORÍAS O PARTES NECESARIAS.
-7. MOMENTO MÁS IMPORTANTE O IMPACTANTE.
-8. CONCLUSIÓN.
-9. DESPEDIDA.
-10. LLAMADA A LA ACCIÓN.
+5. DESARROLLO COMPLETO.
+6. MOMENTO MÁS IMPORTANTE O IMPACTANTE.
+7. CONCLUSIÓN.
+8. DESPEDIDA Y LLAMADA A LA ACCIÓN.
+
+OBLIGACIÓN FUNDAMENTAL: SECUENCIAS NUMERADAS.
+
+El guion DEBE contener como mínimo TRES SECUENCIAS.
+No alcanza con enumerar títulos o apartados generales.
+
+Usá obligatoriamente este formato:
+
+SECUENCIA 1 — [00:00 a 00:20]
+Narración:
+[Texto completo que debe pronunciar la voz]
+
+Visual:
+[Qué se verá en pantalla]
+
+SECUENCIA 2 — [00:20 a 00:40]
+Narración:
+[Texto completo que debe pronunciar la voz]
+
+Visual:
+[Qué se verá en pantalla]
+
+SECUENCIA 3 — [00:40 a 01:00]
+Narración:
+[Texto completo que debe pronunciar la voz]
+
+Visual:
+[Qué se verá en pantalla]
+
+Los tiempos del ejemplo son ilustrativos.
+Calculá los tiempos reales según la duración solicitada.
+
+Si el video necesita más de tres secuencias, agregá todas las necesarias.
+
+REGLAS DE LAS SECUENCIAS:
+
+- Numerá cada secuencia en orden.
+- Cada secuencia debe tener un tiempo inicial y final.
+- Cada secuencia debe incluir narración completa.
+- Cada secuencia debe incluir una descripción visual.
+- No repitas números.
+- No dejes huecos temporales.
+- La primera comienza en 00:00.
+- La última termina exactamente en ${duration} segundos.
+- La suma de los tiempos debe cubrir toda la duración.
 
 NARRACIÓN:
 
 - Escribí cada frase que debe pronunciar la voz.
 - No utilices indicaciones como "continuar hablando".
 - No sustituyas párrafos por resúmenes.
-- No cortes ninguna explicación.
-- Distribuí la narración por secuencias.
-- Indicá el tiempo de inicio y final de cada secuencia.
-- La última secuencia debe terminar exactamente en el tiempo total solicitado.
-- La suma de los tiempos debe cubrir toda la duración.
+- No cortes explicaciones.
+- Desarrollá todos los elementos anunciados en el gancho.
+- Adaptá el ritmo a la duración solicitada.
 
 EXTENSIÓN:
 
-La narración debe tener aproximadamente entre 100 y 150 palabras por minuto,
-adaptadas al ritmo y estilo solicitado.
+La narración debe tener aproximadamente entre 100 y 150 palabras por minuto.
 
 Para un video de 60 segundos, prepará una narración adecuada
 para aproximadamente un minuto de locución.
 
 No entregues un guion de diez segundos para un video de un minuto.
 
-Si el usuario solicita varias teorías, consejos, historias o elementos,
-desarrollá todos los elementos prometidos en el gancho inicial.
-
 Si el usuario selecciona sin narración, reemplazá el texto hablado
-por instrucciones visuales y textos completos en pantalla.
+por instrucciones visuales completas y textos en pantalla.
+Aun así, conservá como mínimo tres secuencias numeradas.
 
-Entregá el guion completo. No avances a las siguientes etapas.
+IMPORTANTE:
+Antes de terminar, comprobá que existan SECUENCIA 1,
+SECUENCIA 2 y SECUENCIA 3 como mínimo.
+
+No avances a las siguientes etapas.
 
 Terminá con ${STAGE_MARKERS[1]}
 `,
@@ -748,15 +815,13 @@ Terminá con ${STAGE_MARKERS[4]}
   return common+"\n"+instructions[stage];
 }
 
-/* Validación de las etapas */
+/* Validación de etapas */
 
 function validateStage(number,content,settings){
 
   const marker=STAGE_MARKERS[number];
-
   const trimmed=content.trim();
 
-  // El marcador debe estar al final de la respuesta
   if(!trimmed.endsWith(marker)){
     return {
       valid:false,
@@ -789,6 +854,33 @@ function validateStage(number,content,settings){
         reason:"El guion es demasiado corto para considerarse completo."
       };
     }
+
+    // NUEVA COMPROBACIÓN DE SECUENCIAS
+    const sequences=detectSequences(cleaned);
+
+    if(sequences.length<3){
+      return {
+        valid:false,
+        reason:
+          "El guion contiene solamente "+sequences.length+
+          " secuencias numeradas reconocibles. Necesita al menos tres. "+
+          "Usá encabezados como SECUENCIA 1, SECUENCIA 2 y SECUENCIA 3."
+      };
+    }
+
+    // Comprobar que la numeración sea consecutiva
+    const hasFirst=sequences.includes(1);
+    const hasSecond=sequences.includes(2);
+    const hasThird=sequences.includes(3);
+
+    if(!hasFirst||!hasSecond||!hasThird){
+      return {
+        valid:false,
+        reason:
+          "La numeración de las secuencias está incompleta. "+
+          "El guion debe incluir SECUENCIA 1, 2 y 3."
+      };
+    }
   }
 
   if(number===2 && cleaned.length<450){
@@ -814,9 +906,7 @@ function validateStage(number,content,settings){
 
   if(number===2){
 
-    const timeMatches=cleaned.match(
-      /\b\d{1,2}:\d{2}\b/g
-    )||[];
+    const timeMatches=cleaned.match(/\b\d{1,2}:\d{2}\b/g)||[];
 
     if(timeMatches.length<4){
       return {
@@ -839,8 +929,6 @@ async function generateValidatedStage(number,prompt,settings){
   const system=buildStageSystem(number,settings);
 
   let lastReason="Respuesta incompleta.";
-
-  // CORRECCIÓN: declarar antes de utilizar
   let previousResponse="";
 
   for(let attempt=1;attempt<=3;attempt++){
@@ -849,11 +937,14 @@ async function generateValidatedStage(number,prompt,settings){
 
     if(attempt>1){
 
-      // Evitar enviar una respuesta anterior excesivamente larga
       const previousShort=previousResponse.slice(-14000);
 
+      // IMPORTANTE: conservar siempre el prompt original.
       request=`
-La respuesta anterior no superó la comprobación de integridad.
+INSTRUCCIONES ORIGINALES DE ESTA ETAPA:
+${prompt}
+
+LA RESPUESTA ANTERIOR NO SUPERÓ LA COMPROBACIÓN.
 
 MOTIVO:
 ${lastReason}
@@ -861,11 +952,17 @@ ${lastReason}
 RESPUESTA ANTERIOR:
 ${previousShort}
 
-Necesito que RECONSTRUYAS LA ETAPA COMPLETA DESDE EL PRINCIPIO.
+RECONSTRUÍ LA ETAPA COMPLETA DESDE EL PRINCIPIO.
 
 No entregues solamente un fragmento.
 No resumas el contenido anterior.
 No omitas secciones.
+Conservá la idea original y todos los datos del proyecto.
+
+Si esta es la etapa 1:
+- Incluí como mínimo SECUENCIA 1, SECUENCIA 2 y SECUENCIA 3.
+- Cada secuencia debe tener tiempo y narración.
+- Comprobá la numeración antes de terminar.
 
 Cumplí todas las instrucciones originales.
 Terminá obligatoriamente con:
@@ -875,17 +972,12 @@ ${STAGE_MARKERS[number]}
 
     setProgress(
       Math.min((number-1)*25+5,95),
-      "Generando etapa "+number+
-      ". Intento "+attempt+" de 3..."
+      "Generando etapa "+number+". Intento "+attempt+" de 3..."
     );
 
     const response=await askKatia(system,request);
 
-    const validation=validateStage(
-      number,
-      response,
-      settings
-    );
+    const validation=validateStage(number,response,settings);
 
     if(validation.valid){
       return validation.content;
@@ -910,11 +1002,7 @@ ${STAGE_MARKERS[number]}
 async function runStage(number,title,prompt,settings){
 
   setStep(number,"active");
-
-  setProgress(
-    (number-1)*25,
-    title
-  );
+  setProgress((number-1)*25,title);
 
   const result=await generateValidatedStage(
     number,
@@ -929,11 +1017,7 @@ async function runStage(number,title,prompt,settings){
   });
 
   setStep(number,"done");
-
-  setProgress(
-    number*25,
-    "Etapa "+number+" de 4 completada."
-  );
+  setProgress(number*25,"Etapa "+number+" de 4 completada.");
 
   return result;
 }
@@ -968,9 +1052,7 @@ Voz: ${settings.voice}
 `;
 
   stages.forEach((stage,index)=>{
-
-    output+=
-`
+    output+=`
 ========================================
 ${headings[index]}
 ========================================
@@ -986,6 +1068,7 @@ CONTROL DE FINALIZACIÓN
 ========================================
 
 ✓ Guion generado y comprobado.
+✓ Secuencias numeradas comprobadas.
 ✓ Storyboard generado y comprobado.
 ✓ Prompts visuales generados y comprobados.
 ✓ Audio, subtítulos y edición generados y comprobados.
@@ -1013,9 +1096,7 @@ async function crearPlan(){
   const settings=getSettings();
 
   if(!settings.idea){
-    setStatus(
-      "Primero contale a Katia qué video querés crear."
-    );
+    setStatus("Primero contale a Katia qué video querés crear.");
     $("idea").focus();
     return;
   }
@@ -1039,10 +1120,7 @@ async function crearPlan(){
     setStep(i,"");
   }
 
-  setStatus(
-    "Conectando con Katia. Preparando las cuatro etapas."
-  );
-
+  setStatus("Conectando con Katia. Preparando las cuatro etapas.");
   setProgress(0,"Iniciando producción...");
 
   try{
@@ -1063,6 +1141,37 @@ Si el título promete tres teorías, desarrollá las tres.
 Si promete cinco consejos, desarrollá los cinco.
 
 No dejes ningún elemento anunciado sin desarrollar.
+
+OBLIGATORIO:
+El guion debe contener al menos tres secuencias numeradas.
+
+Usá exactamente este tipo de encabezados:
+
+SECUENCIA 1 — [tiempo inicial a tiempo final]
+Narración:
+Texto completo.
+
+Visual:
+Descripción de lo que aparece en pantalla.
+
+SECUENCIA 2 — [tiempo inicial a tiempo final]
+Narración:
+Texto completo.
+
+Visual:
+Descripción de lo que aparece en pantalla.
+
+SECUENCIA 3 — [tiempo inicial a tiempo final]
+Narración:
+Texto completo.
+
+Visual:
+Descripción de lo que aparece en pantalla.
+
+Agregá más secuencias si la duración lo requiere.
+
+No uses solamente una lista de apartados.
+Las secuencias deben representar partes reales del video.
 
 Entregá la narración completa y sus tiempos.
 El guion debe tener un principio, desarrollo y final.
@@ -1139,30 +1248,18 @@ No omitas ninguna parte del proyecto.
       settings
     );
 
-    /* Comprobación final */
-
     if(completedStages.length!==4){
-      throw new Error(
-        "No se completaron las cuatro etapas."
-      );
+      throw new Error("No se completaron las cuatro etapas.");
     }
 
-    currentPlan=buildFinalPlan(
-      settings,
-      completedStages
-    );
+    currentPlan=buildFinalPlan(settings,completedStages);
 
     $("result").textContent=currentPlan;
     $("resultPanel").hidden=false;
 
-    setProgress(
-      100,
-      "¡Las cuatro etapas terminaron correctamente!"
-    );
+    setProgress(100,"¡Las cuatro etapas terminaron correctamente!");
 
-    setStatus(
-      "🎉 ¡Proyecto completo! Katia terminó las cuatro etapas."
-    );
+    setStatus("🎉 ¡Proyecto completo! Katia terminó las cuatro etapas.");
 
     $("resultPanel").scrollIntoView({
       behavior:"smooth",
@@ -1172,9 +1269,7 @@ No omitas ninguna parte del proyecto.
   }catch(error){
 
     console.error(error);
-
     currentPlan="";
-
     $("resultPanel").hidden=true;
 
     const next=completedStages.length+1;
@@ -1192,16 +1287,12 @@ No omitas ninguna parte del proyecto.
       "\n\nNo se habilitó la descarga porque el plan todavía no está completo."
     );
 
-    setStatus(
-      "La producción se detuvo para evitar entregar un plan incompleto."
-    );
+    setStatus("La producción se detuvo para evitar entregar un plan incompleto.");
 
   }finally{
 
     generating=false;
-
     btn.disabled=false;
-
     btn.textContent="✨ KATIA, CREÁ TODO EL PLAN";
   }
 }
@@ -1213,18 +1304,10 @@ async function copiarPlan(){
   if(!currentPlan)return;
 
   try{
-
     await navigator.clipboard.writeText(currentPlan);
-
-    setStatus(
-      "¡Plan completo copiado correctamente! 💜"
-    );
-
+    setStatus("¡Plan completo copiado correctamente! 💜");
   }catch(error){
-
-    setStatus(
-      "No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente."
-    );
+    setStatus("No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente.");
   }
 }
 
@@ -1249,10 +1332,7 @@ function descargarPlan(){
   a.click();
   a.remove();
 
-  setTimeout(
-    ()=>URL.revokeObjectURL(url),
-    1500
-  );
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
 /* Guardar proyecto */
@@ -1260,18 +1340,14 @@ function descargarPlan(){
 function guardarProyecto(){
 
   if(!currentPlan){
-    setStatus(
-      "Primero necesitás generar un plan completo."
-    );
+    setStatus("Primero necesitás generar un plan completo.");
     return;
   }
 
   try{
 
     let items=JSON.parse(
-      localStorage.getItem(
-        "katia_video_projects_v1"
-      )||"[]"
+      localStorage.getItem("katia_video_projects_v1")||"[]"
     );
 
     if(!Array.isArray(items)){
@@ -1291,16 +1367,10 @@ function guardarProyecto(){
     );
 
     renderProjects();
-
-    setStatus(
-      "Proyecto completo guardado en este dispositivo. 💜"
-    );
+    setStatus("Proyecto completo guardado en este dispositivo. 💜");
 
   }catch(error){
-
-    setStatus(
-      "No se pudo guardar. El almacenamiento del navegador podría estar lleno."
-    );
+    setStatus("No se pudo guardar. El almacenamiento del navegador podría estar lleno.");
   }
 }
 
@@ -1313,9 +1383,7 @@ function renderProjects(){
   try{
 
     items=JSON.parse(
-      localStorage.getItem(
-        "katia_video_projects_v1"
-      )||"[]"
+      localStorage.getItem("katia_video_projects_v1")||"[]"
     );
 
     if(!Array.isArray(items)){
@@ -1330,10 +1398,7 @@ function renderProjects(){
   box.innerHTML="";
 
   if(!items.length){
-
-    box.innerHTML=
-      '<p class="note">Todavía no guardaste proyectos.</p>';
-
+    box.innerHTML='<p class="note">Todavía no guardaste proyectos.</p>';
     return;
   }
 
