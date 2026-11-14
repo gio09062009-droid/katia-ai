@@ -155,7 +155,7 @@ line-height:1.6;margin-bottom:14px
     <br><br>
     💾 <strong>Guardado inteligente:</strong> si una etapa falla, las anteriores quedan guardadas para continuar después.
     <br><br>
-    ⏳ <strong>Control de consumo:</strong> Katia hará pausas entre etapas y ajustará el tamaño de cada solicitud.
+    ⚡ <strong>Etapa 4 optimizada:</strong> audio, subtítulos y edición se generarán en partes pequeñas para reducir el consumo de Groq.
   </div>
 
   <details>
@@ -288,6 +288,7 @@ let currentPlan="";
 let currentTitle="Mi video";
 let generating=false;
 let completedStages=[];
+let completedStage4Parts=[];
 let activeFingerprint="";
 
 const STAGE_MARKERS={
@@ -297,10 +298,10 @@ const STAGE_MARKERS={
   4:"[FIN_ETAPA_4]"
 };
 
-/* Configuración de pausas */
-
 const PAUSE_BETWEEN_STAGES=35000;
 const MAX_RATE_RETRIES=5;
+
+/* INTERFAZ */
 
 function setStatus(message){
   $("status").textContent=message;
@@ -377,11 +378,6 @@ function getDurationSeconds(duration){
   return 60;
 }
 
-/*
-  Límites por etapa.
-  Son topes de salida, no una garantía de consumo total.
-*/
-
 function getTokenLimit(settings,stage){
 
   const seconds=getDurationSeconds(settings.duration);
@@ -390,15 +386,12 @@ function getTokenLimit(settings,stage){
     1:1700,
     2:1800,
     3:1900,
-    4:2100
+    4:1600
   };
 
-  const extra=Math.floor(seconds/60)*150;
+  const extra=Math.floor(seconds/60)*100;
 
-  return Math.min(
-    2600,
-    base[stage]+extra
-  );
+  return Math.min(2000,base[stage]+extra);
 }
 
 function getMinimumWords(settings){
@@ -455,6 +448,8 @@ function sleep(ms){
   return new Promise(resolve=>setTimeout(resolve,ms));
 }
 
+/* DETECCIÓN DE ERRORES */
+
 function isRateLimit(data,message){
 
   const status=Number(data?.status||data?.code||0);
@@ -462,6 +457,16 @@ function isRateLimit(data,message){
   return (
     status===429 ||
     /rate.?limit|too many requests|tokens per minute|\b429\b/i.test(message||"")
+  );
+}
+
+function isOversizedRequest(data,message,response){
+
+  const status=Number(data?.status||data?.code||response?.status||0);
+
+  return (
+    status===413 ||
+    /request too large|reduce your message size|requested\s+\d+.*tokens per minute|prompt.*too long/i.test(message||"")
   );
 }
 
@@ -504,7 +509,7 @@ function makeErrorMessage(response,data){
   return message;
 }
 
-/* Comunicación con Katia Brain */
+/* COMUNICACIÓN CON KATIA BRAIN */
 
 async function askKatia(system,prompt,settings,stage){
 
@@ -566,6 +571,16 @@ async function askKatia(system,prompt,settings,stage){
 
         console.error("Error de Katia Brain:",data);
 
+        /* Un 413 no se arregla repitiendo la misma solicitud. */
+
+        if(isOversizedRequest(data,message,response)){
+          throw new Error(
+            "Groq rechazó una solicitud demasiado grande. "+
+            "No se repetirá automáticamente para evitar consumir más capacidad.\n"+
+            message
+          );
+        }
+
         if(isRateLimit(data,message)){
 
           if(attempt>=MAX_RATE_RETRIES){
@@ -601,7 +616,8 @@ async function askKatia(system,prompt,settings,stage){
         data.reply||
         data.response||
         data.message||
-        data.content;
+        data.content||
+        data.choices?.[0]?.message?.content;
 
       if(typeof reply!=="string"||!reply.trim()){
         throw new Error("Katia devolvió una respuesta vacía o incompatible.");
@@ -631,7 +647,7 @@ async function askKatia(system,prompt,settings,stage){
   throw new Error("No se pudo completar la solicitud.");
 }
 
-/* Instrucciones de las etapas */
+/* INSTRUCCIONES DE LAS ETAPAS 1, 2 Y 3 */
 
 function buildStageSystem(stage,settings){
 
@@ -756,58 +772,13 @@ Mantené consistentes los personajes, escenarios, vestuario y objetos.
 No omitas escenas.
 
 Terminá con ${STAGE_MARKERS[3]}
-`,
-
-    4:`
-ETAPA 4: AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN.
-
-Prepará:
-
-1. DIRECCIÓN DE VOZ:
-Tipo de voz, velocidad, emoción, entonación y pausas.
-
-2. MÚSICA:
-Estilo, ambiente, intensidad y momentos de entrada y salida.
-
-3. EFECTOS SONOROS:
-Efecto, momento y función.
-
-4. SUBTÍTULOS:
-Texto completo y tiempos de aparición y desaparición.
-Deben corresponder con la narración.
-
-5. TEXTOS EN PANTALLA:
-Frases, títulos, palabras destacadas y tiempos.
-
-6. EDICIÓN:
-Orden de escenas, ritmo, cortes, transiciones y color.
-
-7. MEZCLA DE AUDIO.
-
-8. MINIATURA:
-Concepto, composición, texto y prompt visual.
-
-9. PUBLICACIÓN:
-Título, descripción, hashtags y llamada a la acción.
-
-10. RECURSOS NECESARIOS.
-
-11. FLUJO DE TRABAJO DESDE ANDROID:
-Opciones gratuitas y orden general de trabajo.
-
-12. LISTA DE CONTROL FINAL.
-
-No recomiendes servicios pagos como requisito.
-No afirmes que el video ya está renderizado.
-
-Terminá con ${STAGE_MARKERS[4]}
 `
   };
 
   return common+"\n"+instructions[stage];
 }
 
-/* Validación */
+/* VALIDACIÓN */
 
 function validateStage(number,content,settings){
 
@@ -880,7 +851,7 @@ function validateStage(number,content,settings){
   return {valid:true,content:cleaned};
 }
 
-/* Guardado y recuperación */
+/* GUARDADO Y RECUPERACIÓN */
 
 function saveProgress(settings){
 
@@ -890,6 +861,7 @@ function saveProgress(settings){
       fingerprint:getFingerprint(settings),
       settings,
       stages:completedStages,
+      stage4Parts:completedStage4Parts,
       updatedAt:new Date().toISOString()
     };
 
@@ -948,6 +920,34 @@ function loadProgress(settings){
   }
 }
 
+function loadStage4Parts(settings){
+
+  try{
+
+    const saved=JSON.parse(
+      localStorage.getItem(PROGRESS_KEY)||"null"
+    );
+
+    if(
+      !saved ||
+      saved.fingerprint!==getFingerprint(settings) ||
+      !Array.isArray(saved.stage4Parts)
+    ){
+      return [];
+    }
+
+    return saved.stage4Parts.filter(
+      part=>
+        typeof part.id==="string" &&
+        typeof part.content==="string" &&
+        part.content.length>100
+    );
+
+  }catch(error){
+    return [];
+  }
+}
+
 function clearProgress(){
 
   try{
@@ -957,14 +957,13 @@ function clearProgress(){
   }
 }
 
-/* Generación y comprobación */
+/* GENERACIÓN DE LAS PRIMERAS TRES ETAPAS */
 
 async function generateValidatedStage(number,prompt,settings){
 
   const system=buildStageSystem(number,settings);
 
   let lastReason="Respuesta incompleta.";
-  let previousResponse="";
 
   for(let attempt=1;attempt<=3;attempt++){
 
@@ -980,9 +979,6 @@ LA RESPUESTA ANTERIOR NO SUPERÓ LA VALIDACIÓN.
 
 MOTIVO:
 ${lastReason}
-
-RESPUESTA ANTERIOR:
-${previousResponse.slice(-4500)}
 
 Reconstruí la etapa completa desde el principio.
 No entregues solo un fragmento.
@@ -1012,7 +1008,6 @@ ${STAGE_MARKERS[number]}
     }
 
     lastReason=validation.reason;
-    previousResponse=response;
 
     setProgress(
       Math.min(number*25,95),
@@ -1049,7 +1044,6 @@ async function runStage(number,title,prompt,settings){
 
   completedStages.sort((a,b)=>a.number-b.number);
 
-  // Guardar inmediatamente cada etapa completada.
   saveProgress(settings);
 
   setStep(number,"done");
@@ -1079,7 +1073,7 @@ async function getOrRunStage(number,title,prompt,settings){
   return await runStage(number,title,prompt,settings);
 }
 
-/* Pausa preventiva entre etapas */
+/* PAUSA PREVENTIVA */
 
 async function waitBetweenStages(nextStage){
 
@@ -1102,7 +1096,396 @@ async function waitBetweenStages(nextStage){
   }
 }
 
-/* Plan final */
+/* CONTEXTO COMPACTO PARA LA ETAPA 4 */
+
+function extractNarration(script){
+
+  const lines=script.split(/\r?\n/);
+  const blocks=[];
+  let collecting=false;
+  let current=[];
+
+  for(const line of lines){
+
+    if(/^\s*Narración\s*:/i.test(line)){
+
+      if(current.length){
+        blocks.push(current.join("\n").trim());
+      }
+
+      collecting=true;
+      current.push(line.replace(/^\s*Narración\s*:/i,"").trim());
+      continue;
+    }
+
+    if(collecting && (
+      /^\s*(?:Visual|SECUENCIA|ESCENA|Título|Concepto|Objetivo)\s*[:—-]/i.test(line) ||
+      /^\s*#{1,4}\s/.test(line)
+    )){
+
+      if(current.length){
+        blocks.push(current.join("\n").trim());
+      }
+
+      current=[];
+      collecting=false;
+      continue;
+    }
+
+    if(collecting){
+      current.push(line);
+    }
+  }
+
+  if(current.length){
+    blocks.push(current.join("\n").trim());
+  }
+
+  const result=blocks.filter(Boolean).join("\n\n");
+
+  if(result.length>7000){
+    return result.slice(0,7000)+
+      "\n[CONTEXTO RECORTADO: consultar el guion original para el resto]";
+  }
+
+  return result||script.slice(0,3500);
+}
+
+function compactStoryboard(storyboard){
+
+  const max=3200;
+
+  if(storyboard.length<=max){
+    return storyboard;
+  }
+
+  return storyboard.slice(0,max)+
+    "\n[RESUMEN RECORTADO: usar esta información como referencia general]";
+}
+
+/* ETAPA 4 DIVIDIDA EN TRES PARTES */
+
+const STAGE4_PARTS=[
+  {
+    id:"audio",
+    title:"Audio y dirección de voz",
+    marker:"[FIN_PARTE_AUDIO]",
+    tokens:1100
+  },
+  {
+    id:"subtitles",
+    title:"Subtítulos y textos en pantalla",
+    marker:"[FIN_PARTE_SUBTITULOS]",
+    tokens:1800
+  },
+  {
+    id:"editing",
+    title:"Edición, miniatura y publicación",
+    marker:"[FIN_PARTE_EDICION]",
+    tokens:1400
+  }
+];
+
+function getStage4PartSystem(part,settings){
+
+  return `
+Sos Katia, productora audiovisual profesional.
+
+Estás completando una parte de la ETAPA 4.
+Idioma: ${settings.language}.
+Duración del video: ${settings.duration}.
+Plataforma: ${settings.platform}.
+Estilo de voz: ${settings.voice}.
+
+Respondé solamente sobre la tarea solicitada.
+No repitas otras etapas.
+No inventes archivos multimedia ya generados.
+No uses puntos suspensivos para omitir contenido.
+Sé concreta, completa y organizada.
+
+Terminá obligatoriamente con este marcador exacto:
+${part.marker}
+
+El marcador debe ser la última línea.
+`;
+}
+
+function getStage4PartPrompt(part,settings,context){
+
+  if(part.id==="audio"){
+
+    return `
+PROYECTO:
+${settingsText(settings)}
+
+TAREA: DIRECCIÓN DE AUDIO.
+
+Prepará los siguientes elementos:
+
+1. DIRECCIÓN DE VOZ:
+Tipo de interpretación, velocidad, emoción, entonación, pausas y pronunciación.
+
+2. MÚSICA:
+Estilo musical, ambiente, intensidad, entrada, cambios y salida.
+
+3. EFECTOS SONOROS:
+Nombre o descripción del efecto, momento aproximado y función narrativa.
+
+4. MEZCLA:
+Relación entre voz, música y efectos.
+Indicar cómo evitar que la música tape la narración.
+
+5. RECURSOS DE AUDIO:
+Qué sonidos y recursos se necesitan.
+
+GUION DE REFERENCIA:
+${context.narration.slice(0,3500)}
+
+No vuelvas a escribir el guion.
+No generes subtítulos en esta parte.
+`;
+  }
+
+  if(part.id==="subtitles"){
+
+    return `
+PROYECTO:
+${settingsText(settings)}
+
+TAREA: SUBTÍTULOS Y TEXTOS EN PANTALLA.
+
+Usá la narración proporcionada como fuente principal.
+
+Prepará:
+1. Subtítulos completos, divididos en fragmentos cortos y legibles.
+2. Tiempo de entrada y salida de cada fragmento.
+3. Texto destacado en pantalla.
+4. Palabras que deben resaltarse.
+5. Recomendaciones de tamaño, posición y legibilidad.
+
+Los subtítulos deben conservar el sentido y las palabras de la narración.
+No inventes frases que no estén en el guion.
+Distribuí los tiempos a lo largo de la duración.
+No dejes toda la narración en un único subtítulo.
+
+NARRACIÓN ORIGINAL:
+${context.narration}
+
+No repitas el guion completo.
+`;
+  }
+
+  return `
+PROYECTO:
+${settingsText(settings)}
+
+TAREA: EDICIÓN Y PUBLICACIÓN.
+
+Usá el siguiente contexto breve del storyboard:
+
+${context.storyboard}
+
+Prepará:
+
+1. ORDEN DE EDICIÓN:
+Secuencia de montaje y ritmo general.
+
+2. CORTES Y TRANSICIONES:
+Indicá dónde conviene cambiar de plano y cómo conectar escenas.
+
+3. COLOR:
+Ambiente visual, contraste y coherencia.
+
+4. MINIATURA:
+Concepto, composición, texto y prompt visual.
+
+5. PUBLICACIÓN:
+Título atractivo, descripción, hashtags y llamada a la acción.
+
+6. FLUJO DE TRABAJO DESDE ANDROID:
+Pasos generales para montar el video con herramientas gratuitas.
+
+7. LISTA DE CONTROL FINAL:
+Revisar narración, imágenes, subtítulos, audio, duración y formato.
+
+No recomiendes servicios pagos como requisito.
+No afirmes que el video ya está renderizado.
+No repitas el storyboard ni los prompts visuales completos.
+`;
+}
+
+function validateStage4Part(content,part){
+
+  const trimmed=content.trim();
+
+  if(!trimmed.endsWith(part.marker)){
+    return {
+      valid:false,
+      reason:"Falta el marcador de finalización de "+part.title+"."
+    };
+  }
+
+  const cleaned=trimmed
+    .slice(0,-part.marker.length)
+    .trim();
+
+  if(cleaned.length<250){
+    return {
+      valid:false,
+      reason:"La respuesta de "+part.title+" está incompleta."
+    };
+  }
+
+  return {
+    valid:true,
+    content:cleaned
+  };
+}
+
+async function generateStage4Part(part,settings,context){
+
+  const existing=completedStage4Parts.find(
+    item=>item.id===part.id
+  );
+
+  if(existing){
+
+    setStatus(
+      "💾 Recuperando parte guardada: "+part.title+"."
+    );
+
+    return existing.content;
+  }
+
+  const system=getStage4PartSystem(part,settings);
+  const prompt=getStage4PartPrompt(part,settings,context);
+
+  let lastReason="Respuesta incompleta.";
+
+  for(let attempt=1;attempt<=2;attempt++){
+
+    const request=attempt===1
+      ?prompt
+      :`
+La respuesta anterior no superó la comprobación.
+
+Motivo:
+${lastReason}
+
+Volvé a generar esta parte completa y de manera más directa.
+No agregues otras etapas.
+Terminá con el marcador exacto:
+${part.marker}
+`;
+
+    setStatus(
+      "⚡ Etapa 4: "+part.title+
+      ". Parte "+(STAGE4_PARTS.findIndex(p=>p.id===part.id)+1)+
+      " de 3. Intento "+attempt+" de 2."
+    );
+
+    const response=await askKatia(
+      system,
+      request,
+      settings,
+      4
+    );
+
+    const validation=validateStage4Part(response,part);
+
+    if(validation.valid){
+
+      completedStage4Parts=completedStage4Parts.filter(
+        item=>item.id!==part.id
+      );
+
+      completedStage4Parts.push({
+        id:part.id,
+        title:part.title,
+        content:validation.content
+      });
+
+      saveProgress(settings);
+
+      return validation.content;
+    }
+
+    lastReason=validation.reason;
+  }
+
+  throw new Error(
+    "No se pudo completar "+part.title+". "+lastReason
+  );
+}
+
+async function runStage4(settings,stage1,stage2){
+
+  setStep(4,"active");
+
+  const context={
+    narration:extractNarration(stage1),
+    storyboard:compactStoryboard(stage2)
+  };
+
+  const results=[];
+
+  for(let index=0;index<STAGE4_PARTS.length;index++){
+
+    const part=STAGE4_PARTS[index];
+
+    setProgress(
+      75+Math.round((index/3)*20),
+      "Etapa 4: "+part.title
+    );
+
+    const content=await generateStage4Part(
+      part,
+      settings,
+      context
+    );
+
+    results.push(
+      "========================================\n"+
+      part.title.toUpperCase()+
+      "\n========================================\n\n"+
+      content
+    );
+
+    if(index<STAGE4_PARTS.length-1){
+      await sleep(4000);
+    }
+  }
+
+  const combined=results.join("\n\n");
+
+  if(combined.length<750){
+    throw new Error("La etapa 4 quedó incompleta.");
+  }
+
+  const finalContent=
+    combined+"\n\n"+STAGE_MARKERS[4];
+
+  completedStages=completedStages.filter(
+    item=>item.number!==4
+  );
+
+  completedStages.push({
+    number:4,
+    title:"Audio, subtítulos y edición",
+    content:finalContent
+  });
+
+  completedStages.sort((a,b)=>a.number-b.number);
+
+  saveProgress(settings);
+
+  setStep(4,"done");
+  setProgress(100,"Etapa 4 completada y guardada.");
+
+  return finalContent;
+}
+
+/* PLAN FINAL */
 
 function buildFinalPlan(settings,stages){
 
@@ -1152,7 +1535,9 @@ CONTROL DE FINALIZACIÓN
 ✓ Secuencias numeradas comprobadas.
 ✓ Storyboard generado y comprobado.
 ✓ Prompts visuales generados y comprobados.
-✓ Audio, subtítulos y edición generados y comprobados.
+✓ Audio generado y comprobado.
+✓ Subtítulos generados y comprobados.
+✓ Edición y publicación preparadas.
 
 LAS CUATRO ETAPAS FUERON COMPLETADAS.
 
@@ -1168,7 +1553,7 @@ con herramientas externas.
   return output;
 }
 
-/* Producción principal */
+/* PRODUCCIÓN PRINCIPAL */
 
 async function crearPlan(){
 
@@ -1188,6 +1573,7 @@ async function crearPlan(){
   activeFingerprint=getFingerprint(settings);
 
   completedStages=loadProgress(settings);
+  completedStage4Parts=loadStage4Parts(settings);
 
   const btn=$("generate");
 
@@ -1227,7 +1613,7 @@ async function crearPlan(){
 
   try{
 
-    /* ETAPA 1: GUION */
+    /* ETAPA 1 */
 
     const stage1=await getOrRunStage(
       1,
@@ -1281,7 +1667,7 @@ No avances a otras etapas.
 
     await waitBetweenStages(2);
 
-    /* ETAPA 2: STORYBOARD */
+    /* ETAPA 2 */
 
     const stage2=await getOrRunStage(
       2,
@@ -1316,7 +1702,7 @@ No dejes huecos temporales.
 
     await waitBetweenStages(3);
 
-    /* ETAPA 3: PROMPTS */
+    /* ETAPA 3 */
 
     const stage3=await getOrRunStage(
       3,
@@ -1344,39 +1730,12 @@ No omitas ninguna escena.
 
     await waitBetweenStages(4);
 
-    /* ETAPA 4: AUDIO Y EDICIÓN */
+    /* ETAPA 4 DIVIDIDA EN TRES SOLICITUDES */
 
-    const stage4=await getOrRunStage(
-      4,
-      "Preparando audio y edición...",
-      `
-PROYECTO:
-${settingsText(settings)}
-
-GUION:
-${stage1}
-
-STORYBOARD:
-${stage2}
-
-Prepará:
-1. Dirección de voz.
-2. Música y momentos de entrada y salida.
-3. Efectos sonoros y tiempos.
-4. Subtítulos completos con tiempos.
-5. Textos en pantalla.
-6. Plan de edición.
-7. Mezcla de audio.
-8. Miniatura y prompt.
-9. Título, descripción y hashtags.
-10. Recursos necesarios.
-11. Flujo de trabajo gratuito desde Android.
-12. Lista de control final.
-
-Los subtítulos deben corresponder al guion.
-No afirmes que el video ya está renderizado.
-`,
-      settings
+    await runStage4(
+      settings,
+      stage1,
+      stage2
     );
 
     if(completedStages.length!==4){
@@ -1389,6 +1748,8 @@ No afirmes que el video ya está renderizado.
     $("resultPanel").hidden=false;
 
     clearProgress();
+
+    completedStage4Parts=[];
 
     setProgress(100,"¡Las cuatro etapas terminaron correctamente!");
     setStatus("🎉 ¡Proyecto completo! Katia terminó las cuatro etapas.");
@@ -1405,24 +1766,28 @@ No afirmes que el video ya está renderizado.
     currentPlan="";
     $("resultPanel").hidden=true;
 
-    const next=completedStages.length+1;
+    let next=completedStages.length+1;
 
-    if(next<=4){
-      setStep(next,"failed");
+    if(next>4){
+      next=4;
     }
+
+    setStep(next,"failed");
 
     saveProgress(settings);
 
     showError(
       "La producción no pudo completarse: "+
       error.message+
-      "\n\nEtapas verificadas y guardadas: "+
+      "\n\nEtapas completas y guardadas: "+
       completedStages.length+" de 4."+
+      "\nPartes guardadas de la etapa 4: "+
+      completedStage4Parts.length+" de 3."+
       "\n\nPodés pulsar CONTINUAR PRODUCCIÓN para retomar."
     );
 
     setStatus(
-      "La producción se detuvo, pero las etapas completadas quedaron guardadas. 💾"
+      "La producción se detuvo, pero las partes completadas quedaron guardadas. 💾"
     );
 
   }finally{
@@ -1438,7 +1803,7 @@ No afirmes que el video ya está renderizado.
   }
 }
 
-/* Copiar */
+/* COPIAR */
 
 async function copiarPlan(){
 
@@ -1452,7 +1817,7 @@ async function copiarPlan(){
   }
 }
 
-/* Descargar */
+/* DESCARGAR */
 
 function descargarPlan(){
 
@@ -1476,7 +1841,7 @@ function descargarPlan(){
   setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-/* Guardar proyecto */
+/* GUARDAR PROYECTO */
 
 function guardarProyecto(){
 
@@ -1515,7 +1880,7 @@ function guardarProyecto(){
   }
 }
 
-/* Proyectos guardados */
+/* PROYECTOS GUARDADOS */
 
 function renderProjects(){
 
