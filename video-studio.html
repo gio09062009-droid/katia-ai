@@ -6,12 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090611">
 <title>Katia AI · Video Studio</title>
-
 <style>
 :root{
 --bg:#090611;--line:#a855f744;--purple:#a855f7;
 --pink:#ec4899;--text:#f7f0ff;--muted:#a99bbd;
---green:#55e6a5;--red:#ff647c;
+--green:#55e6a5;--red:#ff647c
 }
 *{box-sizing:border-box}
 body{
@@ -128,148 +127,141 @@ line-height:1.6;margin-bottom:14px
 <div class="wrap">
 
 <header>
-  <div class="brand">
-    <div class="logo">🎬</div>
-    <div><h1>KATIA AI</h1><div class="sub">VIDEO STUDIO</div></div>
-  </div>
-  <a class="back" href="./index.html">← Volver a Katia</a>
+<div class="brand">
+<div class="logo">🎬</div>
+<div><h1>KATIA AI</h1><div class="sub">VIDEO STUDIO</div></div>
+</div>
+<a class="back" href="./index.html">← Volver a Katia</a>
 </header>
 
 <section class="hero">
-  <div class="eyebrow">CREATIVIDAD AUTOMATIZADA</div>
-  <h2>Tu idea. Toda una producción.</h2>
-  <p>Contale a Katia qué video imaginás. Ella organizará automáticamente el guion, las escenas, los prompts visuales, la voz, el sonido y la edición.</p>
+<div class="eyebrow">CREATIVIDAD AUTOMATIZADA</div>
+<h2>Tu idea. Toda una producción.</h2>
+<p>Contale a Katia qué video imaginás. Ella organizará automáticamente el guion, las escenas, los prompts visuales, la voz, el sonido y la edición.</p>
 </section>
 
 <section class="panel">
-  <span class="tag">4 ETAPAS AUTOMÁTICAS</span>
-  <span class="tag">ANDROID</span>
-  <span class="tag">OBJETIVO: 0 G.</span>
-  <span class="tag">RECUPERACIÓN AUTOMÁTICA</span>
+<span class="tag">4 ETAPAS AUTOMÁTICAS</span>
+<span class="tag">ANDROID</span>
+<span class="tag">OBJETIVO: 0 G.</span>
+<span class="tag">RECUPERACIÓN AUTOMÁTICA</span>
 
-  <label for="idea">¿Qué video querés crear?</label>
-  <textarea id="idea" placeholder="Ejemplo: Quiero un video de terror de 60 segundos sobre una ciudad abandonada, con suspenso y un final inesperado."></textarea>
+<label for="idea">¿Qué video querés crear?</label>
+<textarea id="idea" placeholder="Ejemplo: Quiero un video de terror de 60 segundos sobre una ciudad abandonada, con suspenso y un final inesperado."></textarea>
 
-  <div class="info">
-    ✨ <strong>Modo automático:</strong> Katia preparará el plan completo y comprobará que las cuatro etapas estén terminadas.
-    <br><br>
-    💾 <strong>Guardado inteligente:</strong> si una etapa falla, las anteriores quedan guardadas para continuar después.
-    <br><br>
-    ⚡ <strong>Etapa 4 optimizada:</strong> audio, subtítulos y edición se generarán en partes pequeñas para reducir el consumo de Groq.
-  </div>
+<div class="info">
+✨ <strong>Modo automático:</strong> Katia preparará el plan completo y comprobará las cuatro etapas.
+<br><br>
+💾 <strong>Guardado inteligente:</strong> las partes terminadas se conservan para continuar después.
+<br><br>
+⚡ <strong>Etapa 4 optimizada:</strong> audio, subtítulos y edición se generan en solicitudes independientes.
+</div>
 
-  <details>
-    <summary>⚙️ Ajustes opcionales</summary>
-    <div class="grid">
-      <div>
-        <label for="style">Estilo visual</label>
-        <select id="style">
-          <option>Automático (Katia decide)</option>
-          <option>Realista y cinematográfico</option>
-          <option>Anime</option>
-          <option>3D / animación</option>
-          <option>Terror y suspenso</option>
-          <option>Documental</option>
-          <option>Fantasía</option>
-          <option>Experimental / mezcla de estilos</option>
-        </select>
-      </div>
-      <div>
-        <label for="format">Formato</label>
-        <select id="format">
-          <option value="Automático">Automático (Katia decide)</option>
-          <option value="9:16">Vertical 9:16</option>
-          <option value="16:9">Horizontal 16:9</option>
-          <option value="1:1">Cuadrado 1:1</option>
-        </select>
-      </div>
-      <div>
-        <label for="duration">Duración</label>
-        <select id="duration">
-          <option>Automática (según la idea)</option>
-          <option>30 segundos</option>
-          <option selected>60 segundos</option>
-          <option>90 segundos</option>
-          <option>2 minutos</option>
-          <option>3 minutos</option>
-        </select>
-      </div>
-      <div>
-        <label for="language">Idioma</label>
-        <select id="language">
-          <option>Español latino</option>
-          <option>Español paraguayo</option>
-          <option>Inglés</option>
-          <option>Portugués</option>
-          <option>Sin narración</option>
-        </select>
-      </div>
-      <div>
-        <label for="platform">Plataforma</label>
-        <select id="platform">
-          <option>TikTok</option>
-          <option>YouTube Shorts</option>
-          <option>Instagram Reels</option>
-          <option>YouTube</option>
-          <option>Todas</option>
-        </select>
-      </div>
-      <div>
-        <label for="voice">Estilo de voz</label>
-        <select id="voice">
-          <option>Masculina seria y profunda</option>
-          <option>Masculina juvenil y energética</option>
-          <option>Femenina clara y expresiva</option>
-          <option>Documental profesional</option>
-          <option>Sin narración</option>
-        </select>
-      </div>
-    </div>
-  </details>
+<details>
+<summary>⚙️ Ajustes opcionales</summary>
+<div class="grid">
+<div>
+<label for="style">Estilo visual</label>
+<select id="style">
+<option>Automático (Katia decide)</option>
+<option>Realista y cinematográfico</option>
+<option>Anime</option>
+<option>3D / animación</option>
+<option>Terror y suspenso</option>
+<option>Documental</option>
+<option>Fantasía</option>
+<option>Experimental / mezcla de estilos</option>
+</select>
+</div>
+<div>
+<label for="format">Formato</label>
+<select id="format">
+<option value="Automático">Automático (Katia decide)</option>
+<option value="9:16">Vertical 9:16</option>
+<option value="16:9">Horizontal 16:9</option>
+<option value="1:1">Cuadrado 1:1</option>
+</select>
+</div>
+<div>
+<label for="duration">Duración</label>
+<select id="duration">
+<option>Automática (según la idea)</option>
+<option>30 segundos</option>
+<option selected>60 segundos</option>
+<option>90 segundos</option>
+<option>2 minutos</option>
+<option>3 minutos</option>
+</select>
+</div>
+<div>
+<label for="language">Idioma</label>
+<select id="language">
+<option>Español latino</option>
+<option>Español paraguayo</option>
+<option>Inglés</option>
+<option>Portugués</option>
+<option>Sin narración</option>
+</select>
+</div>
+<div>
+<label for="platform">Plataforma</label>
+<select id="platform">
+<option>TikTok</option>
+<option>YouTube Shorts</option>
+<option>Instagram Reels</option>
+<option>YouTube</option>
+<option>Todas</option>
+</select>
+</div>
+<div>
+<label for="voice">Estilo de voz</label>
+<select id="voice">
+<option>Masculina seria y profunda</option>
+<option>Masculina juvenil y energética</option>
+<option>Femenina clara y expresiva</option>
+<option>Documental profesional</option>
+<option>Sin narración</option>
+</select>
+</div>
+</div>
+</details>
 
-  <button class="primary" id="generate" onclick="crearPlan()">
-    ✨ KATIA, CREÁ TODO EL PLAN
-  </button>
+<button class="primary" id="generate" onclick="crearPlan()">✨ KATIA, CREÁ TODO EL PLAN</button>
 
-  <div class="status" id="status" aria-live="polite">
-    Lista para transformar tu idea en un proyecto audiovisual. 💜
-  </div>
+<div class="status" id="status" aria-live="polite">Lista para transformar tu idea en un proyecto audiovisual. 💜</div>
+<div class="message" id="error"></div>
 
-  <div class="message" id="error"></div>
+<div class="progress" id="progress">
+<h3>⚡ Producción automática</h3>
+<div class="step" id="step1">① Creando guion y narración</div>
+<div class="step" id="step2">② Construyendo storyboard y escenas</div>
+<div class="step" id="step3">③ Diseñando prompts visuales</div>
+<div class="step" id="step4">④ Preparando audio, subtítulos y edición</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="status" id="progressText">Preparando...</div>
+</div>
 
-  <div class="progress" id="progress">
-    <h3>⚡ Producción automática</h3>
-    <div class="step" id="step1">① Creando guion y narración</div>
-    <div class="step" id="step2">② Construyendo storyboard y escenas</div>
-    <div class="step" id="step3">③ Diseñando prompts visuales</div>
-    <div class="step" id="step4">④ Preparando audio, subtítulos y edición</div>
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="status" id="progressText">Preparando...</div>
-  </div>
-
-  <p class="note">
-    Groq puede aplicar límites temporales. Katia respetará los tiempos de espera informados por el servicio y conservará las etapas completadas.
-  </p>
+<p class="note">Groq puede aplicar límites temporales. Katia respetará los tiempos de espera informados y conservará las etapas completadas.</p>
 </section>
 
 <section class="panel" id="resultPanel" hidden>
-  <div class="complete">
-    <strong>✓ PRODUCCIÓN COMPLETA</strong><br>
-    Las cuatro etapas fueron generadas y superaron las comprobaciones estructurales.
-  </div>
-  <h3>🎞️ Plan maestro de producción</h3>
-  <div id="result" class="result"></div>
-  <div class="actions">
-    <button class="secondary" onclick="copiarPlan()">📋 Copiar plan</button>
-    <button class="secondary" onclick="descargarPlan()">📥 Descargar TXT</button>
-    <button class="secondary" onclick="guardarProyecto()">💾 Guardar proyecto</button>
-  </div>
+<div class="complete">
+<strong>✓ PRODUCCIÓN COMPLETA</strong><br>
+Las cuatro etapas fueron generadas y superaron las comprobaciones estructurales.
+</div>
+<h3>🎞️ Plan maestro de producción</h3>
+<div id="result" class="result"></div>
+<div class="actions">
+<button class="secondary" onclick="copiarPlan()">📋 Copiar plan</button>
+<button class="secondary" onclick="descargarPlan()">📥 Descargar TXT</button>
+<button class="secondary" onclick="guardarProyecto()">💾 Guardar proyecto</button>
+</div>
 </section>
 
 <section class="panel">
-  <h3>🗂️ Mis proyectos</h3>
-  <p class="note">Los proyectos se guardan en este navegador y dispositivo.</p>
-  <div id="projects"><p class="note">Todavía no guardaste proyectos.</p></div>
+<h3>🗂️ Mis proyectos</h3>
+<p class="note">Los proyectos se guardan en este navegador y dispositivo.</p>
+<div id="projects"><p class="note">Todavía no guardaste proyectos.</p></div>
 </section>
 
 <footer class="note">KATIA AI · VIDEO STUDIO · MÓDULO INDEPENDIENTE</footer>
@@ -292,10 +284,10 @@ let completedStage4Parts=[];
 let activeFingerprint="";
 
 const STAGE_MARKERS={
-  1:"[FIN_ETAPA_1]",
-  2:"[FIN_ETAPA_2]",
-  3:"[FIN_ETAPA_3]",
-  4:"[FIN_ETAPA_4]"
+1:"[FIN_ETAPA_1]",
+2:"[FIN_ETAPA_2]",
+3:"[FIN_ETAPA_3]",
+4:"[FIN_ETAPA_4]"
 };
 
 const PAUSE_BETWEEN_STAGES=35000;
@@ -304,58 +296,56 @@ const MAX_RATE_RETRIES=5;
 /* INTERFAZ */
 
 function setStatus(message){
-  $("status").textContent=message;
+$("status").textContent=message;
 }
 
 function setProgress(percent,message){
-  $("fill").style.width=percent+"%";
-  $("progressText").textContent=message;
+$("fill").style.width=percent+"%";
+$("progressText").textContent=message;
 }
 
 function setStep(number,state){
-  const element=$("step"+number);
+const element=$("step"+number);
+element.className="step "+state;
 
-  element.className="step "+state;
+const labels=[
+"Creando guion y narración",
+"Construyendo storyboard y escenas",
+"Diseñando prompts visuales",
+"Preparando audio, subtítulos y edición"
+];
 
-  const labels=[
-    "Creando guion y narración",
-    "Construyendo storyboard y escenas",
-    "Diseñando prompts visuales",
-    "Preparando audio, subtítulos y edición"
-  ];
+const symbols=state==="done"?"✓":
+state==="active"?"⏳":
+state==="failed"?"✕":number+"";
 
-  const symbols=
-    state==="done"?"✓":
-    state==="active"?"⏳":
-    state==="failed"?"✕":number+"";
-
-  element.textContent=symbols+" "+labels[number-1];
+element.textContent=symbols+" "+labels[number-1];
 }
 
 function showError(message){
-  $("error").textContent=message;
-  $("error").className="message error";
+$("error").textContent=message;
+$("error").className="message error";
 }
 
 function hideError(){
-  $("error").textContent="";
-  $("error").className="message";
+$("error").textContent="";
+$("error").className="message";
 }
 
 function getSettings(){
-  return {
-    idea:$("idea").value.trim(),
-    style:$("style").value,
-    format:$("format").value,
-    duration:$("duration").value,
-    language:$("language").value,
-    platform:$("platform").value,
-    voice:$("voice").value
-  };
+return{
+idea:$("idea").value.trim(),
+style:$("style").value,
+format:$("format").value,
+duration:$("duration").value,
+language:$("language").value,
+platform:$("platform").value,
+voice:$("voice").value
+};
 }
 
 function settingsText(s){
-  return `
+return`
 IDEA: ${s.idea}
 ESTILO: ${s.style}
 FORMATO: ${s.format}
@@ -366,294 +356,206 @@ VOZ: ${s.voice}`;
 }
 
 function getFingerprint(settings){
-  return JSON.stringify(settings);
+return JSON.stringify(settings);
 }
 
 function getDurationSeconds(duration){
-  if(duration.includes("30"))return 30;
-  if(duration.includes("60"))return 60;
-  if(duration.includes("90"))return 90;
-  if(duration.includes("2 minutos"))return 120;
-  if(duration.includes("3 minutos"))return 180;
-  return 60;
+if(duration.includes("30"))return 30;
+if(duration.includes("60"))return 60;
+if(duration.includes("90"))return 90;
+if(duration.includes("2 minutos"))return 120;
+if(duration.includes("3 minutos"))return 180;
+return 60;
 }
 
 function getTokenLimit(settings,stage){
-
-  const seconds=getDurationSeconds(settings.duration);
-
-  const base={
-    1:1700,
-    2:1800,
-    3:1900,
-    4:1600
-  };
-
-  const extra=Math.floor(seconds/60)*100;
-
-  return Math.min(2000,base[stage]+extra);
+const seconds=getDurationSeconds(settings.duration);
+const base={1:1700,2:1800,3:1900,4:1600};
+const extra=Math.floor(seconds/60)*100;
+return Math.min(2000,base[stage]+extra);
 }
 
 function getMinimumWords(settings){
-
-  if(
-    settings.language==="Sin narración" ||
-    settings.voice==="Sin narración"
-  ){
-    return 0;
-  }
-
-  return Math.floor(getDurationSeconds(settings.duration)*1.65);
+if(settings.language==="Sin narración"||settings.voice==="Sin narración")return 0;
+return Math.floor(getDurationSeconds(settings.duration)*1.65);
 }
 
 function countWords(text){
-  return (text.match(/[\p{L}\p{N}]+/gu)||[]).length;
+return(text.match(/[\p{L}\p{N}]+/gu)||[]).length;
 }
 
 function detectSequences(text){
+const found=new Set();
 
-  const found=new Set();
+for(const line of text.split(/\r?\n/)){
+let match=line.match(/^\s*(?:#{1,6}\s*)?(?:🎬\s*)?(?:SECUENCIA|SEQUENCE)\s*(?:N[.º°]\s*)?#?\s*(\d{1,2})\b/i);
+if(match){found.add(Number(match[1]));continue;}
 
-  for(const line of text.split(/\r?\n/)){
+match=line.match(/^\s*([1-9])(?:\uFE0F?\u20E3)\s*/);
+if(match){found.add(Number(match[1]));continue;}
 
-    let match=line.match(
-      /^\s*(?:#{1,6}\s*)?(?:🎬\s*)?(?:SECUENCIA|SEQUENCE)\s*(?:N[.º°]\s*)?#?\s*(\d{1,2})\b/i
-    );
-
-    if(match){
-      found.add(Number(match[1]));
-      continue;
-    }
-
-    match=line.match(/^\s*([1-9])(?:\uFE0F?\u20E3)\s*/);
-
-    if(match){
-      found.add(Number(match[1]));
-      continue;
-    }
-
-    match=line.match(
-      /^\s*(\d{1,2})[.)]\s*(?:SECUENCIA|ESCENA|SEQUENCE)\b/i
-    );
-
-    if(match){
-      found.add(Number(match[1]));
-    }
-  }
-
-  return [...found].sort((a,b)=>a-b);
+match=line.match(/^\s*(\d{1,2})[.)]\s*(?:SECUENCIA|ESCENA|SEQUENCE)\b/i);
+if(match)found.add(Number(match[1]));
+}
+return[...found].sort((a,b)=>a-b);
 }
 
 function sleep(ms){
-  return new Promise(resolve=>setTimeout(resolve,ms));
+return new Promise(resolve=>setTimeout(resolve,ms));
 }
 
-/* DETECCIÓN DE ERRORES */
+/* ERRORES Y REINTENTOS */
 
 function isRateLimit(data,message){
-
-  const status=Number(data?.status||data?.code||0);
-
-  return (
-    status===429 ||
-    /rate.?limit|too many requests|tokens per minute|\b429\b/i.test(message||"")
-  );
+const status=Number(data?.status||data?.code||0);
+return status===429||/rate.?limit|too many requests|tokens per minute|\b429\b/i.test(message||"");
 }
 
 function isOversizedRequest(data,message,response){
-
-  const status=Number(data?.status||data?.code||response?.status||0);
-
-  return (
-    status===413 ||
-    /request too large|reduce your message size|requested\s+\d+.*tokens per minute|prompt.*too long/i.test(message||"")
-  );
+const status=Number(data?.status||data?.code||response?.status||0);
+return status===413||/request too large|reduce your message size|requested\s+\d+.*tokens per minute|prompt.*too long/i.test(message||"");
 }
 
 function getRetryDelay(message){
+const text=String(message||"");
 
-  const text=String(message||"");
+const secondsMatch=text.match(/(?:try again in|retry after)\s*([\d.]+)\s*(s|sec|seconds?)/i);
+if(secondsMatch)return Math.ceil(Number(secondsMatch[1])*1000)+4000;
 
-  const secondsMatch=text.match(
-    /(?:try again in|retry after)\s*([\d.]+)\s*(s|sec|seconds?)/i
-  );
+const msMatch=text.match(/retry-after["'\s:=]+([\d.]+)/i);
+if(msMatch)return Math.ceil(Number(msMatch[1])*1000)+3000;
 
-  if(secondsMatch){
-    return Math.ceil(Number(secondsMatch[1])*1000)+4000;
-  }
-
-  const msMatch=text.match(
-    /retry-after["'\s:=]+([\d.]+)/i
-  );
-
-  if(msMatch){
-    return Math.ceil(Number(msMatch[1])*1000)+3000;
-  }
-
-  return 35000;
+return 35000;
 }
 
 function makeErrorMessage(response,data){
-
-  let message="HTTP "+response.status+
-    " | "+(data.error||"Error desconocido");
-
-  if(data.status){
-    message+=" | Estado de Groq: "+data.status;
-  }
-
-  if(data.detail){
-    message+=" | Detalle: "+data.detail;
-  }
-
-  return message;
+let message="HTTP "+response.status+" | "+(data.error||"Error desconocido");
+if(data.status)message+=" | Estado de Groq: "+data.status;
+if(data.detail)message+=" | Detalle: "+data.detail;
+return message;
 }
 
-/* COMUNICACIÓN CON KATIA BRAIN */
+/*
+CAMBIO IMPORTANTE:
+Ahora askKatia permite recibir un límite de tokens personalizado.
+Las partes de la etapa 4 ya no quedan limitadas al mismo valor.
+*/
 
-async function askKatia(system,prompt,settings,stage){
+async function askKatia(system,prompt,settings,stage,customTokenLimit){
 
-  if(system.length>48000 || prompt.length>48000){
-    throw new Error("Las instrucciones de esta etapa son demasiado extensas.");
-  }
-
-  if(system.length+prompt.length>95000){
-    throw new Error("La solicitud supera el límite de texto permitido.");
-  }
-
-  const maxTokens=getTokenLimit(settings,stage);
-
-  for(let attempt=1;attempt<=MAX_RATE_RETRIES;attempt++){
-
-    const controller=new AbortController();
-
-    const timeout=setTimeout(
-      ()=>controller.abort(),
-      180000
-    );
-
-    try{
-
-      setStatus(
-        "Katia está trabajando en la etapa "+stage+
-        ". Solicitud "+attempt+" de "+MAX_RATE_RETRIES+"."
-      );
-
-      const response=await fetch(KATIA_API,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          messages:[
-            {role:"system",content:system},
-            {role:"user",content:prompt}
-          ],
-          max_completion_tokens:maxTokens
-        }),
-        signal:controller.signal
-      });
-
-      const responseText=await response.text();
-
-      let data;
-
-      try{
-        data=JSON.parse(responseText);
-      }catch{
-        data={
-          error:"El servidor devolvió una respuesta que no es JSON.",
-          detail:responseText.slice(0,1200)
-        };
-      }
-
-      if(!response.ok){
-
-        const message=makeErrorMessage(response,data);
-
-        console.error("Error de Katia Brain:",data);
-
-        /* Un 413 no se arregla repitiendo la misma solicitud. */
-
-        if(isOversizedRequest(data,message,response)){
-          throw new Error(
-            "Groq rechazó una solicitud demasiado grande. "+
-            "No se repetirá automáticamente para evitar consumir más capacidad.\n"+
-            message
-          );
-        }
-
-        if(isRateLimit(data,message)){
-
-          if(attempt>=MAX_RATE_RETRIES){
-            throw new Error(
-              "Groq sigue limitando las solicitudes después de "+
-              MAX_RATE_RETRIES+" intentos.\n"+message
-            );
-          }
-
-          const delay=getRetryDelay(message);
-          const seconds=Math.ceil(delay/1000);
-
-          setStatus(
-            "⏳ Groq alcanzó su límite temporal. "+
-            "Katia esperará "+seconds+
-            " segundos antes de reintentar."
-          );
-
-          setProgress(
-            Math.min((stage-1)*25+8,95),
-            "Esperando que Groq libere capacidad..."
-          );
-
-          clearTimeout(timeout);
-          await sleep(delay);
-          continue;
-        }
-
-        throw new Error(message);
-      }
-
-      const reply=
-        data.reply||
-        data.response||
-        data.message||
-        data.content||
-        data.choices?.[0]?.message?.content;
-
-      if(typeof reply!=="string"||!reply.trim()){
-        throw new Error("Katia devolvió una respuesta vacía o incompatible.");
-      }
-
-      return reply.trim();
-
-    }catch(error){
-
-      if(error.name==="AbortError"){
-        throw new Error("La solicitud tardó demasiado. Intentá nuevamente.");
-      }
-
-      if(error instanceof TypeError){
-        throw new Error(
-          "No se pudo conectar con Katia Brain. Revisá la conexión o el Worker."
-        );
-      }
-
-      throw error;
-
-    }finally{
-      clearTimeout(timeout);
-    }
-  }
-
-  throw new Error("No se pudo completar la solicitud.");
+if(system.length>48000||prompt.length>48000){
+throw new Error("Las instrucciones de esta etapa son demasiado extensas.");
 }
 
-/* INSTRUCCIONES DE LAS ETAPAS 1, 2 Y 3 */
+if(system.length+prompt.length>95000){
+throw new Error("La solicitud supera el límite de texto permitido.");
+}
+
+const maxTokens=customTokenLimit||getTokenLimit(settings,stage);
+
+for(let attempt=1;attempt<=MAX_RATE_RETRIES;attempt++){
+
+const controller=new AbortController();
+const timeout=setTimeout(()=>controller.abort(),180000);
+
+try{
+
+setStatus("Katia está trabajando en la etapa "+stage+". Solicitud "+attempt+" de "+MAX_RATE_RETRIES+".");
+
+const response=await fetch(KATIA_API,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+messages:[
+{role:"system",content:system},
+{role:"user",content:prompt}
+],
+max_completion_tokens:maxTokens
+}),
+signal:controller.signal
+});
+
+const responseText=await response.text();
+let data;
+
+try{
+data=JSON.parse(responseText);
+}catch{
+data={
+error:"El servidor devolvió una respuesta que no es JSON.",
+detail:responseText.slice(0,1200)
+};
+}
+
+if(!response.ok){
+
+const message=makeErrorMessage(response,data);
+console.error("Error de Katia Brain:",data);
+
+if(isOversizedRequest(data,message,response)){
+throw new Error("Groq rechazó una solicitud demasiado grande. No se repetirá automáticamente.\n"+message);
+}
+
+if(isRateLimit(data,message)){
+
+if(attempt>=MAX_RATE_RETRIES){
+throw new Error("Groq sigue limitando las solicitudes después de "+MAX_RATE_RETRIES+" intentos.\n"+message);
+}
+
+const delay=getRetryDelay(message);
+
+setStatus("⏳ Groq alcanzó su límite temporal. Katia esperará "+Math.ceil(delay/1000)+" segundos.");
+
+setProgress(Math.min((stage-1)*25+8,95),"Esperando que Groq libere capacidad...");
+
+clearTimeout(timeout);
+await sleep(delay);
+continue;
+}
+
+throw new Error(message);
+}
+
+const reply=
+data.reply||
+data.response||
+data.message||
+data.content||
+data.choices?.[0]?.message?.content;
+
+if(typeof reply!=="string"||!reply.trim()){
+throw new Error("Katia devolvió una respuesta vacía o incompatible.");
+}
+
+return reply.trim();
+
+}catch(error){
+
+if(error.name==="AbortError"){
+throw new Error("La solicitud tardó demasiado. Intentá nuevamente.");
+}
+
+if(error instanceof TypeError){
+throw new Error("No se pudo conectar con Katia Brain. Revisá la conexión o el Worker.");
+}
+
+throw error;
+
+}finally{
+clearTimeout(timeout);
+}
+}
+
+throw new Error("No se pudo completar la solicitud.");
+}
+
+/* ETAPAS 1, 2 Y 3 */
 
 function buildStageSystem(stage,settings){
 
-  const duration=getDurationSeconds(settings.duration);
+const duration=getDurationSeconds(settings.duration);
 
-  const common=`
+const common=`
 Sos Katia, una productora audiovisual profesional.
 
 Desarrollá esta etapa de una producción audiovisual.
@@ -665,7 +567,6 @@ No inventes que generaste archivos multimedia.
 No uses puntos suspensivos para reemplazar contenido.
 No dejes frases incompletas.
 Sé concreta, organizada y útil.
-Mantené continuidad con el material recibido.
 
 La respuesta debe terminar con este marcador exacto:
 ${STAGE_MARKERS[stage]}
@@ -673,9 +574,8 @@ ${STAGE_MARKERS[stage]}
 El marcador debe estar en la última línea.
 `;
 
-  const instructions={
-
-    1:`
+const instructions={
+1:`
 ETAPA 1: GUION Y NARRACIÓN.
 
 Creá un guion completo con:
@@ -724,8 +624,7 @@ Si no hay narración, reemplazala por indicaciones visuales y textos en pantalla
 No avances a otras etapas.
 Terminá con ${STAGE_MARKERS[1]}
 `,
-
-    2:`
+2:`
 ETAPA 2: STORYBOARD.
 
 Convertí el guion recibido en escenas ordenadas.
@@ -748,8 +647,7 @@ No dejes huecos temporales ni cambies el sentido del guion.
 
 Terminá con ${STAGE_MARKERS[2]}
 `,
-
-    3:`
+3:`
 ETAPA 3: PROMPTS VISUALES.
 
 Creá un prompt independiente para cada escena del storyboard.
@@ -773,205 +671,150 @@ No omitas escenas.
 
 Terminá con ${STAGE_MARKERS[3]}
 `
-  };
+};
 
-  return common+"\n"+instructions[stage];
+return common+"\n"+instructions[stage];
 }
 
-/* VALIDACIÓN */
+/* VALIDACIÓN DE ETAPAS */
 
 function validateStage(number,content,settings){
 
-  const marker=STAGE_MARKERS[number];
-  const trimmed=content.trim();
+const marker=STAGE_MARKERS[number];
+const trimmed=content.trim();
 
-  if(!trimmed.endsWith(marker)){
-    return {
-      valid:false,
-      reason:"Falta el marcador final. La respuesta podría estar incompleta."
-    };
-  }
-
-  const cleaned=trimmed.slice(0,-marker.length).trim();
-
-  if(number===1){
-
-    const words=countWords(cleaned);
-    const minimum=getMinimumWords(settings);
-
-    if(words<minimum){
-      return {
-        valid:false,
-        reason:"El guion tiene "+words+
-        " palabras y necesita aproximadamente "+minimum+" o más."
-      };
-    }
-
-    if(cleaned.length<350){
-      return {
-        valid:false,
-        reason:"El guion es demasiado corto."
-      };
-    }
-
-    const sequences=detectSequences(cleaned);
-
-    if(
-      sequences.length<3 ||
-      !sequences.includes(1) ||
-      !sequences.includes(2) ||
-      !sequences.includes(3)
-    ){
-      return {
-        valid:false,
-        reason:"Faltan las tres secuencias numeradas obligatorias."
-      };
-    }
-  }
-
-  if(number!==1 && cleaned.length<350){
-    return {
-      valid:false,
-      reason:"Esta etapa tiene muy poco contenido."
-    };
-  }
-
-  if(number===2){
-
-    const times=cleaned.match(/\b\d{1,2}:\d{2}\b/g)||[];
-
-    if(times.length<4){
-      return {
-        valid:false,
-        reason:"Faltan marcas de tiempo suficientes en el storyboard."
-      };
-    }
-  }
-
-  return {valid:true,content:cleaned};
+if(!trimmed.endsWith(marker)){
+return{valid:false,reason:"Falta el marcador final. La respuesta podría estar incompleta."};
 }
 
-/* GUARDADO Y RECUPERACIÓN */
+const cleaned=trimmed.slice(0,-marker.length).trim();
+
+if(number===1){
+
+const words=countWords(cleaned);
+const minimum=getMinimumWords(settings);
+
+if(words<minimum){
+return{valid:false,reason:"El guion tiene "+words+" palabras y necesita aproximadamente "+minimum+" o más."};
+}
+
+if(cleaned.length<350){
+return{valid:false,reason:"El guion es demasiado corto."};
+}
+
+const sequences=detectSequences(cleaned);
+
+if(sequences.length<3||!sequences.includes(1)||!sequences.includes(2)||!sequences.includes(3)){
+return{valid:false,reason:"Faltan las tres secuencias numeradas obligatorias."};
+}
+}
+
+if(number!==1&&cleaned.length<350){
+return{valid:false,reason:"Esta etapa tiene muy poco contenido."};
+}
+
+if(number===2){
+const times=cleaned.match(/\b\d{1,2}:\d{2}\b/g)||[];
+if(times.length<4){
+return{valid:false,reason:"Faltan marcas de tiempo suficientes en el storyboard."};
+}
+}
+
+return{valid:true,content:cleaned};
+}
+
+/* GUARDADO */
 
 function saveProgress(settings){
 
-  try{
+try{
+const data={
+fingerprint:getFingerprint(settings),
+settings,
+stages:completedStages,
+stage4Parts:completedStage4Parts,
+updatedAt:new Date().toISOString()
+};
 
-    const data={
-      fingerprint:getFingerprint(settings),
-      settings,
-      stages:completedStages,
-      stage4Parts:completedStage4Parts,
-      updatedAt:new Date().toISOString()
-    };
+localStorage.setItem(PROGRESS_KEY,JSON.stringify(data));
 
-    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data));
-
-  }catch(error){
-
-    console.warn("No se pudo guardar el progreso:",error);
-
-    setStatus(
-      "Advertencia: el navegador no pudo guardar el progreso. No cierres la página."
-    );
-  }
+}catch(error){
+console.warn("No se pudo guardar el progreso:",error);
+setStatus("Advertencia: el navegador no pudo guardar el progreso. No cierres la página.");
+}
 }
 
 function loadProgress(settings){
 
-  try{
+try{
+const saved=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"null");
 
-    const saved=JSON.parse(
-      localStorage.getItem(PROGRESS_KEY)||"null"
-    );
+if(!saved||saved.fingerprint!==getFingerprint(settings)||!Array.isArray(saved.stages)){
+return[];
+}
 
-    if(
-      !saved ||
-      saved.fingerprint!==getFingerprint(settings) ||
-      !Array.isArray(saved.stages)
-    ){
-      return [];
-    }
+const restored=[];
 
-    const restored=[];
+for(let number=1;number<=4;number++){
 
-    for(let number=1;number<=4;number++){
+const stage=saved.stages.find(item=>item.number===number);
 
-      const stage=saved.stages.find(
-        item=>item.number===number
-      );
+if(!stage||typeof stage.content!=="string"||stage.content.length<100){
+break;
+}
 
-      if(
-        !stage ||
-        typeof stage.content!=="string" ||
-        stage.content.length<100
-      ){
-        break;
-      }
+restored.push(stage);
+}
 
-      restored.push(stage);
-    }
+return restored;
 
-    return restored;
-
-  }catch(error){
-    console.warn("No se pudo recuperar el progreso:",error);
-    return [];
-  }
+}catch(error){
+console.warn("No se pudo recuperar el progreso:",error);
+return[];
+}
 }
 
 function loadStage4Parts(settings){
 
-  try{
+try{
+const saved=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"null");
 
-    const saved=JSON.parse(
-      localStorage.getItem(PROGRESS_KEY)||"null"
-    );
+if(!saved||saved.fingerprint!==getFingerprint(settings)||!Array.isArray(saved.stage4Parts)){
+return[];
+}
 
-    if(
-      !saved ||
-      saved.fingerprint!==getFingerprint(settings) ||
-      !Array.isArray(saved.stage4Parts)
-    ){
-      return [];
-    }
+return saved.stage4Parts.filter(part=>
+typeof part.id==="string"&&
+typeof part.content==="string"&&
+part.content.length>100
+);
 
-    return saved.stage4Parts.filter(
-      part=>
-        typeof part.id==="string" &&
-        typeof part.content==="string" &&
-        part.content.length>100
-    );
-
-  }catch(error){
-    return [];
-  }
+}catch(error){
+return[];
+}
 }
 
 function clearProgress(){
-
-  try{
-    localStorage.removeItem(PROGRESS_KEY);
-  }catch(error){
-    console.warn(error);
-  }
+try{
+localStorage.removeItem(PROGRESS_KEY);
+}catch(error){
+console.warn(error);
+}
 }
 
 /* GENERACIÓN DE LAS PRIMERAS TRES ETAPAS */
 
 async function generateValidatedStage(number,prompt,settings){
 
-  const system=buildStageSystem(number,settings);
+const system=buildStageSystem(number,settings);
+let lastReason="Respuesta incompleta.";
 
-  let lastReason="Respuesta incompleta.";
+for(let attempt=1;attempt<=3;attempt++){
 
-  for(let attempt=1;attempt<=3;attempt++){
+let request=prompt;
 
-    let request=prompt;
-
-    if(attempt>1){
-
-      request=`
+if(attempt>1){
+request=`
 TAREA ORIGINAL:
 ${prompt}
 
@@ -987,208 +830,133 @@ Respetá la idea original y la duración.
 Terminá con el marcador exacto:
 ${STAGE_MARKERS[number]}
 `;
-    }
+}
 
-    setProgress(
-      Math.min((number-1)*25+5,95),
-      "Generando etapa "+number+". Intento "+attempt+" de 3..."
-    );
+setProgress(Math.min((number-1)*25+5,95),"Generando etapa "+number+". Intento "+attempt+" de 3...");
 
-    const response=await askKatia(
-      system,
-      request,
-      settings,
-      number
-    );
+const response=await askKatia(system,request,settings,number);
+const validation=validateStage(number,response,settings);
 
-    const validation=validateStage(number,response,settings);
+if(validation.valid)return validation.content;
 
-    if(validation.valid){
-      return validation.content;
-    }
+lastReason=validation.reason;
+setProgress(Math.min(number*25,95),"Comprobando integridad. Intento "+attempt+" de 3...");
+}
 
-    lastReason=validation.reason;
-
-    setProgress(
-      Math.min(number*25,95),
-      "Comprobando integridad. Intento "+attempt+" de 3..."
-    );
-  }
-
-  throw new Error(
-    "La etapa "+number+" no pudo completarse después de tres intentos. "+
-    lastReason
-  );
+throw new Error("La etapa "+number+" no pudo completarse después de tres intentos. "+lastReason);
 }
 
 async function runStage(number,title,prompt,settings){
 
-  setStep(number,"active");
-  setProgress((number-1)*25,title);
+setStep(number,"active");
+setProgress((number-1)*25,title);
 
-  const result=await generateValidatedStage(
-    number,
-    prompt,
-    settings
-  );
+const result=await generateValidatedStage(number,prompt,settings);
 
-  completedStages=completedStages.filter(
-    item=>item.number!==number
-  );
+completedStages=completedStages.filter(item=>item.number!==number);
 
-  completedStages.push({
-    number,
-    title,
-    content:result
-  });
+completedStages.push({number,title,content:result});
+completedStages.sort((a,b)=>a.number-b.number);
 
-  completedStages.sort((a,b)=>a.number-b.number);
+saveProgress(settings);
+setStep(number,"done");
+setProgress(number*25,"Etapa "+number+" completada y guardada.");
 
-  saveProgress(settings);
-
-  setStep(number,"done");
-  setProgress(number*25,"Etapa "+number+" completada y guardada.");
-
-  return result;
+return result;
 }
 
 async function getOrRunStage(number,title,prompt,settings){
 
-  const existing=completedStages.find(
-    item=>item.number===number
-  );
+const existing=completedStages.find(item=>item.number===number);
 
-  if(existing){
+if(existing){
+setStep(number,"done");
+setProgress(number*25,"Etapa "+number+" recuperada del progreso guardado.");
+return existing.content;
+}
 
-    setStep(number,"done");
-
-    setProgress(
-      number*25,
-      "Etapa "+number+" recuperada del progreso guardado."
-    );
-
-    return existing.content;
-  }
-
-  return await runStage(number,title,prompt,settings);
+return await runStage(number,title,prompt,settings);
 }
 
 /* PAUSA PREVENTIVA */
 
 async function waitBetweenStages(nextStage){
 
-  const total=Math.ceil(PAUSE_BETWEEN_STAGES/1000);
+const total=Math.ceil(PAUSE_BETWEEN_STAGES/1000);
 
-  for(let remaining=total;remaining>0;remaining--){
+for(let remaining=total;remaining>0;remaining--){
 
-    setStatus(
-      "✓ Etapa anterior guardada. Katia esperará "+
-      remaining+" segundos antes de comenzar la etapa "+
-      nextStage+"."
-    );
+setStatus("✓ Etapa anterior guardada. Katia esperará "+remaining+" segundos antes de comenzar la etapa "+nextStage+".");
 
-    setProgress(
-      (nextStage-1)*25,
-      "Pausa preventiva para controlar el consumo de Groq..."
-    );
+setProgress((nextStage-1)*25,"Pausa preventiva para controlar el consumo de Groq...");
 
-    await sleep(1000);
-  }
+await sleep(1000);
+}
 }
 
-/* CONTEXTO COMPACTO PARA LA ETAPA 4 */
+/* CONTEXTO COMPACTO */
 
 function extractNarration(script){
 
-  const lines=script.split(/\r?\n/);
-  const blocks=[];
-  let collecting=false;
-  let current=[];
+const lines=script.split(/\r?\n/);
+const blocks=[];
+let collecting=false;
+let current=[];
 
-  for(const line of lines){
+for(const line of lines){
 
-    if(/^\s*Narración\s*:/i.test(line)){
+if(/^\s*Narración\s*:/i.test(line)){
 
-      if(current.length){
-        blocks.push(current.join("\n").trim());
-      }
+if(current.length)blocks.push(current.join("\n").trim());
 
-      collecting=true;
-      current.push(line.replace(/^\s*Narración\s*:/i,"").trim());
-      continue;
-    }
+collecting=true;
+current.push(line.replace(/^\s*Narración\s*:/i,"").trim());
+continue;
+}
 
-    if(collecting && (
-      /^\s*(?:Visual|SECUENCIA|ESCENA|Título|Concepto|Objetivo)\s*[:—-]/i.test(line) ||
-      /^\s*#{1,4}\s/.test(line)
-    )){
+if(collecting&&(
+/^\s*(?:Visual|SECUENCIA|ESCENA|Título|Concepto|Objetivo)\s*[:—-]/i.test(line)||
+/^\s*#{1,4}\s/.test(line)
+)){
 
-      if(current.length){
-        blocks.push(current.join("\n").trim());
-      }
+if(current.length)blocks.push(current.join("\n").trim());
 
-      current=[];
-      collecting=false;
-      continue;
-    }
+current=[];
+collecting=false;
+continue;
+}
 
-    if(collecting){
-      current.push(line);
-    }
-  }
+if(collecting)current.push(line);
+}
 
-  if(current.length){
-    blocks.push(current.join("\n").trim());
-  }
+if(current.length)blocks.push(current.join("\n").trim());
 
-  const result=blocks.filter(Boolean).join("\n\n");
+const result=blocks.filter(Boolean).join("\n\n");
 
-  if(result.length>7000){
-    return result.slice(0,7000)+
-      "\n[CONTEXTO RECORTADO: consultar el guion original para el resto]";
-  }
+if(result.length>7000){
+return result.slice(0,7000)+"\n[CONTEXTO RECORTADO: consultar el guion original para el resto]";
+}
 
-  return result||script.slice(0,3500);
+return result||script.slice(0,3500);
 }
 
 function compactStoryboard(storyboard){
-
-  const max=3200;
-
-  if(storyboard.length<=max){
-    return storyboard;
-  }
-
-  return storyboard.slice(0,max)+
-    "\n[RESUMEN RECORTADO: usar esta información como referencia general]";
+const max=3200;
+if(storyboard.length<=max)return storyboard;
+return storyboard.slice(0,max)+"\n[RESUMEN RECORTADO: usar como referencia general]";
 }
 
-/* ETAPA 4 DIVIDIDA EN TRES PARTES */
+/* ETAPA 4 */
 
 const STAGE4_PARTS=[
-  {
-    id:"audio",
-    title:"Audio y dirección de voz",
-    marker:"[FIN_PARTE_AUDIO]",
-    tokens:1100
-  },
-  {
-    id:"subtitles",
-    title:"Subtítulos y textos en pantalla",
-    marker:"[FIN_PARTE_SUBTITULOS]",
-    tokens:1800
-  },
-  {
-    id:"editing",
-    title:"Edición, miniatura y publicación",
-    marker:"[FIN_PARTE_EDICION]",
-    tokens:1400
-  }
+{id:"audio",title:"Audio y dirección de voz",marker:"[FIN_PARTE_AUDIO]",tokens:1100},
+{id:"subtitles",title:"Subtítulos y textos en pantalla",marker:"[FIN_PARTE_SUBTITULOS]",tokens:1800},
+{id:"editing",title:"Edición, miniatura y publicación",marker:"[FIN_PARTE_EDICION]",tokens:1400}
 ];
 
 function getStage4PartSystem(part,settings){
 
-  return `
+return`
 Sos Katia, productora audiovisual profesional.
 
 Estás completando una parte de la ETAPA 4.
@@ -1203,24 +971,25 @@ No inventes archivos multimedia ya generados.
 No uses puntos suspensivos para omitir contenido.
 Sé concreta, completa y organizada.
 
+IMPORTANTE:
 Terminá obligatoriamente con este marcador exacto:
 ${part.marker}
 
 El marcador debe ser la última línea.
+No lo omitas.
 `;
 }
 
 function getStage4PartPrompt(part,settings,context){
 
-  if(part.id==="audio"){
-
-    return `
+if(part.id==="audio"){
+return`
 PROYECTO:
 ${settingsText(settings)}
 
 TAREA: DIRECCIÓN DE AUDIO.
 
-Prepará los siguientes elementos:
+Prepará:
 
 1. DIRECCIÓN DE VOZ:
 Tipo de interpretación, velocidad, emoción, entonación, pausas y pronunciación.
@@ -1229,11 +998,11 @@ Tipo de interpretación, velocidad, emoción, entonación, pausas y pronunciaci�
 Estilo musical, ambiente, intensidad, entrada, cambios y salida.
 
 3. EFECTOS SONOROS:
-Nombre o descripción del efecto, momento aproximado y función narrativa.
+Nombre o descripción, momento aproximado y función narrativa.
 
 4. MEZCLA:
 Relación entre voz, música y efectos.
-Indicar cómo evitar que la música tape la narración.
+Cómo evitar que la música tape la narración.
 
 5. RECURSOS DE AUDIO:
 Qué sonidos y recursos se necesitan.
@@ -1244,11 +1013,10 @@ ${context.narration.slice(0,3500)}
 No vuelvas a escribir el guion.
 No generes subtítulos en esta parte.
 `;
-  }
+}
 
-  if(part.id==="subtitles"){
-
-    return `
+if(part.id==="subtitles"){
+return`
 PROYECTO:
 ${settingsText(settings)}
 
@@ -1273,16 +1041,15 @@ ${context.narration}
 
 No repitas el guion completo.
 `;
-  }
+}
 
-  return `
+return`
 PROYECTO:
 ${settingsText(settings)}
 
 TAREA: EDICIÓN Y PUBLICACIÓN.
 
-Usá el siguiente contexto breve del storyboard:
-
+CONTEXTO BREVE DEL STORYBOARD:
 ${context.storyboard}
 
 Prepará:
@@ -1291,7 +1058,7 @@ Prepará:
 Secuencia de montaje y ritmo general.
 
 2. CORTES Y TRANSICIONES:
-Indicá dónde conviene cambiar de plano y cómo conectar escenas.
+Dónde conviene cambiar de plano y cómo conectar escenas.
 
 3. COLOR:
 Ambiente visual, contraste y coherencia.
@@ -1314,190 +1081,212 @@ No repitas el storyboard ni los prompts visuales completos.
 `;
 }
 
+/*
+NUEVA VALIDACIÓN:
+Si el texto es suficientemente completo pero Katia olvidó el marcador,
+el sistema agrega el marcador internamente.
+No se confunde una etiqueta omitida con una respuesta vacía.
+*/
+
 function validateStage4Part(content,part){
 
-  const trimmed=content.trim();
+const trimmed=content.trim();
 
-  if(!trimmed.endsWith(part.marker)){
-    return {
-      valid:false,
-      reason:"Falta el marcador de finalización de "+part.title+"."
-    };
-  }
+if(trimmed.endsWith(part.marker)){
 
-  const cleaned=trimmed
-    .slice(0,-part.marker.length)
-    .trim();
+const cleaned=trimmed.slice(0,-part.marker.length).trim();
 
-  if(cleaned.length<250){
-    return {
-      valid:false,
-      reason:"La respuesta de "+part.title+" está incompleta."
-    };
-  }
+if(cleaned.length<250){
+return{valid:false,reason:"La respuesta de "+part.title+" está incompleta."};
+}
 
-  return {
-    valid:true,
-    content:cleaned
-  };
+return{valid:true,content:cleaned,repaired:false};
+}
+
+/*
+Solo se acepta sin marcador si hay contenido suficiente
+y la respuesta parece haber terminado naturalmente.
+*/
+
+const naturalEnding=/[.!?…:;)\]”"'»]$/.test(trimmed);
+
+if(trimmed.length>=250&&naturalEnding){
+
+return{
+valid:true,
+content:trimmed,
+repaired:true
+};
+}
+
+return{
+valid:false,
+reason:"La respuesta de "+part.title+" parece haberse cortado antes de terminar."
+};
 }
 
 async function generateStage4Part(part,settings,context){
 
-  const existing=completedStage4Parts.find(
-    item=>item.id===part.id
-  );
+const existing=completedStage4Parts.find(item=>item.id===part.id);
 
-  if(existing){
+if(existing){
+setStatus("💾 Recuperando parte guardada: "+part.title+".");
+return existing.content;
+}
 
-    setStatus(
-      "💾 Recuperando parte guardada: "+part.title+"."
-    );
+const system=getStage4PartSystem(part,settings);
+const originalPrompt=getStage4PartPrompt(part,settings,context);
 
-    return existing.content;
-  }
+let lastReason="Respuesta incompleta.";
 
-  const system=getStage4PartSystem(part,settings);
-  const prompt=getStage4PartPrompt(part,settings,context);
+for(let attempt=1;attempt<=3;attempt++){
 
-  let lastReason="Respuesta incompleta.";
+/*
+IMPORTANTE:
+En los reintentos se conserva el prompt original.
+La corrección se añade al final, no se reemplaza el contexto.
+*/
 
-  for(let attempt=1;attempt<=2;attempt++){
+let request=originalPrompt;
 
-    const request=attempt===1
-      ?prompt
-      :`
-La respuesta anterior no superó la comprobación.
+if(attempt>1){
+request+=`
 
-Motivo:
+CORRECCIÓN DE LA RESPUESTA ANTERIOR:
 ${lastReason}
 
-Volvé a generar esta parte completa y de manera más directa.
-No agregues otras etapas.
-Terminá con el marcador exacto:
+Volvé a preparar esta misma tarea completa.
+Conservá toda la información del proyecto.
+No omitas las secciones solicitadas.
+Reducí explicaciones repetidas si necesitás espacio.
+Asegurate de terminar la respuesta con esta línea exacta:
 ${part.marker}
 `;
+}
 
-    setStatus(
-      "⚡ Etapa 4: "+part.title+
-      ". Parte "+(STAGE4_PARTS.findIndex(p=>p.id===part.id)+1)+
-      " de 3. Intento "+attempt+" de 2."
-    );
+setStatus(
+"⚡ Etapa 4: "+part.title+
+". Parte "+(STAGE4_PARTS.findIndex(p=>p.id===part.id)+1)+
+" de 3. Intento "+attempt+" de 3."
+);
 
-    const response=await askKatia(
-      system,
-      request,
-      settings,
-      4
-    );
+/*
+CAMBIO CLAVE:
+Se envía part.tokens como límite personalizado.
+*/
 
-    const validation=validateStage4Part(response,part);
+const response=await askKatia(
+system,
+request,
+settings,
+4,
+part.tokens
+);
 
-    if(validation.valid){
+const validation=validateStage4Part(response,part);
 
-      completedStage4Parts=completedStage4Parts.filter(
-        item=>item.id!==part.id
-      );
+if(validation.valid){
 
-      completedStage4Parts.push({
-        id:part.id,
-        title:part.title,
-        content:validation.content
-      });
+completedStage4Parts=completedStage4Parts.filter(item=>item.id!==part.id);
 
-      saveProgress(settings);
+completedStage4Parts.push({
+id:part.id,
+title:part.title,
+content:validation.content,
+markerRepaired:validation.repaired===true
+});
 
-      return validation.content;
-    }
+saveProgress(settings);
 
-    lastReason=validation.reason;
-  }
+if(validation.repaired){
+setStatus("✓ "+part.title+" completada. Katia recuperó el marcador final automáticamente.");
+}else{
+setStatus("✓ "+part.title+" completada y comprobada.");
+}
 
-  throw new Error(
-    "No se pudo completar "+part.title+". "+lastReason
-  );
+return validation.content;
+}
+
+lastReason=validation.reason;
+}
+
+throw new Error(
+"No se pudo completar "+part.title+" después de tres intentos. "+lastReason
+);
 }
 
 async function runStage4(settings,stage1,stage2){
 
-  setStep(4,"active");
+setStep(4,"active");
 
-  const context={
-    narration:extractNarration(stage1),
-    storyboard:compactStoryboard(stage2)
-  };
+const context={
+narration:extractNarration(stage1),
+storyboard:compactStoryboard(stage2)
+};
 
-  const results=[];
+const results=[];
 
-  for(let index=0;index<STAGE4_PARTS.length;index++){
+for(let index=0;index<STAGE4_PARTS.length;index++){
 
-    const part=STAGE4_PARTS[index];
+const part=STAGE4_PARTS[index];
 
-    setProgress(
-      75+Math.round((index/3)*20),
-      "Etapa 4: "+part.title
-    );
+setProgress(
+75+Math.round((index/3)*20),
+"Etapa 4: "+part.title
+);
 
-    const content=await generateStage4Part(
-      part,
-      settings,
-      context
-    );
+const content=await generateStage4Part(part,settings,context);
 
-    results.push(
-      "========================================\n"+
-      part.title.toUpperCase()+
-      "\n========================================\n\n"+
-      content
-    );
+results.push(
+"========================================\n"+
+part.title.toUpperCase()+
+"\n========================================\n\n"+
+content
+);
 
-    if(index<STAGE4_PARTS.length-1){
-      await sleep(4000);
-    }
-  }
+if(index<STAGE4_PARTS.length-1){
+await sleep(4000);
+}
+}
 
-  const combined=results.join("\n\n");
+const combined=results.join("\n\n");
 
-  if(combined.length<750){
-    throw new Error("La etapa 4 quedó incompleta.");
-  }
+if(combined.length<750){
+throw new Error("La etapa 4 quedó incompleta.");
+}
 
-  const finalContent=
-    combined+"\n\n"+STAGE_MARKERS[4];
+const finalContent=combined+"\n\n"+STAGE_MARKERS[4];
 
-  completedStages=completedStages.filter(
-    item=>item.number!==4
-  );
+completedStages=completedStages.filter(item=>item.number!==4);
 
-  completedStages.push({
-    number:4,
-    title:"Audio, subtítulos y edición",
-    content:finalContent
-  });
+completedStages.push({
+number:4,
+title:"Audio, subtítulos y edición",
+content:finalContent
+});
 
-  completedStages.sort((a,b)=>a.number-b.number);
+completedStages.sort((a,b)=>a.number-b.number);
 
-  saveProgress(settings);
+saveProgress(settings);
 
-  setStep(4,"done");
-  setProgress(100,"Etapa 4 completada y guardada.");
+setStep(4,"done");
+setProgress(100,"Etapa 4 completada y guardada.");
 
-  return finalContent;
+return finalContent;
 }
 
 /* PLAN FINAL */
 
 function buildFinalPlan(settings,stages){
 
-  const headings=[
-    "1. GUION COMPLETO Y NARRACIÓN",
-    "2. STORYBOARD Y ESCENAS",
-    "3. PROMPTS VISUALES",
-    "4. AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN"
-  ];
+const headings=[
+"1. GUION COMPLETO Y NARRACIÓN",
+"2. STORYBOARD Y ESCENAS",
+"3. PROMPTS VISUALES",
+"4. AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN"
+];
 
-  let output=
-`KATIA AI · VIDEO STUDIO
+let output=`KATIA AI · VIDEO STUDIO
 PLAN MAESTRO DE PRODUCCIÓN
 
 ========================================
@@ -1514,9 +1303,8 @@ Voz: ${settings.voice}
 
 `;
 
-  stages.forEach((stage,index)=>{
-
-    output+=`
+stages.forEach((stage,index)=>{
+output+=`
 ========================================
 ${headings[index]}
 ========================================
@@ -1524,9 +1312,9 @@ ${headings[index]}
 ${stage.content}
 
 `;
-  });
+});
 
-  output+=`
+output+=`
 ========================================
 CONTROL DE FINALIZACIÓN
 ========================================
@@ -1550,75 +1338,68 @@ Las imágenes, clips, voz, música y video final todavía deben generarse
 con herramientas externas.
 `;
 
-  return output;
+return output;
 }
 
 /* PRODUCCIÓN PRINCIPAL */
 
 async function crearPlan(){
 
-  if(generating)return;
+if(generating)return;
 
-  const settings=getSettings();
+const settings=getSettings();
 
-  if(!settings.idea){
-    setStatus("Primero contale a Katia qué video querés crear.");
-    $("idea").focus();
-    return;
-  }
+if(!settings.idea){
+setStatus("Primero contale a Katia qué video querés crear.");
+$("idea").focus();
+return;
+}
 
-  generating=true;
-  currentPlan="";
-  currentTitle=settings.idea.slice(0,65);
-  activeFingerprint=getFingerprint(settings);
+generating=true;
+currentPlan="";
+currentTitle=settings.idea.slice(0,65);
+activeFingerprint=getFingerprint(settings);
 
-  completedStages=loadProgress(settings);
-  completedStage4Parts=loadStage4Parts(settings);
+completedStages=loadProgress(settings);
+completedStage4Parts=loadStage4Parts(settings);
 
-  const btn=$("generate");
+const btn=$("generate");
 
-  btn.disabled=true;
-  btn.textContent="⏳ KATIA ESTÁ TRABAJANDO...";
+btn.disabled=true;
+btn.textContent="⏳ KATIA ESTÁ TRABAJANDO...";
 
-  $("progress").style.display="block";
-  $("resultPanel").hidden=true;
+$("progress").style.display="block";
+$("resultPanel").hidden=true;
 
-  hideError();
+hideError();
 
-  for(let i=1;i<=4;i++){
-    setStep(i,"");
-  }
+for(let i=1;i<=4;i++)setStep(i,"");
 
-  if(completedStages.length){
+if(completedStages.length){
 
-    completedStages.forEach(stage=>{
-      setStep(stage.number,"done");
-    });
+completedStages.forEach(stage=>setStep(stage.number,"done"));
 
-    setProgress(
-      completedStages.length*25,
-      "Progreso recuperado: "+completedStages.length+" de 4 etapas."
-    );
+setProgress(
+completedStages.length*25,
+"Progreso recuperado: "+completedStages.length+" de 4 etapas."
+);
 
-    setStatus(
-      "💾 ¡Progreso recuperado! Katia continuará desde la etapa "+
-      (completedStages.length+1)+"."
-    );
+setStatus("💾 ¡Progreso recuperado! Katia continuará desde la etapa "+(completedStages.length+1)+".");
 
-  }else{
+}else{
 
-    setStatus("Conectando con Katia Brain. Preparando la producción.");
-    setProgress(0,"Iniciando producción...");
-  }
+setStatus("Conectando con Katia Brain. Preparando la producción.");
+setProgress(0,"Iniciando producción...");
+}
 
-  try{
+try{
 
-    /* ETAPA 1 */
+/* ETAPA 1 */
 
-    const stage1=await getOrRunStage(
-      1,
-      "Creando guion completo...",
-      `
+const stage1=await getOrRunStage(
+1,
+"Creando guion completo...",
+`
 PROYECTO:
 ${settingsText(settings)}
 
@@ -1662,17 +1443,17 @@ La última termina al final de la duración.
 
 No avances a otras etapas.
 `,
-      settings
-    );
+settings
+);
 
-    await waitBetweenStages(2);
+await waitBetweenStages(2);
 
-    /* ETAPA 2 */
+/* ETAPA 2 */
 
-    const stage2=await getOrRunStage(
-      2,
-      "Construyendo storyboard...",
-      `
+const stage2=await getOrRunStage(
+2,
+"Construyendo storyboard...",
+`
 PROYECTO:
 ${settingsText(settings)}
 
@@ -1697,17 +1478,17 @@ La primera escena comienza en 00:00.
 La última termina al final del video.
 No dejes huecos temporales.
 `,
-      settings
-    );
+settings
+);
 
-    await waitBetweenStages(3);
+await waitBetweenStages(3);
 
-    /* ETAPA 3 */
+/* ETAPA 3 */
 
-    const stage3=await getOrRunStage(
-      3,
-      "Diseñando prompts visuales...",
-      `
+const stage3=await getOrRunStage(
+3,
+"Diseñando prompts visuales...",
+`
 PROYECTO:
 ${settingsText(settings)}
 
@@ -1725,221 +1506,190 @@ estilo artístico, cámara, profundidad y detalles.
 Mantené continuidad entre personajes y escenarios.
 No omitas ninguna escena.
 `,
-      settings
-    );
+settings
+);
 
-    await waitBetweenStages(4);
+await waitBetweenStages(4);
 
-    /* ETAPA 4 DIVIDIDA EN TRES SOLICITUDES */
+/* ETAPA 4 */
 
-    await runStage4(
-      settings,
-      stage1,
-      stage2
-    );
+await runStage4(settings,stage1,stage2);
 
-    if(completedStages.length!==4){
-      throw new Error("No se completaron las cuatro etapas.");
-    }
+if(completedStages.length!==4){
+throw new Error("No se completaron las cuatro etapas.");
+}
 
-    currentPlan=buildFinalPlan(settings,completedStages);
+currentPlan=buildFinalPlan(settings,completedStages);
 
-    $("result").textContent=currentPlan;
-    $("resultPanel").hidden=false;
+$("result").textContent=currentPlan;
+$("resultPanel").hidden=false;
 
-    clearProgress();
+clearProgress();
+completedStage4Parts=[];
 
-    completedStage4Parts=[];
+setProgress(100,"¡Las cuatro etapas terminaron correctamente!");
+setStatus("🎉 ¡Proyecto completo! Katia terminó las cuatro etapas.");
 
-    setProgress(100,"¡Las cuatro etapas terminaron correctamente!");
-    setStatus("🎉 ¡Proyecto completo! Katia terminó las cuatro etapas.");
+$("resultPanel").scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
 
-    $("resultPanel").scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+}catch(error){
 
-  }catch(error){
+console.error(error);
 
-    console.error(error);
+currentPlan="";
+$("resultPanel").hidden=true;
 
-    currentPlan="";
-    $("resultPanel").hidden=true;
+let next=completedStages.length+1;
+if(next>4)next=4;
 
-    let next=completedStages.length+1;
+setStep(next,"failed");
+saveProgress(settings);
 
-    if(next>4){
-      next=4;
-    }
+showError(
+"La producción no pudo completarse: "+
+error.message+
+"\n\nEtapas completas y guardadas: "+
+completedStages.length+" de 4."+
+"\nPartes guardadas de la etapa 4: "+
+completedStage4Parts.length+" de 3."+
+"\n\nPodés pulsar CONTINUAR PRODUCCIÓN para retomar."
+);
 
-    setStep(next,"failed");
+setStatus("La producción se detuvo, pero las partes completadas quedaron guardadas. 💾");
 
-    saveProgress(settings);
+}finally{
 
-    showError(
-      "La producción no pudo completarse: "+
-      error.message+
-      "\n\nEtapas completas y guardadas: "+
-      completedStages.length+" de 4."+
-      "\nPartes guardadas de la etapa 4: "+
-      completedStage4Parts.length+" de 3."+
-      "\n\nPodés pulsar CONTINUAR PRODUCCIÓN para retomar."
-    );
+generating=false;
+btn.disabled=false;
 
-    setStatus(
-      "La producción se detuvo, pero las partes completadas quedaron guardadas. 💾"
-    );
-
-  }finally{
-
-    generating=false;
-    btn.disabled=false;
-
-    btn.textContent=
-      completedStages.length>0 &&
-      completedStages.length<4
-        ? "🔄 CONTINUAR PRODUCCIÓN"
-        : "✨ KATIA, CREÁ TODO EL PLAN";
-  }
+btn.textContent=
+completedStages.length>0&&completedStages.length<4
+?"🔄 CONTINUAR PRODUCCIÓN"
+:"✨ KATIA, CREÁ TODO EL PLAN";
+}
 }
 
 /* COPIAR */
 
 async function copiarPlan(){
 
-  if(!currentPlan)return;
+if(!currentPlan)return;
 
-  try{
-    await navigator.clipboard.writeText(currentPlan);
-    setStatus("¡Plan completo copiado correctamente! 💜");
-  }catch(error){
-    setStatus("No se pudo copiar automáticamente. Seleccioná el texto y copialo manualmente.");
-  }
+try{
+await navigator.clipboard.writeText(currentPlan);
+setStatus("¡Plan completo copiado correctamente! 💜");
+}catch(error){
+setStatus("No se pudo copiar automáticamente. Seleccioná el texto y copialo manualmente.");
+}
 }
 
 /* DESCARGAR */
 
 function descargarPlan(){
 
-  if(!currentPlan)return;
+if(!currentPlan)return;
 
-  const blob=new Blob(
-    [currentPlan],
-    {type:"text/plain;charset=utf-8"}
-  );
+const blob=new Blob([currentPlan],{type:"text/plain;charset=utf-8"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
 
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
+a.href=url;
+a.download="katia-video-studio-plan-completo.txt";
 
-  a.href=url;
-  a.download="katia-video-studio-plan-completo.txt";
+document.body.appendChild(a);
+a.click();
+a.remove();
 
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(()=>URL.revokeObjectURL(url),1500);
+setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
 /* GUARDAR PROYECTO */
 
 function guardarProyecto(){
 
-  if(!currentPlan){
-    setStatus("Primero necesitás generar un plan completo.");
-    return;
-  }
-
-  try{
-
-    let items=JSON.parse(
-      localStorage.getItem(PROJECTS_KEY)||"[]"
-    );
-
-    if(!Array.isArray(items)){
-      items=[];
-    }
-
-    items.unshift({
-      title:currentTitle,
-      plan:currentPlan,
-      date:new Date().toLocaleString("es"),
-      complete:true
-    });
-
-    localStorage.setItem(
-      PROJECTS_KEY,
-      JSON.stringify(items.slice(0,30))
-    );
-
-    renderProjects();
-    setStatus("Proyecto completo guardado en este dispositivo. 💜");
-
-  }catch(error){
-    setStatus("No se pudo guardar. El almacenamiento del navegador podría estar lleno.");
-  }
+if(!currentPlan){
+setStatus("Primero necesitás generar un plan completo.");
+return;
 }
 
-/* PROYECTOS GUARDADOS */
+try{
+
+let items=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");
+
+if(!Array.isArray(items))items=[];
+
+items.unshift({
+title:currentTitle,
+plan:currentPlan,
+date:new Date().toLocaleString("es"),
+complete:true
+});
+
+localStorage.setItem(PROJECTS_KEY,JSON.stringify(items.slice(0,30)));
+
+renderProjects();
+setStatus("Proyecto completo guardado en este dispositivo. 💜");
+
+}catch(error){
+setStatus("No se pudo guardar. El almacenamiento del navegador podría estar lleno.");
+}
+}
+
+/* PROYECTOS */
 
 function renderProjects(){
 
-  let items=[];
+let items=[];
 
-  try{
+try{
+items=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");
+if(!Array.isArray(items))items=[];
+}catch(error){
+items=[];
+}
 
-    items=JSON.parse(
-      localStorage.getItem(PROJECTS_KEY)||"[]"
-    );
+const box=$("projects");
+box.innerHTML="";
 
-    if(!Array.isArray(items)){
-      items=[];
-    }
+if(!items.length){
+box.innerHTML='<p class="note">Todavía no guardaste proyectos.</p>';
+return;
+}
 
-  }catch(error){
-    items=[];
-  }
+items.forEach(project=>{
 
-  const box=$("projects");
-  box.innerHTML="";
+const div=document.createElement("div");
+div.className="project";
 
-  if(!items.length){
-    box.innerHTML='<p class="note">Todavía no guardaste proyectos.</p>';
-    return;
-  }
+const title=document.createElement("strong");
+title.textContent=project.title||"Proyecto";
 
-  items.forEach(project=>{
+const date=document.createElement("small");
+date.textContent=project.date||"";
 
-    const div=document.createElement("div");
-    div.className="project";
+const open=document.createElement("button");
+open.className="secondary";
+open.textContent="Abrir";
 
-    const title=document.createElement("strong");
-    title.textContent=project.title||"Proyecto";
+open.onclick=()=>{
+currentPlan=project.plan||"";
+currentTitle=project.title||"Proyecto";
 
-    const date=document.createElement("small");
-    date.textContent=project.date||"";
+$("result").textContent=currentPlan;
+$("resultPanel").hidden=false;
 
-    const open=document.createElement("button");
-    open.className="secondary";
-    open.textContent="Abrir";
+$("resultPanel").scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+};
 
-    open.onclick=()=>{
-
-      currentPlan=project.plan||"";
-      currentTitle=project.title||"Proyecto";
-
-      $("result").textContent=currentPlan;
-      $("resultPanel").hidden=false;
-
-      $("resultPanel").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-    };
-
-    div.append(title,date,open);
-    box.appendChild(div);
-  });
+div.append(title,date,open);
+box.appendChild(div);
+});
 }
 
 renderProjects();
