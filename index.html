@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,575 +6,143 @@
 <meta name="theme-color" content="#090611">
 <title>Katia AI 💜</title>
 
+<!-- Biblioteca gratuita para crear PowerPoint -->
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@4.0.1/dist/pptxgen.bundle.js"></script>
+
 <style>
-:root {
-  --bg:#090611;
-  --panel:rgba(25,16,42,.78);
-  --purple:#a855f7;
-  --pink:#ec4899;
-  --cyan:#67e8f9;
-  --text:#f7f0ff;
-  --muted:#a99bbd;
+:root{
+  --bg:#090611;--panel:rgba(25,16,42,.86);
+  --purple:#a855f7;--pink:#ec4899;--cyan:#67e8f9;
+  --text:#f7f0ff;--muted:#a99bbd
 }
-
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  min-height:100vh;
-  color:var(--text);
-  background:
-    radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),
-    radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),
-    var(--bg);
-  font-family:Arial,Helvetica,sans-serif;
-  overflow-x:hidden;
+  margin:0;min-height:100vh;color:var(--text);
+  background:radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),
+  radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),var(--bg);
+  font-family:Arial,Helvetica,sans-serif;overflow-x:hidden
 }
-
 body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.18;
-  background-image:
-    linear-gradient(rgba(180,100,255,.12) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(180,100,255,.12) 1px,transparent 1px);
-  background-size:45px 45px;
-  mask-image:linear-gradient(to bottom,black,transparent);
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+  background-image:linear-gradient(rgba(180,100,255,.12) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(180,100,255,.12) 1px,transparent 1px);
+  background-size:45px 45px;mask-image:linear-gradient(to bottom,black,transparent)
 }
-
-body:after{
-  content:"";
-  position:fixed;
-  width:350px;
-  height:350px;
-  border-radius:50%;
-  background:#8b5cf6;
-  filter:blur(150px);
-  opacity:.12;
-  top:25%;
-  left:calc(50% - 175px);
-  pointer-events:none;
-}
-
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-
-.app{
-  position:relative;
-  z-index:1;
-  max-width:1150px;
-  min-height:100vh;
-  margin:auto;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-}
-
-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:8px 0 18px;
-  border-bottom:1px solid rgba(192,132,252,.15);
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:11px;
-}
-
-.brand-icon{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  font-size:22px;
-  background:linear-gradient(135deg,#a855f7,#ec4899);
-  box-shadow:0 0 25px #a855f755;
-}
-
-.brand h1{
-  font-size:19px;
-  margin:0;
-  letter-spacing:1px;
-}
-
-.brand small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:2px;
-  margin-top:4px;
-}
-
-.header-actions{display:flex;gap:8px}
-
-.icon-btn{
-  width:40px;
-  height:40px;
-  border:1px solid #a855f744;
-  border-radius:13px;
-  color:white;
-  background:#ffffff08;
-  font-size:17px;
-  transition:.2s;
-}
-
-.icon-btn:hover{
-  background:#a855f733;
-  box-shadow:0 0 18px #a855f744;
-}
-
-main{
-  flex:1;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:30px;
-  align-items:center;
-  padding:25px 0;
-}
-
-.left{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-width:0;
-}
-
-.orb-area{
-  width:100%;
-  min-height:340px;
-  display:grid;
-  place-items:center;
-  position:relative;
-}
-
-.orb{
-  width:205px;
-  height:205px;
-  position:relative;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 32% 28%,#ffffff 0%,#e9baff 4%,#bd73ff 13%,#8529d5 35%,#42106f 65%,#170625 100%);
-  box-shadow:
-    0 0 20px #c084fc,
-    0 0 55px #a855f799,
-    0 0 110px #9333ea66,
-    inset -15px -18px 35px #090313,
-    inset 10px 10px 25px #ffffff55;
-  animation:float 4s ease-in-out infinite;
-  transition:transform .12s,filter .3s;
-}
-
-.orb:before{
-  content:"";
-  position:absolute;
-  inset:-16px;
-  border-radius:50%;
-  border:1px solid #c084fc88;
-  box-shadow:0 0 22px #a855f766;
-  animation:rotate 12s linear infinite;
-}
-
-.orb:after{
-  content:"";
-  position:absolute;
-  inset:-32px;
-  border-radius:50%;
-  border:1px dashed #67e8f955;
-  animation:rotate 20s linear infinite reverse;
-}
-
-.orb-core{
-  position:absolute;
-  inset:22%;
-  border-radius:50%;
-  background:radial-gradient(circle,#fff 0%,#f0abfc 10%,#c084fc 35%,#7e22ce 75%,transparent 100%);
-  filter:blur(3px);
-  opacity:.8;
-  animation:core 3s ease-in-out infinite;
-}
-
-.orb-ring{
-  position:absolute;
-  width:270px;
-  height:90px;
-  border:2px solid #c084fc77;
-  border-radius:50%;
-  transform:rotate(-20deg);
-  box-shadow:0 0 18px #a855f744;
-  animation:ring 5s ease-in-out infinite;
-}
-
-.orb-ring.second{
-  width:290px;
-  height:110px;
-  transform:rotate(55deg);
-  border-color:#67e8f955;
-  animation-delay:-2s;
-}
-
-.orb-particles{
-  position:absolute;
-  inset:-75px;
-  border-radius:50%;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 20% 30%,#fff 0 2px,transparent 3px),
-    radial-gradient(circle at 80% 25%,#c084fc 0 2px,transparent 3px),
-    radial-gradient(circle at 75% 75%,#67e8f9 0 2px,transparent 3px),
-    radial-gradient(circle at 25% 80%,#fff 0 1px,transparent 3px);
-  animation:rotate 18s linear infinite;
-}
-
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
+.app{position:relative;z-index:1;max-width:1150px;min-height:100vh;margin:auto;padding:20px;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 18px;border-bottom:1px solid #c084fc22}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#a855f7,#ec4899);box-shadow:0 0 25px #a855f755}
+.brand h1{font-size:19px;margin:0;letter-spacing:1px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:4px}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.icon-btn{width:40px;height:40px;border:1px solid #a855f744;border-radius:13px;color:white;background:#ffffff08;font-size:17px}
+.office-open{border:1px solid #c084fc88;border-radius:13px;padding:11px 14px;color:white;background:linear-gradient(135deg,#9333ea,#6b21a8);font-size:12px;font-weight:bold;box-shadow:0 0 18px #a855f733}
+main{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:25px 0}
+.left{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.orb-area{width:100%;min-height:340px;display:grid;place-items:center;position:relative}
+.orb{width:205px;height:205px;position:relative;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0%,#e9baff 4%,#bd73ff 13%,#8529d5 35%,#42106f 65%,#170625 100%);box-shadow:0 0 20px #c084fc,0 0 55px #a855f799,0 0 110px #9333ea66,inset -15px -18px 35px #090313,inset 10px 10px 25px #ffffff55;animation:float 4s ease-in-out infinite;transition:transform .12s,filter .3s}
+.orb:before{content:"";position:absolute;inset:-16px;border-radius:50%;border:1px solid #c084fc88;box-shadow:0 0 22px #a855f766;animation:rotate 12s linear infinite}
+.orb:after{content:"";position:absolute;inset:-32px;border-radius:50%;border:1px dashed #67e8f955;animation:rotate 20s linear infinite reverse}
+.orb-core{position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle,#fff 0%,#f0abfc 10%,#c084fc 35%,#7e22ce 75%,transparent 100%);filter:blur(3px);opacity:.8;animation:core 3s ease-in-out infinite}
+.orb-ring{position:absolute;width:270px;height:90px;border:2px solid #c084fc77;border-radius:50%;transform:rotate(-20deg);box-shadow:0 0 18px #a855f744;animation:ring 5s ease-in-out infinite}
+.orb-ring.second{width:290px;height:110px;transform:rotate(55deg);border-color:#67e8f955;animation-delay:-2s}
+.orb-particles{position:absolute;inset:-75px;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 20% 30%,#fff 0 2px,transparent 3px),radial-gradient(circle at 80% 25%,#c084fc 0 2px,transparent 3px),radial-gradient(circle at 75% 75%,#67e8f9 0 2px,transparent 3px),radial-gradient(circle at 25% 80%,#fff 0 1px,transparent 3px);animation:rotate 18s linear infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 @keyframes rotate{to{transform:rotate(360deg)}}
-@keyframes core{
-  0%,100%{transform:scale(.9);opacity:.65}
-  50%{transform:scale(1.12);opacity:1}
-}
-@keyframes ring{
-  0%,100%{opacity:.45;scale:1}
-  50%{opacity:1;scale:1.08}
-}
-
-.orb.speaking{
-  animation:float 4s ease-in-out infinite,voicePulse .22s ease-in-out infinite alternate;
-  filter:brightness(1.35);
-}
-
-.orb.speaking:before{
-  border-width:3px;
-  box-shadow:0 0 35px #e879f9;
-}
-
-.orb.listening{
-  filter:hue-rotate(35deg) brightness(1.2);
-  animation:float 4s ease-in-out infinite,listenPulse 1s ease-in-out infinite;
-}
-
-.orb.thinking{
-  filter:hue-rotate(45deg);
-  animation:float 4s ease-in-out infinite,thinkPulse 1.2s ease-in-out infinite;
-}
-
-@keyframes voicePulse{
-  from{scale:1}
-  to{scale:1.075}
-}
-@keyframes listenPulse{
-  0%,100%{scale:1}
-  50%{scale:1.045}
-}
-@keyframes thinkPulse{
-  0%,100%{filter:hue-rotate(0deg) brightness(1)}
-  50%{filter:hue-rotate(65deg) brightness(1.5)}
-}
-
-.orb-status{
-  margin-top:28px;
-  text-align:center;
-}
-
-.orb-status strong{
-  display:block;
-  font-size:20px;
-  letter-spacing:2px;
-}
-
-.orb-status span{
-  color:var(--muted);
-  font-size:12px;
-  display:block;
-  margin-top:8px;
-}
-
-.status-dot{
-  display:inline-block;
-  width:7px;
-  height:7px;
-  background:#4ade80;
-  border-radius:50%;
-  margin-right:6px;
-  box-shadow:0 0 10px #4ade80;
-}
-
-.chat-panel{
-  min-width:0;
-  height:590px;
-  max-height:75vh;
-  display:flex;
-  flex-direction:column;
-  border:1px solid #a855f733;
-  background:var(--panel);
-  backdrop-filter:blur(18px);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 15px 60px #0005,0 0 35px #9333ea12;
-}
-
-.chat-top{
-  padding:17px 18px;
-  border-bottom:1px solid #a855f722;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.chat-top strong{font-size:14px;letter-spacing:1px}
-.chat-top small{font-size:11px;color:var(--muted)}
-
-.messages{
-  flex:1;
-  overflow-y:auto;
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  scroll-behavior:smooth;
-}
-
-.message{
-  max-width:88%;
-  padding:12px 14px;
-  border-radius:16px;
-  line-height:1.5;
-  font-size:14px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  animation:appear .25s ease;
-}
-
-@keyframes appear{
-  from{opacity:0;transform:translateY(7px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.message.katia{
-  align-self:flex-start;
-  background:linear-gradient(135deg,#51217a99,#301548bb);
-  border:1px solid #c084fc33;
-  border-bottom-left-radius:4px;
-}
-
-.message.user{
-  align-self:flex-end;
-  background:linear-gradient(135deg,#8b35c9,#6324a1);
-  border-bottom-right-radius:4px;
-}
-
-.message .sender{
-  display:block;
-  color:#e9baff;
-  font-size:10px;
-  letter-spacing:1px;
-  margin-bottom:5px;
-}
-
-.typing{
-  color:#d8b4fe;
-  font-size:12px;
-  padding:5px 14px;
-}
-
-.composer{
-  padding:13px;
-  border-top:1px solid #a855f722;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.composer input{
-  flex:1;
-  min-width:0;
-  color:white;
-  background:#ffffff0b;
-  border:1px solid #a855f744;
-  border-radius:14px;
-  padding:14px;
-  outline:none;
-}
-
-.composer input:focus{
-  border-color:#c084fc;
-  box-shadow:0 0 15px #a855f722;
-}
-
+@keyframes core{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.12);opacity:1}}
+@keyframes ring{0%,100%{opacity:.45;scale:1}50%{opacity:1;scale:1.08}}
+.orb.speaking{animation:float 4s ease-in-out infinite,voicePulse .22s ease-in-out infinite alternate;filter:brightness(1.35)}
+.orb.listening{filter:hue-rotate(35deg) brightness(1.2);animation:float 4s ease-in-out infinite,listenPulse 1s ease-in-out infinite}
+.orb.thinking{filter:hue-rotate(45deg);animation:float 4s ease-in-out infinite,thinkPulse 1.2s ease-in-out infinite}
+@keyframes voicePulse{from{scale:1}to{scale:1.075}}
+@keyframes listenPulse{0%,100%{scale:1}50%{scale:1.045}}
+@keyframes thinkPulse{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(65deg) brightness(1.5)}}
+.orb-status{margin-top:28px;text-align:center}
+.orb-status strong{display:block;font-size:20px;letter-spacing:2px}
+.orb-status span{color:var(--muted);font-size:12px;display:block;margin-top:8px}
+.status-dot{display:inline-block;width:7px;height:7px;background:#4ade80;border-radius:50%;margin-right:6px;box-shadow:0 0 10px #4ade80}
+.chat-panel{min-width:0;height:590px;max-height:75vh;display:flex;flex-direction:column;border:1px solid #a855f733;background:var(--panel);backdrop-filter:blur(18px);border-radius:22px;overflow:hidden;box-shadow:0 15px 60px #0005,0 0 35px #9333ea12}
+.chat-top{padding:17px 18px;border-bottom:1px solid #a855f722;display:flex;align-items:center;justify-content:space-between}
+.chat-top strong{font-size:14px;letter-spacing:1px}.chat-top small{font-size:11px;color:var(--muted)}
+.messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.message{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.5;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;animation:appear .25s ease}
+@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.message.katia{align-self:flex-start;background:linear-gradient(135deg,#51217a99,#301548bb);border:1px solid #c084fc33;border-bottom-left-radius:4px}
+.message.user{align-self:flex-end;background:linear-gradient(135deg,#8b35c9,#6324a1);border-bottom-right-radius:4px}
+.message .sender{display:block;color:#e9baff;font-size:10px;letter-spacing:1px;margin-bottom:5px}
+.typing{color:#d8b4fe;font-size:12px;padding:5px 14px}
+.composer{padding:13px;border-top:1px solid #a855f722;display:flex;align-items:center;gap:8px}
+.composer input{flex:1;min-width:0;color:white;background:#ffffff0b;border:1px solid #a855f744;border-radius:14px;padding:14px;outline:none}
+.composer input:focus{border-color:#c084fc;box-shadow:0 0 15px #a855f722}
 .composer input::placeholder{color:#9b8aaa}
+.send-btn,.mic-btn{border:0;width:44px;height:44px;border-radius:14px;color:white;font-size:18px;background:linear-gradient(135deg,#a855f7,#7e22ce);box-shadow:0 0 18px #a855f733}
+.mic-btn{background:#ffffff12;border:1px solid #a855f755}.mic-btn.active{background:#be185d;box-shadow:0 0 20px #ec4899}
+.quick-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:18px}
+.quick-actions button,.tool-btn{color:#e9d5ff;background:#ffffff08;border:1px solid #a855f744;border-radius:12px;padding:10px 13px;font-size:12px}
+.quick-actions button:hover,.tool-btn:hover{background:#a855f733;border-color:#c084fc}
+footer{text-align:center;color:#766784;font-size:10px;padding:12px 0 3px;letter-spacing:1px}
 
-.send-btn,.mic-btn{
-  border:0;
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  color:white;
-  font-size:18px;
-  background:linear-gradient(135deg,#a855f7,#7e22ce);
-  box-shadow:0 0 18px #a855f733;
-}
-
-.mic-btn{background:#ffffff12;border:1px solid #a855f755}
-.mic-btn.active{background:#be185d;box-shadow:0 0 20px #ec4899}
-
-.quick-actions{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:9px;
-  margin-top:18px;
-}
-
-.quick-actions button,.tool-btn{
-  color:#e9d5ff;
-  background:#ffffff08;
-  border:1px solid #a855f744;
-  border-radius:12px;
-  padding:10px 13px;
-  font-size:12px;
-  transition:.2s;
-}
-
-.quick-actions button:hover,.tool-btn:hover{
-  background:#a855f733;
-  border-color:#c084fc;
-}
-
-footer{
-  text-align:center;
-  color:#766784;
-  font-size:10px;
-  padding:12px 0 3px;
-  letter-spacing:1px;
-}
-
-/* PANEL LATERAL */
-
-.overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:10;
-  background:#0009;
-  backdrop-filter:blur(5px);
-}
-
+/* Panel lateral */
+.overlay{display:none;position:fixed;inset:0;z-index:10;background:#0009;backdrop-filter:blur(5px)}
 .overlay.open{display:block}
+.drawer{position:absolute;right:0;top:0;height:100%;width:min(390px,92vw);padding:22px;overflow-y:auto;background:#130c20;border-left:1px solid #a855f755;box-shadow:-15px 0 50px #0008}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.drawer h2{font-size:18px;margin:0}.drawer h3{font-size:13px;color:#d8b4fe;margin-top:24px}
+.drawer textarea,.drawer input,.drawer select{width:100%;padding:12px;margin:7px 0;border-radius:12px;border:1px solid #a855f744;background:#ffffff0b;color:white;outline:none}
+.drawer textarea{min-height:90px;resize:vertical}.drawer select option{background:#160d22}
+.drawer button.action{width:100%;padding:12px;border:0;border-radius:12px;color:white;background:linear-gradient(135deg,#9333ea,#6b21a8);margin-top:8px}
+.drawer .item{background:#ffffff09;border:1px solid #a855f722;padding:11px;border-radius:11px;margin:8px 0;font-size:12px;overflow-wrap:anywhere}
+.drawer .item button{float:right;color:#f9a8d4;border:0;background:transparent}
+.drawer label{color:#bdaaca;font-size:11px;display:block;margin-top:12px}
+.small-note{color:#9584a5;font-size:11px;line-height:1.5}
 
-.drawer{
-  position:absolute;
-  right:0;
-  top:0;
-  height:100%;
-  width:min(390px,92vw);
-  padding:22px;
-  overflow-y:auto;
-  background:#130c20;
-  border-left:1px solid #a855f755;
-  box-shadow:-15px 0 50px #0008;
-}
-
-.drawer-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:22px;
-}
-
-.drawer h2{font-size:18px;margin:0}
-.drawer h3{font-size:13px;color:#d8b4fe;margin-top:24px}
-
-.drawer textarea,.drawer input,.drawer select{
-  width:100%;
-  padding:12px;
-  margin:7px 0;
-  border-radius:12px;
-  border:1px solid #a855f744;
-  background:#ffffff0b;
-  color:white;
-  outline:none;
-}
-
-.drawer textarea{min-height:90px;resize:vertical}
-.drawer select option{background:#160d22}
-
-.drawer button.action{
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:12px;
-  color:white;
-  background:linear-gradient(135deg,#9333ea,#6b21a8);
-  margin-top:8px;
-}
-
-.drawer .item{
-  background:#ffffff09;
-  border:1px solid #a855f722;
-  padding:11px;
-  border-radius:11px;
-  margin:8px 0;
-  font-size:12px;
-  overflow-wrap:anywhere;
-}
-
-.drawer .item button{
-  float:right;
-  color:#f9a8d4;
-  border:0;
-  background:transparent;
-}
-
-.drawer label{
-  color:#bdaaca;
-  font-size:11px;
-  display:block;
-  margin-top:12px;
-}
-
-.small-note{
-  color:#9584a5;
-  font-size:11px;
-  line-height:1.5;
-}
-
+/* Katia Office Studio */
+.office-overlay{display:none;position:fixed;inset:0;z-index:30;background:#080510f5;backdrop-filter:blur(15px);overflow-y:auto;padding:18px}
+.office-overlay.open{display:block}
+.office-wrap{max-width:850px;margin:12px auto 40px;border:1px solid #a855f755;border-radius:22px;background:linear-gradient(145deg,#1b102b,#0e0918);padding:22px;box-shadow:0 0 60px #9333ea22}
+.office-head{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #a855f733;padding-bottom:16px}
+.office-head h2{margin:0;font-size:21px}
+.office-head p{color:var(--muted);font-size:12px;margin:6px 0 0}
+.office-close{border:1px solid #a855f755;border-radius:12px;background:#ffffff0b;color:white;padding:10px 13px}
+.office-intro{padding:16px;border:1px solid #a855f733;border-radius:16px;background:#a855f70d;margin:18px 0}
+.office-intro strong{color:#e9baff}
+.office-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.office-field{margin:10px 0}
+.office-field label{display:block;color:#d8b4fe;font-size:12px;margin-bottom:7px}
+.office-field input,.office-field textarea,.office-field select{width:100%;padding:13px;border-radius:12px;border:1px solid #a855f755;background:#ffffff0b;color:white;outline:none}
+.office-field textarea{min-height:115px;resize:vertical}
+.office-field select option{background:#160d22;color:white}
+.office-primary{width:100%;padding:15px;border:0;border-radius:13px;color:white;font-weight:bold;background:linear-gradient(110deg,#9333ea,#c026d3);box-shadow:0 0 25px #a855f733;margin-top:12px}
+.office-primary:disabled{opacity:.5;cursor:wait}
+.office-status{font-size:12px;color:#c4b5fd;min-height:22px;margin-top:12px;white-space:pre-wrap}
+.office-modules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.office-module{border:1px solid #a855f733;border-radius:13px;padding:13px;background:#ffffff06}
+.office-module strong{display:block;font-size:13px;margin-bottom:5px}
+.office-module small{font-size:10px;color:var(--muted)}
 @media(max-width:760px){
-  .app{padding:14px}
-  main{grid-template-columns:1fr;gap:10px;padding:12px 0}
-  .orb-area{min-height:285px}
-  .orb{width:155px;height:155px}
-  .orb-ring{width:215px;height:70px}
-  .orb-ring.second{width:235px;height:85px}
-  .orb-status{margin-top:14px}
-  .chat-panel{height:480px;max-height:58vh}
-  .brand h1{font-size:16px}
-  footer{padding-bottom:10px}
+  .app{padding:14px}main{grid-template-columns:1fr;gap:10px;padding:12px 0}
+  .orb-area{min-height:285px}.orb{width:155px;height:155px}
+  .orb-ring{width:215px;height:70px}.orb-ring.second{width:235px;height:85px}
+  .orb-status{margin-top:14px}.chat-panel{height:480px;max-height:58vh}
+  .brand h1{font-size:16px}footer{padding-bottom:10px}
+  .office-overlay{padding:8px}.office-wrap{padding:15px;margin:5px auto 20px}
+  .office-grid{grid-template-columns:1fr}.office-modules{grid-template-columns:1fr 1fr}
+  .office-head h2{font-size:17px}
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-
 <header>
   <div class="brand">
     <div class="brand-icon">💜</div>
-    <div>
-      <h1>KATIA AI</h1>
-      <small>YOUR VIRTUAL COMPANION</small>
-    </div>
+    <div><h1>KATIA AI</h1><small>YOUR VIRTUAL COMPANION</small></div>
   </div>
-
   <div class="header-actions">
+    <button class="office-open" onclick="abrirOffice()">🏢 Office Studio</button>
     <button class="icon-btn" onclick="abrirPanel('memory')" title="Memoria">🧠</button>
     <button class="icon-btn" onclick="abrirPanel('settings')" title="Configuración">⚙️</button>
   </div>
@@ -584,19 +151,14 @@ footer{
 <main>
   <section class="left">
     <div class="orb-area">
-      <div class="orb-ring"></div>
-      <div class="orb-ring second"></div>
+      <div class="orb-ring"></div><div class="orb-ring second"></div>
       <div class="orb-particles"></div>
-      <div class="orb" id="orb">
-        <div class="orb-core"></div>
-      </div>
+      <div class="orb" id="orb"><div class="orb-core"></div></div>
     </div>
-
     <div class="orb-status">
       <strong>KATIA</strong>
       <span id="statusText"><i class="status-dot"></i> En línea · Lista para hablar</span>
     </div>
-
     <div class="quick-actions">
       <button onclick="saludar()">💜 Saludar</button>
       <button onclick="leerUltimo()">🔊 Repetir voz</button>
@@ -607,20 +169,12 @@ footer{
 
   <section class="chat-panel">
     <div class="chat-top">
-      <div>
-        <strong>CONVERSACIÓN</strong><br>
-        <small>Un espacio entre vos y Katia 💜</small>
-      </div>
+      <div><strong>CONVERSACIÓN</strong><br><small>Un espacio entre vos y Katia 💜</small></div>
       <button class="icon-btn" onclick="limpiarChat()" title="Limpiar conversación">🗑️</button>
     </div>
-
     <div class="messages" id="messages">
-      <div class="message katia">
-        <span class="sender">KATIA 💜</span>
-        ¡Holaaa! Estoy acá. ¿De qué hablamos hoy? ✨
-      </div>
+      <div class="message katia"><span class="sender">KATIA 💜</span>¡Holaaa! Estoy acá. ¿De qué hablamos hoy? ✨</div>
     </div>
-
     <div class="composer">
       <button class="mic-btn" id="micButton" onclick="alternarMicrofono()" title="Hablar">🎙️</button>
       <input id="userInput" type="text" placeholder="Escribile algo a Katia..." autocomplete="off">
@@ -628,734 +182,655 @@ footer{
     </div>
   </section>
 </main>
-
 <footer>KATIA AI · UN UNIVERSO DE POSIBILIDADES 💜</footer>
 </div>
 
-<!-- PANEL -->
-
+<!-- Panel de memoria y configuración -->
 <div class="overlay" id="overlay" onclick="cerrarPanel(event)">
   <aside class="drawer" onclick="event.stopPropagation()">
     <div class="drawer-head">
       <h2 id="panelTitle">Configuración</h2>
       <button class="icon-btn" onclick="cerrarPanel()">✕</button>
     </div>
-
     <div id="panelContent"></div>
   </aside>
 </div>
 
+<!-- Katia Office Studio -->
+<div class="office-overlay" id="officeOverlay">
+  <div class="office-wrap">
+    <div class="office-head">
+      <div>
+        <h2>🏢 Katia Office Studio</h2>
+        <p>Documentos profesionales creados con inteligencia artificial.</p>
+      </div>
+      <button class="office-close" onclick="cerrarOffice()">✕ Cerrar</button>
+    </div>
+
+    <div class="office-intro">
+      <strong>✨ PowerPoint Studio</strong>
+      <p class="small-note">Creá presentaciones con portada, estructura, contenido organizado y conclusión. Katia preparará el contenido y lo convertirá en un archivo PowerPoint editable.</p>
+    </div>
+
+    <div class="office-grid">
+      <div class="office-field">
+        <label for="pptTitle">Título de la presentación</label>
+        <input id="pptTitle" placeholder="Ej.: El cambio climático">
+      </div>
+      <div class="office-field">
+        <label for="pptSubtitle">Subtítulo (opcional)</label>
+        <input id="pptSubtitle" placeholder="Ej.: Causas, consecuencias y soluciones">
+      </div>
+      <div class="office-field">
+        <label for="pptAudience">¿Para quién es?</label>
+        <select id="pptAudience">
+          <option value="Presentación escolar">Presentación escolar</option>
+          <option value="Presentación universitaria">Presentación universitaria</option>
+          <option value="Presentación profesional">Presentación profesional</option>
+          <option value="Presentación empresarial">Presentación empresarial</option>
+          <option value="Público general">Público general</option>
+        </select>
+      </div>
+      <div class="office-field">
+        <label for="pptCount">Cantidad de diapositivas</label>
+        <select id="pptCount">
+          <option value="5">5 diapositivas</option>
+          <option value="8" selected>8 diapositivas</option>
+          <option value="10">10 diapositivas</option>
+          <option value="12">12 diapositivas</option>
+        </select>
+      </div>
+      <div class="office-field">
+        <label for="pptStyle">Estilo visual</label>
+        <select id="pptStyle">
+          <option value="Violeta futurista">Violeta futurista</option>
+          <option value="Azul corporativo">Azul corporativo</option>
+          <option value="Verde moderno">Verde moderno</option>
+          <option value="Elegante oscuro">Elegante oscuro</option>
+          <option value="Claro minimalista">Claro minimalista</option>
+        </select>
+      </div>
+      <div class="office-field">
+        <label for="pptAuthor">Autor o institución (opcional)</label>
+        <input id="pptAuthor" placeholder="Nombre, colegio o empresa">
+      </div>
+    </div>
+
+    <div class="office-field">
+      <label for="pptDetails">Información e indicaciones para Katia</label>
+      <textarea id="pptDetails" placeholder="Contale qué debe incluir. Podés pegar información, objetivos, temas, datos, nombres o instrucciones. Cuanto más contexto le des, mejor será la presentación."></textarea>
+    </div>
+
+    <button class="office-primary" id="pptGenerate" onclick="crearPowerPoint()">✨ Crear PowerPoint profesional</button>
+    <div class="office-status" id="officeStatus"></div>
+
+    <div class="office-modules">
+      <div class="office-module"><strong>📊 Excel Studio</strong><small>Próxima etapa</small></div>
+      <div class="office-module"><strong>📝 Word Studio</strong><small>Próxima etapa</small></div>
+      <div class="office-module"><strong>📕 PDF Studio</strong><small>Próxima etapa</small></div>
+    </div>
+  </div>
+</div>
+
 <script>
-/* =========================================
-   CONFIGURACIÓN PRINCIPAL
-========================================= */
-
-const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
-
-const STORAGE = {
-  history:"katia_history_4",
-  memories:"katia_memories_4",
-  diary:"katia_diary_4",
-  likes:"katia_likes_4",
-  name:"katia_user_name_4",
-  gemini:"katia_gemini_key_4",
+/* CONFIGURACIÓN PRINCIPAL */
+const KATIA_API="https://katia-braine.gio09062009.workers.dev/";
+const STORAGE={
+  history:"katia_history_4",memories:"katia_memories_4",
+  diary:"katia_diary_4",likes:"katia_likes_4",
+  name:"katia_user_name_4",gemini:"katia_gemini_key_4",
   provider:"katia_provider_4"
 };
 
-let historial = cargar(STORAGE.history,[]);
-let recuerdos = cargar(STORAGE.memories,[]);
-let diario = cargar(STORAGE.diary,[]);
-let gustos = cargar(STORAGE.likes,[]);
-let ultimoMensajeKatia = "";
-let ultimoTextoVoz = "";
-let reconociendo = false;
-let recognition = null;
-let speaking = false;
+let historial=cargar(STORAGE.history,[]);
+let recuerdos=cargar(STORAGE.memories,[]);
+let diario=cargar(STORAGE.diary,[]);
+let gustos=cargar(STORAGE.likes,[]);
+let ultimoMensajeKatia="";
+let ultimoTextoVoz="";
+let reconociendo=false;
+let recognition=null;
+let speaking=false;
 
-function cargar(key, fallback){
-  try{
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : fallback;
-  }catch(e){return fallback}
+function cargar(key,fallback){
+  try{const data=localStorage.getItem(key);return data?JSON.parse(data):fallback}
+  catch(e){return fallback}
 }
-
 function guardar(key,value){
-  localStorage.setItem(key,JSON.stringify(value));
+  try{localStorage.setItem(key,JSON.stringify(value))}
+  catch(e){console.warn("No se pudo guardar en el dispositivo",e)}
 }
 
-/* =========================================
-   ESTADOS DE LA ESFERA
-========================================= */
-
-const orb = document.getElementById("orb");
-const statusText = document.getElementById("statusText");
-
+/* ESTADOS DE LA ESFERA */
+const orb=document.getElementById("orb");
+const statusText=document.getElementById("statusText");
 function estadoOrb(estado){
   orb.classList.remove("speaking","listening","thinking");
-
-  if(estado==="speaking"){
-    orb.classList.add("speaking");
-    statusText.textContent="🔊 Katia está hablando...";
-  }else if(estado==="listening"){
-    orb.classList.add("listening");
-    statusText.textContent="🎙️ Te estoy escuchando...";
-  }else if(estado==="thinking"){
-    orb.classList.add("thinking");
-    statusText.textContent="✨ Estoy pensando...";
-  }else{
-    statusText.innerHTML='<i class="status-dot"></i> En línea · Lista para hablar';
-  }
+  if(estado==="speaking"){orb.classList.add("speaking");statusText.textContent="🔊 Katia está hablando..."}
+  else if(estado==="listening"){orb.classList.add("listening");statusText.textContent="🎙️ Te estoy escuchando..."}
+  else if(estado==="thinking"){orb.classList.add("thinking");statusText.textContent="✨ Estoy pensando..."}
+  else statusText.innerHTML='<i class="status-dot"></i> En línea · Lista para hablar';
 }
 
-/* =========================================
-   CHAT
-========================================= */
-
-const messagesBox = document.getElementById("messages");
-const input = document.getElementById("userInput");
-
-input.addEventListener("keydown",e=>{
-  if(e.key==="Enter") enviarMensaje();
-});
+/* CHAT */
+const messagesBox=document.getElementById("messages");
+const input=document.getElementById("userInput");
+input.addEventListener("keydown",e=>{if(e.key==="Enter")enviarMensaje()});
 
 function agregarMensaje(texto,tipo,guardarHistorial=true){
-  const div=document.createElement("div");
-  div.className="message "+tipo;
-
-  const sender=document.createElement("span");
-  sender.className="sender";
+  const div=document.createElement("div");div.className="message "+tipo;
+  const sender=document.createElement("span");sender.className="sender";
   sender.textContent=tipo==="user"?"VOS":"KATIA 💜";
-
-  const content=document.createElement("div");
-  content.textContent=texto;
-
-  div.appendChild(sender);
-  div.appendChild(content);
-  messagesBox.appendChild(div);
+  const content=document.createElement("div");content.textContent=texto;
+  div.appendChild(sender);div.appendChild(content);messagesBox.appendChild(div);
   messagesBox.scrollTop=messagesBox.scrollHeight;
-
   if(guardarHistorial){
     historial.push({role:tipo==="user"?"user":"assistant",content:texto});
-    if(historial.length>60) historial=historial.slice(-60);
+    if(historial.length>60)historial=historial.slice(-60);
     guardar(STORAGE.history,historial);
   }
 }
-
 function mostrarTyping(){
-  const div=document.createElement("div");
-  div.className="typing";
-  div.id="typing";
-  div.textContent="Katia está pensando...";
-  messagesBox.appendChild(div);
-  messagesBox.scrollTop=messagesBox.scrollHeight;
+  const div=document.createElement("div");div.className="typing";
+  div.id="typing";div.textContent="Katia está pensando...";
+  messagesBox.appendChild(div);messagesBox.scrollTop=messagesBox.scrollHeight;
 }
-
-function quitarTyping(){
-  const t=document.getElementById("typing");
-  if(t)t.remove();
-}
+function quitarTyping(){const t=document.getElementById("typing");if(t)t.remove()}
 
 async function enviarMensaje(){
-  const texto=input.value.trim();
-  if(!texto)return;
-
-  input.value="";
-  agregarMensaje(texto,"user");
-  estadoOrb("thinking");
-  mostrarTyping();
-
+  const texto=input.value.trim();if(!texto)return;
+  input.value="";agregarMensaje(texto,"user");estadoOrb("thinking");mostrarTyping();
   try{
     const respuesta=await responderConIA(texto);
-    quitarTyping();
-    agregarMensaje(respuesta,"katia");
-    ultimoMensajeKatia=respuesta;
-    hablar(respuesta);
+    quitarTyping();agregarMensaje(respuesta,"katia");
+    ultimoMensajeKatia=respuesta;hablar(respuesta);
   }catch(error){
     quitarTyping();
     const mensaje="Uy, tuve un problema al conectarme. Revisá tu conexión e intentá otra vez. 💜";
-    agregarMensaje(mensaje,"katia");
-    ultimoMensajeKatia=mensaje;
-    estadoOrb("idle");
-    console.error(error);
+    agregarMensaje(mensaje,"katia");ultimoMensajeKatia=mensaje;
+    estadoOrb("idle");console.error(error);
   }
 }
 
-/* =========================================
-   MEMORIA Y CONTEXTO
-========================================= */
-
+/* MEMORIA Y CONTEXTO */
 function construirMensajesIA(texto){
   const nombre=localStorage.getItem(STORAGE.name)||"";
-
-  let contexto=
-    "Tu nombre es Katia. Sos una asistente virtual amigable, cercana, alegre y conversadora. "+
-    "Hablás español de manera natural. Respondé con claridad y personalidad. "+
-    "No inventes recuerdos ni afirmes que recordás algo que no está en el contexto.";
-
-  if(nombre) contexto+=" El nombre del usuario es "+nombre+".";
-
-  if(recuerdos.length){
-    contexto+="\n\nRECUERDOS IMPORTANTES DEL USUARIO:\n"+
-      recuerdos.map(x=>"- "+x).join("\n");
-  }
-
-  if(gustos.length){
-    contexto+="\n\nGUSTOS Y PREFERENCIAS:\n"+
-      gustos.map(x=>"- "+x).join("\n");
-  }
-
-  if(diario.length){
-    contexto+="\n\nNOTAS DEL DIARIO:\n"+
-      diario.slice(-8).map(x=>"- "+x.texto).join("\n");
-  }
-
-  const mensajes=[
-    {role:"system",content:contexto}
-  ];
-
-  historial.slice(-20).forEach(m=>{
-    mensajes.push({role:m.role,content:m.content});
-  });
-
-  /*
-    CORRECCIÓN:
-    El mensaje actual ya fue guardado en historial
-    por agregarMensaje(texto,"user") dentro de enviarMensaje().
-    Por eso NO debemos volver a agregarlo aquí.
-  */
-
+  let contexto="Tu nombre es Katia. Sos una asistente virtual amigable, cercana, alegre y conversadora. Hablás español de manera natural. Respondé con claridad y personalidad. No inventes recuerdos ni afirmes que recordás algo que no está en el contexto.";
+  if(nombre)contexto+=" El nombre del usuario es "+nombre+".";
+  if(recuerdos.length)contexto+="\n\nRECUERDOS IMPORTANTES DEL USUARIO:\n"+recuerdos.map(x=>"- "+x).join("\n");
+  if(gustos.length)contexto+="\n\nGUSTOS Y PREFERENCIAS:\n"+gustos.map(x=>"- "+x).join("\n");
+  if(diario.length)contexto+="\n\nNOTAS DEL DIARIO:\n"+diario.slice(-8).map(x=>"- "+x.texto).join("\n");
+  const mensajes=[{role:"system",content:contexto}];
+  historial.slice(-20).forEach(m=>mensajes.push({role:m.role,content:m.content}));
+  // El mensaje actual ya está guardado en historial. No se duplica.
   return mensajes;
 }
 
-/* =========================================
-   CONEXIÓN CON EL WORKER
-========================================= */
-
+/* CONEXIÓN CON EL WORKER */
 async function responderConIA(texto){
   const proveedor=localStorage.getItem(STORAGE.provider)||"groq";
-
-  if(proveedor==="gemini"){
-    return await responderGemini(texto);
-  }
-
+  if(proveedor==="gemini")return await responderGemini(texto);
   const mensajes=construirMensajesIA(texto);
-
   const response=await fetch(KATIA_API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
+    method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({messages:mensajes})
   });
-
-  if(!response.ok){
-    throw new Error("Error del servidor: "+response.status);
-  }
-
+  if(!response.ok)throw new Error("Error del servidor: "+response.status);
   const datos=await response.json();
-
-  if(!datos.reply){
-    throw new Error("El servidor no devolvió una respuesta válida.");
-  }
-
+  if(!datos.reply)throw new Error("El servidor no devolvió una respuesta válida.");
   return datos.reply;
 }
 
-/* =========================================
-   OPCIÓN GEMINI
-========================================= */
-
+/* GEMINI */
 async function responderGemini(texto){
   const key=localStorage.getItem(STORAGE.gemini);
-
-  if(!key){
-    throw new Error("Falta configurar la API key de Gemini.");
-  }
-
+  if(!key)throw new Error("Falta configurar la API key de Gemini.");
   const mensajes=construirMensajesIA(texto);
-
-  const contents=mensajes
-    .filter(m=>m.role!=="system")
-    .map(m=>({
-      role:m.role==="assistant"?"model":"user",
-      parts:[{text:m.content}]
-    }));
-
-  contents.unshift({
-    role:"user",
-    parts:[{text:mensajes[0].content}]
-  });
-
+  const contents=mensajes.filter(m=>m.role!=="system").map(m=>({
+    role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]
+  }));
+  contents.unshift({role:"user",parts:[{text:mensajes[0].content}]});
   const response=await fetch(
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+encodeURIComponent(key),
-    {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({contents})
-    }
+    {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents})}
   );
-
   const data=await response.json();
-
-  if(!response.ok){
-    throw new Error(data.error?.message||"Error de Gemini");
-  }
-
-  const reply=data.candidates?.[0]?.content?.parts
-    ?.map(p=>p.text||"").join("");
-
+  if(!response.ok)throw new Error(data.error?.message||"Error de Gemini");
+  const reply=data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("");
   if(!reply)throw new Error("Gemini no devolvió una respuesta.");
-
   return reply;
 }
 
-/* =========================================
-   VOZ DE KATIA
-========================================= */
-
+/* VOZ */
 function hablar(texto){
-  if(!("speechSynthesis" in window)){
-    estadoOrb("idle");
-    return;
-  }
-
+  if(!("speechSynthesis" in window)){estadoOrb("idle");return}
   speechSynthesis.cancel();
-
-  const limpio=texto
-    .replace(/[*_`#]/g,"")
-    .replace(/https?:\/\/\S+/g,"enlace");
-
+  const limpio=texto.replace(/[*_`#]/g,"").replace(/https?:\/\/\S+/g,"enlace");
   const utterance=new SpeechSynthesisUtterance(limpio);
-  utterance.lang="es-ES";
-  utterance.rate=1;
-  utterance.pitch=1.12;
-  utterance.volume=1;
-
+  utterance.lang="es-ES";utterance.rate=1;utterance.pitch=1.12;utterance.volume=1;
   const voices=speechSynthesis.getVoices();
   const voz=voices.find(v=>v.lang.toLowerCase().startsWith("es"));
   if(voz)utterance.voice=voz;
-
-  utterance.onstart=()=>{
-    speaking=true;
-    estadoOrb("speaking");
-  };
-
-  utterance.onboundary=()=>{
-    orb.animate([
-      {transform:"scale(1)"},
-      {transform:"scale(1.10)"},
-      {transform:"scale(1)"}
-    ],{
-      duration:260,
-      easing:"ease-out"
-    });
-  };
-
-  utterance.onend=()=>{
-    speaking=false;
-    estadoOrb("idle");
-  };
-
-  utterance.onerror=()=>{
-    speaking=false;
-    estadoOrb("idle");
-  };
-
-  speechSynthesis.speak(utterance);
-  ultimoTextoVoz=texto;
+  utterance.onstart=()=>{speaking=true;estadoOrb("speaking")};
+  utterance.onboundary=()=>orb.animate(
+    [{transform:"scale(1)"},{transform:"scale(1.10)"},{transform:"scale(1)"}],
+    {duration:260,easing:"ease-out"}
+  );
+  utterance.onend=()=>{speaking=false;estadoOrb("idle")};
+  utterance.onerror=()=>{speaking=false;estadoOrb("idle")};
+  speechSynthesis.speak(utterance);ultimoTextoVoz=texto;
 }
-
-function leerUltimo(){
-  if(ultimoMensajeKatia) hablar(ultimoMensajeKatia);
-}
-
+function leerUltimo(){if(ultimoMensajeKatia)hablar(ultimoMensajeKatia)}
 function detenerVoz(){
-  if("speechSynthesis" in window){
-    speechSynthesis.cancel();
-  }
-  speaking=false;
-  estadoOrb("idle");
+  if("speechSynthesis" in window)speechSynthesis.cancel();
+  speaking=false;estadoOrb("idle");
 }
 
-/* =========================================
-   MICRÓFONO / RECONOCIMIENTO DE VOZ
-========================================= */
-
+/* MICRÓFONO */
 function prepararMicrofono(){
-  const SpeechRecognition=
-    window.SpeechRecognition||window.webkitSpeechRecognition;
-
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SpeechRecognition)return false;
-
-  recognition=new SpeechRecognition();
-  recognition.lang="es-ES";
-  recognition.continuous=false;
-  recognition.interimResults=false;
-
+  recognition=new SpeechRecognition();recognition.lang="es-ES";
+  recognition.continuous=false;recognition.interimResults=false;
   recognition.onstart=()=>{
-    reconociendo=true;
-    document.getElementById("micButton").classList.add("active");
+    reconociendo=true;document.getElementById("micButton").classList.add("active");
     estadoOrb("listening");
   };
-
-  recognition.onresult=event=>{
-    const texto=event.results[0][0].transcript;
-    input.value=texto;
-    enviarMensaje();
-  };
-
+  recognition.onresult=event=>{input.value=event.results[0][0].transcript;enviarMensaje()};
   recognition.onerror=()=>{
-    reconociendo=false;
-    document.getElementById("micButton").classList.remove("active");
-    estadoOrb("idle");
+    reconociendo=false;document.getElementById("micButton").classList.remove("active");estadoOrb("idle");
   };
-
   recognition.onend=()=>{
-    reconociendo=false;
-    document.getElementById("micButton").classList.remove("active");
+    reconociendo=false;document.getElementById("micButton").classList.remove("active");
     if(!speaking)estadoOrb("idle");
   };
-
   return true;
 }
-
 function alternarMicrofono(){
-  if(!recognition){
-    if(!prepararMicrofono()){
-      alert("Tu navegador no admite reconocimiento de voz. Probá con Chrome.");
-      return;
-    }
+  if(!recognition&&!prepararMicrofono()){
+    alert("Tu navegador no admite reconocimiento de voz. Probá con Chrome.");return;
   }
-
-  if(reconociendo){
-    recognition.stop();
-  }else{
-    detenerVoz();
-    recognition.start();
-  }
+  if(reconociendo)recognition.stop();
+  else{detenerVoz();recognition.start()}
 }
 
-/* =========================================
-   ACCIONES RÁPIDAS
-========================================= */
-
+/* ACCIONES RÁPIDAS */
 function saludar(){
   const nombre=localStorage.getItem(STORAGE.name);
-  const saludo=nombre
-    ?"¡Holaaa, "+nombre+"! 💜 ¿Cómo estás hoy?"
-    :"¡Holaaa! 💜 Me alegra que estés acá. ¿Cómo va todo?";
-
-  agregarMensaje(saludo,"katia");
-  ultimoMensajeKatia=saludo;
-  hablar(saludo);
+  const saludo=nombre?"¡Holaaa, "+nombre+"! 💜 ¿Cómo estás hoy?":"¡Holaaa! 💜 Me alegra que estés acá. ¿Cómo va todo?";
+  agregarMensaje(saludo,"katia");ultimoMensajeKatia=saludo;hablar(saludo);
 }
-
 function limpiarChat(){
   if(!confirm("¿Querés limpiar la conversación visible?"))return;
-  historial=[];
-  guardar(STORAGE.history,historial);
-  messagesBox.innerHTML="";
+  historial=[];guardar(STORAGE.history,historial);messagesBox.innerHTML="";
   const bienvenida="¡Conversación limpia! Seguimos desde acá. 💜";
-  agregarMensaje(bienvenida,"katia",false);
-  ultimoMensajeKatia=bienvenida;
+  agregarMensaje(bienvenida,"katia",false);ultimoMensajeKatia=bienvenida;
 }
 
-/* =========================================
-   PANELES
-========================================= */
-
+/* PANELES */
 const overlay=document.getElementById("overlay");
 const panelTitle=document.getElementById("panelTitle");
 const panelContent=document.getElementById("panelContent");
-
 function abrirPanel(tipo){
   overlay.classList.add("open");
-
-  if(tipo==="memory"){
-    panelTitle.textContent="🧠 Memoria de Katia";
-    renderMemoria();
-  }
-
-  if(tipo==="diary"){
-    panelTitle.textContent="📖 Diario";
-    renderDiario();
-  }
-
-  if(tipo==="likes"){
-    panelTitle.textContent="✨ Gustos y preferencias";
-    renderGustos();
-  }
-
-  if(tipo==="settings"){
-    panelTitle.textContent="⚙️ Configuración";
-    renderSettings();
-  }
+  if(tipo==="memory"){panelTitle.textContent="🧠 Memoria de Katia";renderMemoria()}
+  if(tipo==="diary"){panelTitle.textContent="📖 Diario";renderDiario()}
+  if(tipo==="likes"){panelTitle.textContent="✨ Gustos y preferencias";renderGustos()}
+  if(tipo==="settings"){panelTitle.textContent="⚙️ Configuración";renderSettings()}
 }
-
 function cerrarPanel(event){
-  if(!event||event.target===overlay){
-    overlay.classList.remove("open");
-  }
+  if(!event||event.target===overlay)overlay.classList.remove("open");
 }
 
-/* =========================================
-   MEMORIA
-========================================= */
-
+/* MEMORIA */
 function renderMemoria(){
   panelContent.innerHTML=`
-    <p class="small-note">
-      Estos recuerdos se guardan en este dispositivo y se utilizan
-      para darle contexto a las conversaciones de Katia.
-    </p>
+    <p class="small-note">Estos recuerdos se guardan en este dispositivo y se utilizan para darle contexto a las conversaciones de Katia.</p>
     <h3>Guardar un recuerdo</h3>
     <textarea id="memoryInput" placeholder="Ejemplo: Mi color favorito es el violeta..."></textarea>
     <button class="action" onclick="guardarRecuerdo()">Guardar recuerdo</button>
-    <h3>Recuerdos guardados</h3>
-    <div id="memoryList"></div>
-  `;
-
+    <h3>Recuerdos guardados</h3><div id="memoryList"></div>`;
   const list=document.getElementById("memoryList");
-
-  if(!recuerdos.length){
-    list.innerHTML='<p class="small-note">Todavía no hay recuerdos guardados.</p>';
-  }
-
+  if(!recuerdos.length)list.innerHTML='<p class="small-note">Todavía no hay recuerdos guardados.</p>';
   recuerdos.forEach((r,i)=>{
-    const div=document.createElement("div");
-    div.className="item";
-    div.textContent=r;
-
-    const btn=document.createElement("button");
-    btn.textContent="✕";
-    btn.onclick=()=>eliminarRecuerdo(i);
-
-    div.appendChild(btn);
-    list.appendChild(div);
+    const div=document.createElement("div");div.className="item";div.textContent=r;
+    const btn=document.createElement("button");btn.textContent="✕";btn.onclick=()=>eliminarRecuerdo(i);
+    div.appendChild(btn);list.appendChild(div);
   });
 }
-
 function guardarRecuerdo(){
-  const input=document.getElementById("memoryInput");
-  const texto=input.value.trim();
-  if(!texto)return;
-
-  recuerdos.push(texto);
-  guardar(STORAGE.memories,recuerdos);
-  renderMemoria();
+  const input=document.getElementById("memoryInput");const texto=input.value.trim();if(!texto)return;
+  recuerdos.push(texto);guardar(STORAGE.memories,recuerdos);renderMemoria();
 }
+function eliminarRecuerdo(i){recuerdos.splice(i,1);guardar(STORAGE.memories,recuerdos);renderMemoria()}
 
-function eliminarRecuerdo(i){
-  recuerdos.splice(i,1);
-  guardar(STORAGE.memories,recuerdos);
-  renderMemoria();
-}
-
-/* =========================================
-   DIARIO
-========================================= */
-
+/* DIARIO */
 function renderDiario(){
   panelContent.innerHTML=`
     <p class="small-note">Un espacio para guardar pensamientos, momentos y notas.</p>
     <h3>Nueva entrada</h3>
     <textarea id="diaryInput" placeholder="Escribí algo para tu diario..."></textarea>
     <button class="action" onclick="guardarDiario()">Guardar entrada</button>
-    <h3>Entradas</h3>
-    <div id="diaryList"></div>
-  `;
-
+    <h3>Entradas</h3><div id="diaryList"></div>`;
   const list=document.getElementById("diaryList");
-
-  if(!diario.length){
-    list.innerHTML='<p class="small-note">Tu diario está vacío.</p>';
-  }
-
-  diario.slice().reverse().forEach((d)=>{
-    const div=document.createElement("div");
-    div.className="item";
-    div.textContent=d.fecha+" · "+d.texto;
-    list.appendChild(div);
+  if(!diario.length)list.innerHTML='<p class="small-note">Tu diario está vacío.</p>';
+  diario.slice().reverse().forEach(d=>{
+    const div=document.createElement("div");div.className="item";
+    div.textContent=d.fecha+" · "+d.texto;list.appendChild(div);
   });
 }
-
 function guardarDiario(){
-  const input=document.getElementById("diaryInput");
-  const texto=input.value.trim();
-  if(!texto)return;
-
-  diario.push({
-    texto,
-    fecha:new Date().toLocaleDateString("es")
-  });
-
-  guardar(STORAGE.diary,diario);
-  renderDiario();
+  const input=document.getElementById("diaryInput");const texto=input.value.trim();if(!texto)return;
+  diario.push({texto,fecha:new Date().toLocaleDateString("es")});
+  guardar(STORAGE.diary,diario);renderDiario();
 }
 
-/* =========================================
-   GUSTOS
-========================================= */
-
+/* GUSTOS */
 function renderGustos(){
   panelContent.innerHTML=`
     <p class="small-note">Guardá cosas que te gustan para que Katia pueda tenerlas en cuenta.</p>
     <h3>Agregar un gusto</h3>
     <input id="likesInput" placeholder="Ejemplo: Me gusta el fútbol...">
     <button class="action" onclick="guardarGusto()">Guardar gusto</button>
-    <h3>Mis gustos</h3>
-    <div id="likesList"></div>
-  `;
-
+    <h3>Mis gustos</h3><div id="likesList"></div>`;
   const list=document.getElementById("likesList");
-
-  if(!gustos.length){
-    list.innerHTML='<p class="small-note">Todavía no agregaste gustos.</p>';
-  }
-
+  if(!gustos.length)list.innerHTML='<p class="small-note">Todavía no agregaste gustos.</p>';
   gustos.forEach((g,i)=>{
-    const div=document.createElement("div");
-    div.className="item";
-    div.textContent=g;
-
-    const btn=document.createElement("button");
-    btn.textContent="✕";
-    btn.onclick=()=>eliminarGusto(i);
-
-    div.appendChild(btn);
-    list.appendChild(div);
+    const div=document.createElement("div");div.className="item";div.textContent=g;
+    const btn=document.createElement("button");btn.textContent="✕";btn.onclick=()=>eliminarGusto(i);
+    div.appendChild(btn);list.appendChild(div);
   });
 }
-
 function guardarGusto(){
-  const input=document.getElementById("likesInput");
-  const texto=input.value.trim();
-  if(!texto)return;
-
-  gustos.push(texto);
-  guardar(STORAGE.likes,gustos);
-  renderGustos();
+  const input=document.getElementById("likesInput");const texto=input.value.trim();if(!texto)return;
+  gustos.push(texto);guardar(STORAGE.likes,gustos);renderGustos();
 }
+function eliminarGusto(i){gustos.splice(i,1);guardar(STORAGE.likes,gustos);renderGustos()}
 
-function eliminarGusto(i){
-  gustos.splice(i,1);
-  guardar(STORAGE.likes,gustos);
-  renderGustos();
-}
-
-/* =========================================
-   CONFIGURACIÓN
-========================================= */
-
+/* CONFIGURACIÓN */
 function renderSettings(){
   const provider=localStorage.getItem(STORAGE.provider)||"groq";
   const key=localStorage.getItem(STORAGE.gemini)||"";
   const nombre=localStorage.getItem(STORAGE.name)||"";
-
   panelContent.innerHTML=`
     <h3>Tu nombre</h3>
     <input id="nameInput" placeholder="¿Cómo querés que te llame?" value="${escaparHTML(nombre)}">
     <button class="action" onclick="guardarNombre()">Guardar nombre</button>
-
     <h3>Motor de inteligencia artificial</h3>
     <select id="providerSelect">
       <option value="groq" ${provider==="groq"?"selected":""}>Groq · Worker de Katia</option>
       <option value="gemini" ${provider==="gemini"?"selected":""}>Google Gemini</option>
     </select>
-
     <label>API key de Gemini (solo si elegís Gemini)</label>
     <input id="geminiKey" type="password" placeholder="Pegá tu API key de Gemini" value="${escaparHTML(key)}">
     <button class="action" onclick="guardarConfiguracion()">Guardar configuración</button>
-
     <h3>Voz</h3>
-    <p class="small-note">
-      Katia utiliza las voces disponibles en tu navegador o dispositivo.
-      La disponibilidad depende del sistema.
-    </p>
+    <p class="small-note">Katia utiliza las voces disponibles en tu navegador o dispositivo.</p>
     <button class="action" onclick="probarVoz()">Probar voz</button>
-
     <h3>Datos</h3>
     <button class="action" onclick="exportarDatos()">Exportar mis recuerdos</button>
-    <p class="small-note">
-      La memoria se almacena localmente en este navegador.
-      Si borrás los datos del sitio, podrías perderla.
-    </p>
-  `;
+    <p class="small-note">La memoria se almacena localmente en este navegador. Si borrás los datos del sitio, podrías perderla.</p>`;
 }
-
 function guardarNombre(){
   const nombre=document.getElementById("nameInput").value.trim();
-  localStorage.setItem(STORAGE.name,nombre);
-  alert("¡Nombre guardado! 💜");
+  localStorage.setItem(STORAGE.name,nombre);alert("¡Nombre guardado! 💜");
 }
-
 function guardarConfiguracion(){
   const provider=document.getElementById("providerSelect").value;
   const key=document.getElementById("geminiKey").value.trim();
-
-  localStorage.setItem(STORAGE.provider,provider);
-  localStorage.setItem(STORAGE.gemini,key);
-
+  localStorage.setItem(STORAGE.provider,provider);localStorage.setItem(STORAGE.gemini,key);
   alert("Configuración guardada. 💜");
 }
-
-function probarVoz(){
-  hablar("¡Hola! Soy Katia. ¿Qué te parece mi nueva voz?");
+function probarVoz(){hablar("¡Hola! Soy Katia. ¿Qué te parece mi nueva voz?")}
+function exportarDatos(){
+  const datos={recuerdos,diario,gustos,historial};
+  const blob=new Blob([JSON.stringify(datos,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download="katia-mis-datos.json";a.click();URL.revokeObjectURL(url);
+}
+function escaparHTML(texto){
+  return String(texto).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function exportarDatos(){
-  const datos={
-    recuerdos,
-    diario,
-    gustos,
-    historial
+/* ==========================================
+   KATIA OFFICE STUDIO - POWERPOINT
+========================================== */
+const officeOverlay=document.getElementById("officeOverlay");
+const officeStatus=document.getElementById("officeStatus");
+const pptButton=document.getElementById("pptGenerate");
+
+function abrirOffice(){officeOverlay.classList.add("open")}
+function cerrarOffice(){officeOverlay.classList.remove("open")}
+
+function coloresPowerPoint(estilo){
+  const temas={
+    "Violeta futurista":{bg:"10091D",panel:"211238",accent:"B76CFF",accent2:"EC8CFF",text:"FFFFFF",muted:"D9C8EA"},
+    "Azul corporativo":{bg:"0B1730",panel:"142B50",accent:"3D8BFF",accent2:"65D5FF",text:"FFFFFF",muted:"D5E4F7"},
+    "Verde moderno":{bg:"0B211C",panel:"143B30",accent:"36B889",accent2:"A2E6C8",text:"FFFFFF",muted:"D2E9DE"},
+    "Elegante oscuro":{bg:"171717",panel:"292929",accent:"D5B36A",accent2:"F0D9A0",text:"FFFFFF",muted:"E0D8C8"},
+    "Claro minimalista":{bg:"F5F4F8",panel:"FFFFFF",accent:"7046A8",accent2:"A16BD5",text:"211B2B",muted:"625B6B"}
+  };
+  return temas[estilo]||temas["Violeta futurista"];
+}
+
+function limpiarJSON(texto){
+  let s=String(texto||"").trim();
+  s=s.replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();
+  const inicio=s.indexOf("{"),fin=s.lastIndexOf("}");
+  if(inicio>=0&&fin>inicio)s=s.slice(inicio,fin+1);
+  return JSON.parse(s);
+}
+
+async function pedirContenidoPresentacion(titulo,subtitulo,detalle,audiencia,cantidad){
+  const instruccion=`
+Actuá como especialista en investigación, redacción y diseño de presentaciones profesionales.
+Creá una presentación en español sobre: ${titulo}
+Subtítulo: ${subtitulo||"No especificado"}
+Audiencia: ${audiencia}
+Cantidad de diapositivas de contenido: ${cantidad}.
+Material e indicaciones del usuario:
+${detalle||"Desarrollá el tema con información general bien organizada."}
+
+Devolvé SOLAMENTE JSON válido, sin Markdown ni explicaciones, con esta estructura:
+{
+ "title":"Título claro",
+ "subtitle":"Subtítulo",
+ "slides":[
+  {"title":"Título de diapositiva","body":"Explicación breve y útil","bullets":["Punto importante","Otro punto"],"highlight":"Dato o idea clave"}
+ ]
+}
+Creá exactamente ${cantidad} objetos dentro de slides. No repitas ideas. Incluí contexto, desarrollo, ejemplos o datos relevantes y una conclusión en la última diapositiva. No inventes estadísticas exactas ni fuentes. Usá lenguaje adecuado a la audiencia. Evitá párrafos largos: cada diapositiva debe ser visual y fácil de leer.
+`;
+  const response=await fetch(KATIA_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({messages:[
+      {role:"system",content:"Sos Katia Office Studio, una experta en crear contenido para presentaciones profesionales. Seguí exactamente el formato solicitado."},
+      {role:"user",content:instruccion}
+    ]})
+  });
+  if(!response.ok)throw new Error("El servidor de Katia respondió con error "+response.status);
+  const data=await response.json();
+  if(!data.reply)throw new Error("Katia no devolvió contenido.");
+  return limpiarJSON(data.reply);
+}
+
+function contenidoManual(titulo,detalle,cantidad){
+  const partes=detalle.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const slides=[];
+  for(let i=0;i<cantidad;i++){
+    const parte=partes[i]||"Desarrollo del tema: "+titulo+".";
+    slides.push({
+      title:i===cantidad-1?"Conclusión":(i===0?"Introducción": "Punto "+(i+1)),
+      body:parte,
+      bullets:[parte.slice(0,180)],
+      highlight:"Idea principal"
+    });
+  }
+  return {title:titulo,subtitle:"Presentación",slides};
+}
+
+async function crearPowerPoint(){
+  const titulo=document.getElementById("pptTitle").value.trim();
+  const subtitulo=document.getElementById("pptSubtitle").value.trim();
+  const audiencia=document.getElementById("pptAudience").value;
+  const cantidad=parseInt(document.getElementById("pptCount").value,10);
+  const estilo=document.getElementById("pptStyle").value;
+  const autor=document.getElementById("pptAuthor").value.trim();
+  const detalle=document.getElementById("pptDetails").value.trim();
+
+  if(!titulo){officeStatus.textContent="⚠️ Escribí el título de tu presentación.";return}
+  if(typeof window.PptxGenJS==="undefined"){
+    officeStatus.textContent="No se pudo cargar PptxGenJS. Revisá tu conexión y recargá la página.";
+    return;
+  }
+
+  pptButton.disabled=true;
+  officeStatus.textContent="✨ Katia está preparando el contenido de tu presentación...";
+  try{
+    let contenido;
+    try{
+      contenido=await pedirContenidoPresentacion(titulo,subtitulo,detalle,audiencia,cantidad);
+    }catch(error){
+      console.warn("Se usará contenido manual de respaldo:",error);
+      if(!detalle)throw error;
+      contenido=contenidoManual(titulo,detalle,cantidad);
+      officeStatus.textContent="No pude conectar con la IA. Prepararé una versión inicial con el texto que proporcionaste...";
+    }
+
+    if(!contenido||!Array.isArray(contenido.slides)||!contenido.slides.length){
+      throw new Error("La respuesta de Katia no tiene una estructura de diapositivas válida.");
+    }
+
+    officeStatus.textContent="🎨 Diseñando las diapositivas y generando el archivo...";
+    await descargarPPTX({
+      titulo:contenido.title||titulo,
+      subtitulo:contenido.subtitle||subtitulo,
+      slides:contenido.slides,
+      estilo,autor
+    });
+    officeStatus.textContent="✅ ¡PowerPoint creado! Revisá tus descargas.";
+  }catch(error){
+    console.error(error);
+    officeStatus.textContent="❌ No se pudo crear el PowerPoint: "+error.message;
+  }finally{
+    pptButton.disabled=false;
+  }
+}
+
+async function descargarPPTX(datos){
+  const pptx=new window.PptxGenJS();
+  pptx.layout="LAYOUT_WIDE";
+  pptx.author=datos.autor||"Katia AI";
+  pptx.subject="Presentación creada con Katia Office Studio";
+  pptx.title=datos.titulo;
+  pptx.company="Katia AI";
+  pptx.lang="es-ES";
+
+  const c=coloresPowerPoint(datos.estilo);
+  pptx.theme={
+    headFontFace:"Aptos Display",
+    bodyFontFace:"Aptos",
+    lang:"es-ES"
   };
 
-  const blob=new Blob(
-    [JSON.stringify(datos,null,2)],
-    {type:"application/json"}
-  );
+  const W=13.333,H=7.5;
+  const Shape=pptx.ShapeType;
 
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="katia-mis-datos.json";
-  a.click();
-  URL.revokeObjectURL(url);
+  // Portada
+  {
+    const s=pptx.addSlide();
+    s.background={color:c.bg};
+    s.addShape(Shape.rect,{x:0,y:0,w:W,h:H,line:{color:c.bg,transparency:100},fill:{color:c.bg}});
+    s.addShape(Shape.rect,{x:0,y:0,w:.22,h:H,line:{color:c.accent,transparency:100},fill:{color:c.accent}});
+    s.addShape(Shape.ellipse,{x:8.9,y:-1.2,w:5.2,h:5.2,line:{color:c.accent,transparency:100},fill:{color:c.accent,transparency:78}});
+    s.addShape(Shape.ellipse,{x:9.7,y:3.7,w:3.8,h:3.8,line:{color:c.accent2,transparency:100},fill:{color:c.accent2,transparency:82}});
+    s.addText("KATIA OFFICE STUDIO",{x:.85,y:.65,w:5,h:.3,fontFace:"Aptos",fontSize:11,bold:true,charSpacing:3,color:c.accent2});
+    s.addText(datos.titulo,{x:.85,y:2.05,w:10.8,h:1.65,fontFace:"Aptos Display",fontSize:34,bold:true,color:c.text,breakLine:false,fit:"shrink",margin:0});
+    if(datos.subtitulo){
+      s.addText(datos.subtitulo,{x:.9,y:3.95,w:9.4,h:.75,fontSize:19,color:c.muted,breakLine:false,fit:"shrink",margin:0});
+    }
+    s.addShape(Shape.line,{x:.9,y:5.45,w:2.2,h:0,line:{color:c.accent,width:2}});
+    s.addText(datos.autor||"Presentación profesional",{x:.9,y:5.72,w:7,h:.4,fontSize:13,color:c.muted,margin:0});
+    s.addText("01",{x:11.9,y:6.85,w:.6,h:.25,fontSize:10,color:c.muted,align:"right",margin:0});
+  }
+
+  // Diapositivas de contenido
+  datos.slides.forEach((item,index)=>{
+    const s=pptx.addSlide();
+    s.background={color:c.bg};
+    s.addShape(Shape.rect,{x:0,y:0,w:W,h:.16,line:{color:c.accent,transparency:100},fill:{color:c.accent}});
+    s.addText("KATIA OFFICE STUDIO",{x:.65,y:.38,w:5,h:.25,fontSize:9,bold:true,charSpacing:2,color:c.accent2,margin:0});
+    s.addText(item.title||("Tema "+(index+1)),{
+      x:.65,y:.88,w:11.9,h:.75,fontFace:"Aptos Display",
+      fontSize:25,bold:true,color:c.text,margin:0,fit:"shrink"
+    });
+    s.addShape(Shape.line,{x:.67,y:1.72,w:1.1,h:0,line:{color:c.accent,width:2.5}});
+
+    const body=String(item.body||"").trim();
+    if(body){
+      s.addText(body,{
+        x:.75,y:2.02,w:11.75,h:1.05,fontSize:15,
+        color:c.muted,breakLine:false,fit:"shrink",
+        valign:"mid",margin:.04,paraSpaceAfterPt:8
+      });
+    }
+
+    const bullets=Array.isArray(item.bullets)?item.bullets.filter(Boolean):[];
+    const startY=body?3.28:2.25;
+    bullets.slice(0,4).forEach((b,i)=>{
+      const y=startY+i*.67;
+      s.addShape(Shape.roundRect,{
+        x:.78,y:y+.04,w:.22,h:.22,rectRadius:.04,
+        line:{color:c.accent,transparency:100},
+        fill:{color:c.accent}
+      });
+      s.addText(String(b),{
+        x:1.2,y:y,w:10.9,h:.48,fontSize:14,
+        color:c.text,breakLine:false,fit:"shrink",
+        valign:"mid",margin:.02
+      });
+    });
+
+    if(item.highlight){
+      s.addShape(Shape.roundRect,{
+        x:.75,y:6.08,w:11.8,h:.65,rectRadius:.08,
+        line:{color:c.accent,transparency:65},
+        fill:{color:c.panel}
+      });
+      s.addText("IDEA CLAVE",{x:1,y:6.18,w:1.35,h:.18,fontSize:8,bold:true,charSpacing:1,color:c.accent2,margin:0});
+      s.addText(String(item.highlight),{
+        x:2.45,y:6.15,w:9.7,h:.32,fontSize:11,
+        color:c.text,fit:"shrink",margin:0
+      });
+    }
+
+    s.addShape(Shape.line,{x:.65,y:7.05,w:12,h:0,line:{color:c.accent,transparency:70,width:.7}});
+    s.addText(datos.titulo,{x:.68,y:7.12,w:8,h:.18,fontSize:8,color:c.muted,margin:0});
+    s.addText(String(index+2).padStart(2,"0"),{x:11.85,y:7.1,w:.65,h:.2,fontSize:9,color:c.muted,align:"right",margin:0});
+  });
+
+  const nombre=datos.titulo.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,55)||"presentacion";
+  await pptx.writeFile({fileName:nombre+"-katia.pptx"});
 }
 
-function escaparHTML(texto){
-  return String(texto).replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c]));
-}
-
-/* =========================================
-   RESTAURAR CONVERSACIÓN
-========================================= */
-
+/* RESTAURAR CONVERSACIÓN */
 function restaurarHistorial(){
   if(!historial.length)return;
-
   messagesBox.innerHTML="";
-
   historial.slice(-30).forEach(m=>{
     const tipo=m.role==="user"?"user":"katia";
     agregarMensaje(m.content,tipo,false);
-
     if(tipo==="katia")ultimoMensajeKatia=m.content;
   });
 }
-
 restaurarHistorial();
-
 if("speechSynthesis" in window){
   speechSynthesis.getVoices();
   speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
 }
-
 </script>
 </body>
-</html>
+        </html>
