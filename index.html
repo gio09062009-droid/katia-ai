@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -33,8 +32,7 @@ body{
  radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),
  radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),
  var(--bg);
- font-family:Arial,sans-serif;
- overflow-x:hidden
+ font-family:Arial,sans-serif;overflow-x:hidden
 }
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
@@ -112,9 +110,7 @@ main{
 @keyframes voicePulse{to{scale:1.075}}
 .orb-status{margin-top:28px;text-align:center}
 .orb-status strong{display:block;font-size:20px;letter-spacing:2px}
-.orb-status span{
- color:var(--muted);font-size:12px;display:block;margin-top:8px
-}
+.orb-status span{color:var(--muted);font-size:12px;display:block;margin-top:8px}
 .quick-actions{
  display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:18px
 }
@@ -158,7 +154,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 }
 .overlay.open,.office-overlay.open{display:block}
 .drawer,.office-wrap{
- max-width:850px;margin:12px auto;background:#130c20;
+ max-width:900px;margin:12px auto;background:#130c20;
  border:1px solid #a855f755;border-radius:20px;padding:20px
 }
 .drawer{max-width:390px}
@@ -220,9 +216,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  background:#080510;padding:12px;border-radius:12px;
  font-size:12px;color:#d8c5e8;line-height:1.6
 }
-.mode-description{
- color:#a99bbd;font-size:11px;line-height:1.5;margin-top:5px
-}
+.mode-description{color:#a99bbd;font-size:11px;line-height:1.5;margin-top:5px}
 @media(max-width:760px){
  .app{padding:14px}
  main{grid-template-columns:1fr;gap:10px;padding:12px 0}
@@ -238,7 +232,6 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 </head>
 
 <body>
-
 <div class="app">
 <header>
  <div class="brand">
@@ -287,7 +280,6 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 <footer>KATIA AI · UN UNIVERSO DE POSIBILIDADES 💜</footer>
 </div>
 
-<!-- PANEL LATERAL -->
 <div class="overlay" id="overlay" onclick="cerrarPanel(event)">
  <aside class="drawer" onclick="event.stopPropagation()">
   <div class="office-head">
@@ -298,10 +290,8 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  </aside>
 </div>
 
-<!-- KATIA OFFICE STUDIO -->
 <div class="office-overlay" id="officeOverlay">
  <div class="office-wrap">
-
   <div class="office-head">
    <div>
     <h2>🏢 Katia Office Studio</h2>
@@ -312,10 +302,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 
   <div class="office-intro">
    <strong>💜 Tu espacio de trabajo inteligente</strong>
-   <p class="small-note">
-    Subí un documento y conversá con Katia. Podés pedirle que lo explique,
-    revise, corrija, resuma o prepare una versión modificada.
-   </p>
+   <p class="small-note">Subí un documento y conversá con Katia. Podés pedirle que lo explique, revise, corrija, resuma o prepare una versión modificada.</p>
   </div>
 
   <div class="document-panel">
@@ -324,19 +311,15 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
     📎 Seleccionar archivo DOCX, XLSX, PPTX o PDF
     <input type="file" id="documentFile" accept=".docx,.xlsx,.pptx,.pdf">
    </label>
-   <div class="office-status" id="fileStatus">
-    Todavía no seleccionaste ningún archivo.
-   </div>
+   <div class="office-status" id="fileStatus">Todavía no seleccionaste ningún archivo.</div>
   </div>
 
   <div class="document-panel">
    <h3>🧠 2. Inteligencia documental</h3>
-
    <div class="office-field">
     <label>¿Qué querés que haga Katia?</label>
     <textarea id="documentPrompt" placeholder="Ejemplo: Analizá este documento, explicame sus ideas principales y señalá qué debería mejorar."></textarea>
    </div>
-
    <div class="office-field">
     <label>Modo de trabajo</label>
     <select id="documentMode" onchange="actualizarDescripcionModo()">
@@ -345,38 +328,24 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
      <option value="question">💬 Preguntar sobre el documento</option>
      <option value="modify">✍️ Modificar el contenido completo</option>
     </select>
-    <div class="mode-description" id="modeDescription">
-     Katia analizará el documento y decidirá si necesita dividirlo en partes.
-    </div>
+    <div class="mode-description" id="modeDescription"></div>
    </div>
-
-   <button class="office-primary" id="analyzeButton" onclick="consultarDocumento()">
-    ✨ Trabajar con Katia
-   </button>
-
+   <button class="office-primary" id="analyzeButton" onclick="consultarDocumento()">✨ Trabajar con Katia</button>
    <div class="office-status" id="documentStatus"></div>
    <div id="documentPreview"></div>
-
    <div class="document-actions">
-    <button class="tool-btn" onclick="descargarDocumentoModificado()">
-     📥 Descargar versión modificada
-    </button>
-    <button class="tool-btn" onclick="limpiarDocumento()">
-     🗑️ Limpiar documento
-    </button>
+    <button class="tool-btn" onclick="descargarDocumentoModificado()">📥 Descargar versión modificada</button>
+    <button class="tool-btn" onclick="limpiarDocumento()">🗑️ Limpiar documento</button>
    </div>
   </div>
 
   <div class="office-intro">
    <strong>✨ Crear archivos nuevos</strong>
-   <p class="small-note">
-    Describí lo que necesitás y Katia preparará el contenido para crear el archivo.
-   </p>
-
+   <p class="small-note">Describí lo que necesitás y Katia preparará el contenido para crear el archivo.</p>
    <div class="office-grid">
     <div class="office-field">
      <label>Tipo de archivo</label>
-     <select id="newFileType">
+     <select id="newFileType" onchange="actualizarOpcionesCreacion()">
       <option value="docx">Word (.docx)</option>
       <option value="xlsx">Excel (.xlsx)</option>
       <option value="pptx">PowerPoint (.pptx)</option>
@@ -389,24 +358,56 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
     </div>
    </div>
 
+   <div id="pptxOptions" style="display:none">
+    <div class="office-grid">
+     <div class="office-field">
+      <label>Estilo de presentación</label>
+      <select id="pptxTheme">
+       <option value="purple">Violeta futurista</option>
+       <option value="blue">Azul profesional</option>
+       <option value="green">Verde naturaleza</option>
+       <option value="dark">Oscuro elegante</option>
+       <option value="light">Claro minimalista</option>
+      </select>
+     </div>
+     <div class="office-field">
+      <label>Diseño de diapositivas</label>
+      <select id="pptxLayout">
+       <option value="modern">Moderno</option>
+       <option value="minimal">Minimalista</option>
+       <option value="corporate">Corporativo</option>
+      </select>
+     </div>
+    </div>
+   </div>
+
+   <div id="xlsxOptions" style="display:none">
+    <div class="office-field">
+     <label>Estilo de tabla</label>
+     <select id="xlsxStyle">
+      <option value="purple">Violeta</option>
+      <option value="blue">Azul profesional</option>
+      <option value="green">Verde</option>
+      <option value="gray">Gris elegante</option>
+     </select>
+    </div>
+    <p class="small-note">Katia podrá crear varias hojas usando encabezados como «### HOJA: Ventas» en el contenido.</p>
+   </div>
+
    <div class="office-field">
     <label>Contenido e instrucciones</label>
     <textarea id="newFileContent" placeholder="Describí qué querés crear..."></textarea>
    </div>
-
-   <button class="office-primary" id="createButton" onclick="crearDocumentoNuevo()">
-    🚀 Crear archivo con Katia
-   </button>
+   <button class="office-primary" id="createButton" onclick="crearDocumentoNuevo()">🚀 Crear archivo con Katia</button>
    <div class="office-status" id="createStatus"></div>
   </div>
 
   <div class="office-modules">
    <div class="office-module"><strong>📝 Word</strong><small>Leer y crear</small></div>
-   <div class="office-module"><strong>📊 Excel</strong><small>Datos y tablas</small></div>
-   <div class="office-module"><strong>📽️ PowerPoint</strong><small>Presentaciones</small></div>
+   <div class="office-module"><strong>📊 Excel 2.0</strong><small>Hojas y fórmulas</small></div>
+   <div class="office-module"><strong>📽️ PowerPoint 2.0</strong><small>Diseño profesional</small></div>
    <div class="office-module"><strong>📕 PDF</strong><small>Lectura y creación</small></div>
   </div>
-
  </div>
 </div>
 
@@ -414,598 +415,409 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 /* ==========================================
    KATIA AI - CONFIGURACIÓN PRINCIPAL
 ========================================== */
-
 const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
 
 const STORAGE = {
- history: "katia_history_4",
- memories: "katia_memories_4",
- diary: "katia_diary_4",
- likes: "katia_likes_4",
- username: "katia_user_name_4",
- apiKey: "katia_gemini_key_4",
- provider: "katia_provider_4"
+ history:"katia_history_4",
+ memories:"katia_memories_4",
+ diary:"katia_diary_4",
+ likes:"katia_likes_4",
+ username:"katia_user_name_4",
+ apiKey:"katia_gemini_key_4",
+ provider:"katia_provider_4"
 };
 
-let historial = cargar(STORAGE.history, []);
-let memorias = cargar(STORAGE.memories, []);
-let diario = cargar(STORAGE.diary, []);
-let gustos = cargar(STORAGE.likes, []);
+let historial = cargar(STORAGE.history,[]);
+let memorias = cargar(STORAGE.memories,[]);
+let diario = cargar(STORAGE.diary,[]);
+let gustos = cargar(STORAGE.likes,[]);
 let ultimoMensaje = "";
 let reconociendo = false;
 let reconocimiento = null;
 let typingElement = null;
 
-/* ALMACENAMIENTO */
-
-function cargar(key, fallback) {
- try {
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : fallback;
- } catch(error) {
-  return fallback;
- }
+function cargar(key,fallback){
+ try{
+  const data=localStorage.getItem(key);
+  return data?JSON.parse(data):fallback;
+ }catch(e){return fallback}
 }
-
-function guardar(key, value) {
- try {
-  localStorage.setItem(key, JSON.stringify(value));
- } catch(error) {
-  console.warn("No se pudo guardar:", key, error);
- }
+function guardar(key,value){
+ try{localStorage.setItem(key,JSON.stringify(value))}
+ catch(e){console.warn("No se pudo guardar",key,e)}
 }
+function nombreUsuario(){return localStorage.getItem(STORAGE.username)||""}
 
-function guardarTodo() {
- guardar(STORAGE.history, historial);
- guardar(STORAGE.memories, memorias);
- guardar(STORAGE.diary, diario);
- guardar(STORAGE.likes, gustos);
-}
-
-function nombreUsuario() {
- return localStorage.getItem(STORAGE.username) || "";
-}
-
-/* ESTADO DE LA ESFERA */
-
-function estadoOrb(estado, texto) {
- const orb = document.getElementById("orb");
- const status = document.getElementById("statusText");
- if(!orb || !status) return;
-
+function estadoOrb(estado,texto){
+ const orb=document.getElementById("orb");
+ const status=document.getElementById("statusText");
+ if(!orb||!status)return;
  orb.classList.remove("speaking","listening","thinking");
- if(estado) orb.classList.add(estado);
- status.textContent = texto || "🟢 En línea";
+ if(estado)orb.classList.add(estado);
+ status.textContent=texto||"🟢 En línea";
 }
 
-/* MENSAJES */
-
-function agregarMensaje(tipo, texto, guardarEnHistorial = true) {
- const messages = document.getElementById("messages");
- if(!messages) return;
-
- const div = document.createElement("div");
- div.className = "message " + tipo;
-
- const sender = document.createElement("span");
- sender.className = "sender";
- sender.textContent = tipo === "user" ? "VOS" : "KATIA 💜";
-
- const content = document.createElement("div");
- content.textContent = texto;
-
- div.appendChild(sender);
- div.appendChild(content);
+function agregarMensaje(tipo,texto,guardarEnHistorial=true){
+ const messages=document.getElementById("messages");
+ const div=document.createElement("div");
+ div.className="message "+tipo;
+ const sender=document.createElement("span");
+ sender.className="sender";
+ sender.textContent=tipo==="user"?"VOS":"KATIA 💜";
+ const content=document.createElement("div");
+ content.textContent=texto;
+ div.append(sender,content);
  messages.appendChild(div);
- messages.scrollTop = messages.scrollHeight;
+ messages.scrollTop=messages.scrollHeight;
 
- if(guardarEnHistorial) {
+ if(guardarEnHistorial){
   historial.push({
-   role: tipo === "user" ? "user" : "assistant",
-   content: texto,
-   time: new Date().toISOString()
+   role:tipo==="user"?"user":"assistant",
+   content:texto,time:new Date().toISOString()
   });
-
-  if(historial.length > 80) historial = historial.slice(-80);
-  guardar(STORAGE.history, historial);
+  if(historial.length>80)historial=historial.slice(-80);
+  guardar(STORAGE.history,historial);
  }
-
- if(tipo === "katia") ultimoMensaje = texto;
+ if(tipo==="katia")ultimoMensaje=texto;
  return div;
 }
 
-function restaurarHistorial() {
- const messages = document.getElementById("messages");
- if(!messages) return;
-
- messages.innerHTML = "";
-
- if(!historial.length) {
+function restaurarHistorial(){
+ const messages=document.getElementById("messages");
+ messages.innerHTML="";
+ if(!historial.length){
   agregarMensaje("katia","¡Holaaa! 💜 Soy Katia. ¿Qué hacemos hoy?",false);
   return;
  }
-
- historial.slice(-50).forEach(item => {
-  agregarMensaje(
-   item.role === "user" ? "user" : "katia",
-   item.content,
-   false
-  );
-  if(item.role === "assistant") ultimoMensaje = item.content;
+ historial.slice(-50).forEach(item=>{
+  agregarMensaje(item.role==="user"?"user":"katia",item.content,false);
+  if(item.role==="assistant")ultimoMensaje=item.content;
  });
 }
 
-function mostrarTyping() {
+function mostrarTyping(){
  quitarTyping();
- const messages = document.getElementById("messages");
- typingElement = document.createElement("div");
- typingElement.className = "message katia";
- typingElement.textContent = "Katia está pensando... ✨";
+ const messages=document.getElementById("messages");
+ typingElement=document.createElement("div");
+ typingElement.className="message katia";
+ typingElement.textContent="Katia está pensando... ✨";
  messages.appendChild(typingElement);
- messages.scrollTop = messages.scrollHeight;
+ messages.scrollTop=messages.scrollHeight;
+}
+function quitarTyping(){
+ if(typingElement){typingElement.remove();typingElement=null}
 }
 
-function quitarTyping() {
- if(typingElement) {
-  typingElement.remove();
-  typingElement = null;
- }
-}
-
-/* CONTEXTO DE KATIA */
-
-function construirMensajesIA() {
- const usuario = nombreUsuario();
-
- let contexto = `
+function construirMensajesIA(){
+ const usuario=nombreUsuario();
+ const contexto=`
 Sos Katia AI, una asistente virtual inteligente.
-Respondé en español natural, con personalidad amable,
-alegre, clara y cercana.
-
-Podés ayudar con explicaciones, aprendizaje, escritura,
-corrección, organización de ideas, programación,
-análisis de documentos, creación de documentos y conversaciones.
-
+Respondé en español natural, amable, clara y cercana.
 Tu nombre es Katia.
-${usuario ? "El nombre del usuario es " + usuario + "." : ""}
+${usuario?"El nombre del usuario es "+usuario+".":""}
 
-MEMORIA DEL USUARIO:
-${memorias.slice(-15).join("\n") || "Todavía no hay recuerdos guardados."}
+MEMORIA:
+${memorias.slice(-15).join("\n")||"Sin recuerdos guardados."}
 
 GUSTOS:
-${gustos.slice(-15).join("\n") || "Todavía no hay gustos guardados."}
+${gustos.slice(-15).join("\n")||"Sin gustos guardados."}
 
 DIARIO:
-${diario.slice(-10).map(x => x.text).join("\n") || "Todavía no hay entradas."}
+${diario.slice(-10).map(x=>x.text).join("\n")||"Sin entradas."}
 
-No inventes datos que no conozcas.
-Si no sabés algo, explicalo con honestidad.
+No inventes datos. Si no sabés algo, explicalo honestamente.
 `;
-
- const recent = historial.slice(-20).map(item => ({
-  role:item.role,
-  content:item.content
+ const recent=historial.slice(-20).map(item=>({
+  role:item.role,content:item.content
  }));
-
  return [{role:"system",content:contexto},...recent];
 }
 
-/* CONEXIÓN CON EL WORKER */
-
-async function llamarWorker(messages) {
- const response = await fetch(KATIA_API,{
+/* SE CONSERVA EL CONTRATO DEL WORKER ORIGINAL */
+async function llamarWorker(messages){
+ const response=await fetch(KATIA_API,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
   body:JSON.stringify({messages})
  });
-
- if(!response.ok) {
-  throw new Error("El servidor respondió con error: " + response.status);
- }
-
- const data = await response.json();
- const resultado = data.reply || data.response || data.message;
-
- if(typeof resultado !== "string" || !resultado.trim()) {
+ if(!response.ok)throw new Error("Error del servidor: "+response.status);
+ const data=await response.json();
+ const resultado=data.reply||data.response||data.message;
+ if(typeof resultado!=="string"||!resultado.trim()){
   throw new Error("El servidor no devolvió una respuesta reconocible.");
  }
-
  return resultado;
 }
-
-async function responderConIA() {
+async function responderConIA(){
  return await llamarWorker(construirMensajesIA());
 }
 
-/* CHAT PRINCIPAL */
-
-async function enviarMensaje() {
- const input = document.getElementById("userInput");
- const texto = input.value.trim();
- if(!texto) return;
-
- input.value = "";
+async function enviarMensaje(){
+ const input=document.getElementById("userInput");
+ const texto=input.value.trim();
+ if(!texto)return;
+ input.value="";
  agregarMensaje("user",texto);
  mostrarTyping();
  estadoOrb("thinking","🧠 Katia está pensando...");
-
- try {
-  const respuesta = await responderConIA();
+ try{
+  const respuesta=await responderConIA();
   quitarTyping();
   agregarMensaje("katia",respuesta);
   estadoOrb("","🟢 En línea · Lista para hablar");
- } catch(error) {
+ }catch(error){
   quitarTyping();
-  agregarMensaje(
-   "katia",
-   "Tuve un problema al conectarme con mi cerebro. 💜\n\n" +
-   "Revisá tu conexión a internet o el Worker e intentá nuevamente.\n\n" +
-   "Detalle: " + error.message
-  );
+  agregarMensaje("katia","Tuve un problema al conectarme con mi cerebro. 💜\n\nRevisá tu conexión o el Worker e intentá nuevamente.\n\nDetalle: "+error.message);
   estadoOrb("","⚠️ Problema de conexión");
   console.error(error);
  }
 }
-
-document.getElementById("userInput").addEventListener("keydown",event => {
- if(event.key === "Enter") enviarMensaje();
+document.getElementById("userInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter")enviarMensaje();
 });
-
-function saludar() {
- document.getElementById("userInput").value = "Hola Katia, ¿cómo estás hoy?";
+function saludar(){
+ document.getElementById("userInput").value="Hola Katia, ¿cómo estás hoy?";
  enviarMensaje();
 }
-
-function limpiarChat() {
- if(!confirm("¿Querés borrar el historial de conversación?")) return;
- historial = [];
+function limpiarChat(){
+ if(!confirm("¿Querés borrar el historial de conversación?"))return;
+ historial=[];
  guardar(STORAGE.history,historial);
  restaurarHistorial();
- ultimoMensaje = "";
+ ultimoMensaje="";
 }
 
 /* MEMORIA */
-
-function abrirMemoria() {
- document.getElementById("panelContent").innerHTML = `
-  <p>🧠 Recuerdos guardados de Katia.</p>
-  <textarea id="memoryInput" placeholder="Escribí algo que Katia debería recordar..."></textarea>
-  <button class="action" onclick="guardarMemoria()">Guardar recuerdo</button>
-  <div id="memoryList"></div>
- `;
+function abrirMemoria(){
+ document.getElementById("panelContent").innerHTML=`
+ <p>🧠 Recuerdos guardados de Katia.</p>
+ <textarea id="memoryInput" placeholder="Escribí algo que Katia debería recordar..."></textarea>
+ <button class="action" onclick="guardarMemoria()">Guardar recuerdo</button>
+ <div id="memoryList"></div>`;
  mostrarMemorias();
 }
-
-function guardarMemoria() {
- const input = document.getElementById("memoryInput");
- const texto = input.value.trim();
- if(!texto) return;
+function guardarMemoria(){
+ const input=document.getElementById("memoryInput");
+ const texto=input.value.trim();
+ if(!texto)return;
  memorias.push(texto);
  guardar(STORAGE.memories,memorias);
- input.value = "";
+ input.value="";
  mostrarMemorias();
 }
-
-function mostrarMemorias() {
- const list = document.getElementById("memoryList");
- if(!list) return;
- list.innerHTML = "<h3>Recuerdos</h3>";
-
- memorias.forEach((item,index) => {
-  const div = document.createElement("div");
-  div.style.padding = "10px";
-  div.style.borderBottom = "1px solid #ffffff22";
-  div.textContent = item;
-
-  const btn = document.createElement("button");
-  btn.textContent = "Eliminar";
-  btn.className = "tool-btn";
-  btn.style.marginTop = "7px";
-  btn.onclick = () => {
+function mostrarMemorias(){
+ const list=document.getElementById("memoryList");
+ if(!list)return;
+ list.innerHTML="<h3>Recuerdos</h3>";
+ memorias.forEach((item,index)=>{
+  const div=document.createElement("div");
+  div.style.padding="10px";
+  div.style.borderBottom="1px solid #ffffff22";
+  div.textContent=item;
+  const btn=document.createElement("button");
+  btn.textContent="Eliminar";
+  btn.className="tool-btn";
+  btn.style.marginTop="7px";
+  btn.onclick=()=>{
    memorias.splice(index,1);
    guardar(STORAGE.memories,memorias);
    mostrarMemorias();
   };
-
-  div.appendChild(document.createElement("br"));
-  div.appendChild(btn);
+  div.append(document.createElement("br"),btn);
   list.appendChild(div);
  });
 }
 
 /* DIARIO */
-
-function abrirDiario() {
- document.getElementById("panelContent").innerHTML = `
-  <p>📖 Tu diario personal.</p>
-  <textarea id="diaryInput" placeholder="Escribí una nueva entrada..."></textarea>
-  <button class="action" onclick="guardarDiario()">Guardar entrada</button>
-  <div id="diaryList"></div>
- `;
+function abrirDiario(){
+ document.getElementById("panelContent").innerHTML=`
+ <p>📖 Tu diario personal.</p>
+ <textarea id="diaryInput" placeholder="Escribí una nueva entrada..."></textarea>
+ <button class="action" onclick="guardarDiario()">Guardar entrada</button>
+ <div id="diaryList"></div>`;
  mostrarDiario();
 }
-
-function guardarDiario() {
- const input = document.getElementById("diaryInput");
- const texto = input.value.trim();
- if(!texto) return;
-
+function guardarDiario(){
+ const input=document.getElementById("diaryInput");
+ const texto=input.value.trim();
+ if(!texto)return;
  diario.push({text:texto,date:new Date().toLocaleString()});
  guardar(STORAGE.diary,diario);
- input.value = "";
+ input.value="";
  mostrarDiario();
 }
-
-function mostrarDiario() {
- const list = document.getElementById("diaryList");
- if(!list) return;
- list.innerHTML = "<h3>Entradas</h3>";
-
- diario.slice().reverse().forEach(item => {
-  const div = document.createElement("div");
-  div.style.padding = "12px";
-  div.style.borderBottom = "1px solid #ffffff22";
-
-  const date = document.createElement("small");
-  date.textContent = item.date;
-
-  const content = document.createElement("p");
-  content.textContent = item.text;
-
+function mostrarDiario(){
+ const list=document.getElementById("diaryList");
+ if(!list)return;
+ list.innerHTML="<h3>Entradas</h3>";
+ diario.slice().reverse().forEach(item=>{
+  const div=document.createElement("div");
+  div.style.padding="12px";
+  div.style.borderBottom="1px solid #ffffff22";
+  const date=document.createElement("small");
+  date.textContent=item.date;
+  const content=document.createElement("p");
+  content.textContent=item.text;
   div.append(date,content);
   list.appendChild(div);
  });
 }
 
 /* GUSTOS */
-
-function abrirGustos() {
- document.getElementById("panelContent").innerHTML = `
-  <p>✨ Cosas que te gustan.</p>
-  <textarea id="likeInput" placeholder="Agregá algo que te guste..."></textarea>
-  <button class="action" onclick="guardarGusto()">Guardar gusto</button>
-  <div id="likesList"></div>
- `;
+function abrirGustos(){
+ document.getElementById("panelContent").innerHTML=`
+ <p>✨ Cosas que te gustan.</p>
+ <textarea id="likeInput" placeholder="Agregá algo que te guste..."></textarea>
+ <button class="action" onclick="guardarGusto()">Guardar gusto</button>
+ <div id="likesList"></div>`;
  mostrarGustos();
 }
-
-function guardarGusto() {
- const input = document.getElementById("likeInput");
- const texto = input.value.trim();
- if(!texto) return;
+function guardarGusto(){
+ const input=document.getElementById("likeInput");
+ const texto=input.value.trim();
+ if(!texto)return;
  gustos.push(texto);
  guardar(STORAGE.likes,gustos);
- input.value = "";
+ input.value="";
  mostrarGustos();
 }
-
-function mostrarGustos() {
- const list = document.getElementById("likesList");
- if(!list) return;
- list.innerHTML = "<h3>Mis gustos</h3>";
-
- gustos.forEach((item,index) => {
-  const div = document.createElement("div");
-  div.style.padding = "10px";
-  div.style.borderBottom = "1px solid #ffffff22";
-  div.textContent = item;
-
-  const btn = document.createElement("button");
-  btn.className = "tool-btn";
-  btn.textContent = "Eliminar";
-  btn.onclick = () => {
+function mostrarGustos(){
+ const list=document.getElementById("likesList");
+ if(!list)return;
+ list.innerHTML="<h3>Mis gustos</h3>";
+ gustos.forEach((item,index)=>{
+  const div=document.createElement("div");
+  div.style.padding="10px";
+  div.style.borderBottom="1px solid #ffffff22";
+  div.textContent=item;
+  const btn=document.createElement("button");
+  btn.className="tool-btn";
+  btn.textContent="Eliminar";
+  btn.onclick=()=>{
    gustos.splice(index,1);
    guardar(STORAGE.likes,gustos);
    mostrarGustos();
   };
-
-  div.appendChild(document.createElement("br"));
-  div.appendChild(btn);
+  div.append(document.createElement("br"),btn);
   list.appendChild(div);
  });
 }
 
 /* CONFIGURACIÓN */
-
-function abrirConfiguracion() {
- document.getElementById("panelContent").innerHTML = `
-  <h3>⚙️ Configuración</h3>
-  <label>¿Cómo querés que te llame Katia?</label>
-  <input id="userNameInput" placeholder="Tu nombre">
-  <button class="action" onclick="guardarNombre()">Guardar nombre</button>
-
-  <hr style="border-color:#ffffff22;margin:20px 0">
-
-  <label>Clave API de Gemini (opcional)</label>
-  <input id="geminiKeyInput" type="password" placeholder="API Key">
-  <button class="action" onclick="guardarApiKey()">Guardar clave</button>
-
-  <p class="small-note">
-   La conexión principal de Katia utiliza el Worker configurado.
-   No compartas tu clave API con otras personas.
-  </p>
-
-  <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
- `;
-
- document.getElementById("userNameInput").value = nombreUsuario();
- document.getElementById("geminiKeyInput").value =
-  localStorage.getItem(STORAGE.apiKey) || "";
+function abrirConfiguracion(){
+ document.getElementById("panelContent").innerHTML=`
+ <h3>⚙️ Configuración</h3>
+ <label>¿Cómo querés que te llame Katia?</label>
+ <input id="userNameInput" placeholder="Tu nombre">
+ <button class="action" onclick="guardarNombre()">Guardar nombre</button>
+ <hr style="border-color:#ffffff22;margin:20px 0">
+ <label>Clave API de Gemini (opcional)</label>
+ <input id="geminiKeyInput" type="password" placeholder="API Key">
+ <button class="action" onclick="guardarApiKey()">Guardar clave</button>
+ <p class="small-note">La conexión principal de Katia utiliza el Worker configurado. No compartas tu clave API.</p>
+ <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>`;
+ document.getElementById("userNameInput").value=nombreUsuario();
+ document.getElementById("geminiKeyInput").value=localStorage.getItem(STORAGE.apiKey)||"";
 }
-
-function guardarNombre() {
- const value = document.getElementById("userNameInput").value.trim();
- localStorage.setItem(STORAGE.username,value);
+function guardarNombre(){
+ localStorage.setItem(STORAGE.username,document.getElementById("userNameInput").value.trim());
  alert("Nombre guardado 💜");
 }
-
-function guardarApiKey() {
- const value = document.getElementById("geminiKeyInput").value.trim();
- localStorage.setItem(STORAGE.apiKey,value);
+function guardarApiKey(){
+ localStorage.setItem(STORAGE.apiKey,document.getElementById("geminiKeyInput").value.trim());
  alert("Configuración guardada.");
 }
-
-/* PANELES */
-
-function abrirPanel(tipo) {
- const overlay = document.getElementById("overlay");
- const title = document.getElementById("panelTitle");
+function abrirPanel(tipo){
+ const overlay=document.getElementById("overlay");
+ const title=document.getElementById("panelTitle");
  overlay.classList.add("open");
-
- if(tipo === "memory") {
-  title.textContent = "🧠 Memoria";
-  abrirMemoria();
- } else if(tipo === "diary") {
-  title.textContent = "📖 Diario";
-  abrirDiario();
- } else if(tipo === "likes") {
-  title.textContent = "✨ Mis gustos";
-  abrirGustos();
- } else {
-  title.textContent = "⚙️ Configuración";
-  abrirConfiguracion();
- }
+ if(tipo==="memory"){title.textContent="🧠 Memoria";abrirMemoria()}
+ else if(tipo==="diary"){title.textContent="📖 Diario";abrirDiario()}
+ else if(tipo==="likes"){title.textContent="✨ Mis gustos";abrirGustos()}
+ else{title.textContent="⚙️ Configuración";abrirConfiguracion()}
 }
-
-function cerrarPanel(event) {
- if(event && event.target.id !== "overlay") return;
+function cerrarPanel(event){
+ if(event&&event.target.id!=="overlay")return;
  document.getElementById("overlay").classList.remove("open");
 }
+function abrirOffice(){document.getElementById("officeOverlay").classList.add("open")}
+function cerrarOffice(){document.getElementById("officeOverlay").classList.remove("open")}
 
-/* OFFICE STUDIO */
-
-function abrirOffice() {
- document.getElementById("officeOverlay").classList.add("open");
-}
-
-function cerrarOffice() {
- document.getElementById("officeOverlay").classList.remove("open");
-}
-
-/* EXPORTAR DATOS */
-
-function exportarDatos() {
- const datos = {
-  historial,memorias,diario,gustos,
-  exportado:new Date().toISOString()
- };
-
- const blob = new Blob([JSON.stringify(datos,null,2)],{
-  type:"application/json"
- });
-
+function exportarDatos(){
+ const datos={historial,memorias,diario,gustos,exportado:new Date().toISOString()};
+ const blob=new Blob([JSON.stringify(datos,null,2)],{type:"application/json"});
  descargarBlob(blob,"katia-datos.json");
 }
 
-/* VOZ - SÍNTESIS */
-
-function hablar(texto) {
- if(!("speechSynthesis" in window)) {
-  alert("Tu navegador no permite reproducir voz.");
-  return;
+/* VOZ */
+function hablar(texto){
+ if(!("speechSynthesis" in window)){
+  alert("Tu navegador no permite reproducir voz.");return;
  }
-
  speechSynthesis.cancel();
-
- const utterance = new SpeechSynthesisUtterance(texto);
- utterance.lang = "es-ES";
- utterance.rate = 1;
- utterance.pitch = 1.05;
-
- utterance.onstart = () => estadoOrb("speaking","🔊 Katia está hablando...");
- utterance.onend = () => estadoOrb("","🟢 En línea · Lista para hablar");
- utterance.onerror = () => estadoOrb("","🟢 En línea");
-
+ const utterance=new SpeechSynthesisUtterance(texto);
+ utterance.lang="es-ES";utterance.rate=1;utterance.pitch=1.05;
+ utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
+ utterance.onend=()=>estadoOrb("","🟢 En línea · Lista para hablar");
+ utterance.onerror=()=>estadoOrb("","🟢 En línea");
  speechSynthesis.speak(utterance);
 }
-
-function leerUltimo() {
- if(!ultimoMensaje) {
-  alert("Todavía no hay ningún mensaje de Katia.");
-  return;
- }
+function leerUltimo(){
+ if(!ultimoMensaje){alert("Todavía no hay ningún mensaje de Katia.");return}
  hablar(ultimoMensaje);
 }
-
-function detenerVoz() {
- if("speechSynthesis" in window) speechSynthesis.cancel();
+function detenerVoz(){
+ if("speechSynthesis" in window)speechSynthesis.cancel();
  estadoOrb("","🟢 En línea");
 }
-
-/* VOZ - RECONOCIMIENTO */
-
-function alternarMicrofono() {
- const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-
- if(!SpeechRecognition) {
-  alert("El reconocimiento de voz no está disponible en este navegador.");
-  return;
- }
-
- if(reconociendo) {
-  reconocimiento.stop();
-  return;
- }
-
- reconocimiento = new SpeechRecognition();
- reconocimiento.lang = "es-ES";
- reconocimiento.interimResults = false;
- reconocimiento.continuous = false;
-
- reconocimiento.onstart = () => {
-  reconociendo = true;
+function alternarMicrofono(){
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){alert("El reconocimiento de voz no está disponible en este navegador.");return}
+ if(reconociendo){reconocimiento.stop();return}
+ reconocimiento=new SpeechRecognition();
+ reconocimiento.lang="es-ES";
+ reconocimiento.interimResults=false;
+ reconocimiento.continuous=false;
+ reconocimiento.onstart=()=>{
+  reconociendo=true;
   estadoOrb("listening","🎙️ Te estoy escuchando...");
-  document.getElementById("micButton").textContent = "⏹️";
+  document.getElementById("micButton").textContent="⏹️";
  };
-
- reconocimiento.onresult = event => {
-  const texto = event.results[0][0].transcript;
-  document.getElementById("userInput").value = texto;
+ reconocimiento.onresult=event=>{
+  document.getElementById("userInput").value=event.results[0][0].transcript;
   enviarMensaje();
  };
-
- reconocimiento.onerror = event => console.warn("Error de micrófono:",event.error);
-
- reconocimiento.onend = () => {
-  reconociendo = false;
-  document.getElementById("micButton").textContent = "🎙️";
+ reconocimiento.onerror=event=>console.warn("Error de micrófono:",event.error);
+ reconocimiento.onend=()=>{
+  reconociendo=false;
+  document.getElementById("micButton").textContent="🎙️";
   estadoOrb("","🟢 En línea · Lista para hablar");
  };
-
  reconocimiento.start();
 }
-
-/* INICIALIZACIÓN */
-
-document.addEventListener("DOMContentLoaded",() => {
+document.addEventListener("DOMContentLoaded",()=>{
  restaurarHistorial();
-
- if(window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
+ if(window.pdfjsLib){
+  pdfjsLib.GlobalWorkerOptions.workerSrc=
    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
  }
 });
-</script>
 
-<script>
 /* ==========================================
-   KATIA OFFICE STUDIO 1.0
-   MOTOR DE INTELIGENCIA DOCUMENTAL
+   KATIA OFFICE STUDIO 2.0
+   INTELIGENCIA DOCUMENTAL + OFFICE AVANZADO
 ========================================== */
 
-let documentoActual = null;
-let textoDocumento = "";
-let contenidoModificado = "";
-let resultadoAnalisis = "";
-let tipoDocumentoActual = "";
-let nombreDocumentoActual = "";
-let historialDocumento = [];
-let documentoCargado = false;
+let documentoActual=null;
+let textoDocumento="";
+let contenidoModificado="";
+let resultadoAnalisis="";
+let tipoDocumentoActual="";
+let nombreDocumentoActual="";
+let historialDocumento=[];
+let documentoCargado=false;
 
-/* CONFIGURACIÓN DEL MOTOR */
-
-const OFFICE_CONFIG = {
+const OFFICE_CONFIG={
  maxCaracteresLectura:120000,
  limiteAnalisisSimple:12000,
  tamanoParte:6500,
@@ -1014,753 +826,590 @@ const OFFICE_CONFIG = {
  limiteModificacion:18000
 };
 
-/* UTILIDADES */
-
-function estadoOffice(id,mensaje) {
- const elemento = document.getElementById(id);
- if(elemento) elemento.textContent = mensaje;
+function estadoOffice(id,mensaje){
+ const elemento=document.getElementById(id);
+ if(elemento)elemento.textContent=mensaje;
 }
-
-function nombreSeguro(nombre) {
- return (nombre || "Documento_Katia")
-  .replace(/[\\/:*?"<>|]/g,"_")
-  .replace(/\s+/g,"_")
-  .replace(/\.[^.]+$/,"")
-  .slice(0,70) || "Documento_Katia";
+function nombreSeguro(nombre){
+ return (nombre||"Documento_Katia")
+ .replace(/[\\/:*?"<>|]/g,"_")
+ .replace(/\s+/g,"_")
+ .replace(/\.[^.]+$/,"")
+ .slice(0,70)||"Documento_Katia";
 }
-
-function descargarBlob(blob,nombre) {
- const url = URL.createObjectURL(blob);
- const enlace = document.createElement("a");
-
- enlace.href = url;
- enlace.download = nombre;
+function descargarBlob(blob,nombre){
+ const url=URL.createObjectURL(blob);
+ const enlace=document.createElement("a");
+ enlace.href=url;enlace.download=nombre;
  document.body.appendChild(enlace);
- enlace.click();
- enlace.remove();
-
- setTimeout(() => URL.revokeObjectURL(url),1500);
+ enlace.click();enlace.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-
-function limitarTexto(texto,limite = OFFICE_CONFIG.maxCaracteresLectura) {
- if(texto.length <= limite) return texto;
- return texto.slice(0,limite) +
-  "\n\n[AVISO: Se alcanzó el límite de lectura de esta versión. El resto del documento no fue incluido.]";
+function limitarTexto(texto,limite=OFFICE_CONFIG.maxCaracteresLectura){
+ if(texto.length<=limite)return texto;
+ return texto.slice(0,limite)+
+ "\n\n[AVISO: Se alcanzó el límite de lectura. El resto no fue incluido.]";
 }
-
-function actualizarDescripcionModo() {
- const modo = document.getElementById("documentMode").value;
- const descripcion = document.getElementById("modeDescription");
-
- const textos = {
+function actualizarDescripcionModo(){
+ const modo=document.getElementById("documentMode").value;
+ const descripciones={
   auto:"Katia analizará el documento y decidirá si necesita dividirlo en partes.",
-  parts:"Katia dividirá el documento en secciones, analizará cada una y preparará una conclusión general.",
-  question:"Podés hacer preguntas sobre el documento y sobre el análisis anterior sin volver a cargarlo.",
-  modify:"Katia preparará una versión completa del contenido. Esta opción tiene un límite de tamaño para evitar modificaciones incompletas."
+  parts:"Katia analizará el documento por secciones y preparará una síntesis.",
+  question:"Podés hacer preguntas sobre el documento y el análisis anterior.",
+  modify:"Katia preparará una versión nueva del contenido para descargar."
  };
-
- descripcion.textContent = textos[modo] || "";
+ document.getElementById("modeDescription").textContent=descripciones[modo]||"";
+}
+function actualizarOpcionesCreacion(){
+ const tipo=document.getElementById("newFileType").value;
+ document.getElementById("pptxOptions").style.display=tipo==="pptx"?"block":"none";
+ document.getElementById("xlsxOptions").style.display=tipo==="xlsx"?"block":"none";
 }
 
-/* LLAMADA DOCUMENTAL AL WORKER */
-
-async function consultarWorkerDocumental(instruccion,contenido,contextoExtra = "") {
- const mensajes = [
+/* LLAMADA DOCUMENTAL */
+async function consultarWorkerDocumental(instruccion,contenido,contextoExtra=""){
+ const mensajes=[
   {
    role:"system",
-   content:
-    "Sos Katia AI, una asistente especializada en lectura, comprensión y análisis de documentos. " +
-    "Respondé en español claro y organizado. " +
-    "Usá únicamente la información proporcionada cuando se trate de datos del documento. " +
-    "No inventes contenido, cifras, nombres ni conclusiones. " +
-    contextoExtra
+   content:"Sos Katia AI, especialista en lectura y análisis documental. Respondé en español claro. No inventes datos. "+contextoExtra
   },
   {
    role:"user",
-   content:
-    "INSTRUCCIÓN:\n" + instruccion +
-    "\n\nCONTENIDO DEL DOCUMENTO:\n" + contenido
+   content:"INSTRUCCIÓN:\n"+instruccion+"\n\nCONTENIDO DEL DOCUMENTO:\n"+contenido
   }
  ];
-
  return await llamarWorker(mensajes);
 }
 
 /* LECTURA DE ARCHIVOS */
-
-document.getElementById("documentFile").addEventListener("change",async function(event) {
- const archivo = event.target.files[0];
- if(!archivo) return;
-
- documentoActual = archivo;
- nombreDocumentoActual = archivo.name;
- tipoDocumentoActual = archivo.name.split(".").pop().toLowerCase();
-
- textoDocumento = "";
- contenidoModificado = "";
- resultadoAnalisis = "";
- historialDocumento = [];
- documentoCargado = false;
-
- estadoOffice("fileStatus","⏳ Leyendo " + archivo.name + "...");
+document.getElementById("documentFile").addEventListener("change",async function(event){
+ const archivo=event.target.files[0];
+ if(!archivo)return;
+ documentoActual=archivo;
+ nombreDocumentoActual=archivo.name;
+ tipoDocumentoActual=archivo.name.split(".").pop().toLowerCase();
+ textoDocumento="";
+ contenidoModificado="";
+ resultadoAnalisis="";
+ historialDocumento=[];
+ documentoCargado=false;
+ estadoOffice("fileStatus","⏳ Leyendo "+archivo.name+"...");
  estadoOffice("documentStatus","");
- document.getElementById("documentPreview").textContent = "";
-
- try {
-  if(tipoDocumentoActual === "docx") {
-   await leerWord(archivo);
-  } else if(tipoDocumentoActual === "xlsx") {
-   await leerExcel(archivo);
-  } else if(tipoDocumentoActual === "pptx") {
-   await leerPowerPoint(archivo);
-  } else if(tipoDocumentoActual === "pdf") {
-   await leerPDF(archivo);
-  } else {
-   throw new Error("Formato no compatible.");
-  }
-
-  textoDocumento = limitarTexto(textoDocumento);
-
-  if(!textoDocumento.trim()) {
-   throw new Error("No se encontró texto legible en el archivo.");
-  }
-
-  documentoCargado = true;
-
-  estadoOffice(
-   "fileStatus",
-   "✅ Archivo leído correctamente: " + archivo.name +
-   "\nFormato: " + tipoDocumentoActual.toUpperCase() +
-   "\nCaracteres extraídos: " + textoDocumento.length.toLocaleString() +
-   "\n\nYa podés conversar con Katia sobre este documento."
-  );
-
- } catch(error) {
+ document.getElementById("documentPreview").textContent="";
+ try{
+  if(tipoDocumentoActual==="docx")await leerWord(archivo);
+  else if(tipoDocumentoActual==="xlsx")await leerExcel(archivo);
+  else if(tipoDocumentoActual==="pptx")await leerPowerPoint(archivo);
+  else if(tipoDocumentoActual==="pdf")await leerPDF(archivo);
+  else throw new Error("Formato no compatible.");
+  textoDocumento=limitarTexto(textoDocumento);
+  if(!textoDocumento.trim())throw new Error("No se encontró texto legible.");
+  documentoCargado=true;
+  estadoOffice("fileStatus","✅ Archivo leído: "+archivo.name+
+   "\nFormato: "+tipoDocumentoActual.toUpperCase()+
+   "\nCaracteres: "+textoDocumento.length.toLocaleString()+
+   "\n\nYa podés trabajar con Katia.");
+ }catch(error){
   console.error(error);
-
-  documentoActual = null;
-  textoDocumento = "";
-  documentoCargado = false;
-
-  estadoOffice("fileStatus","❌ No se pudo leer el documento: " + error.message);
+  documentoActual=null;textoDocumento="";documentoCargado=false;
+  estadoOffice("fileStatus","❌ No se pudo leer: "+error.message);
  }
 });
 
-/* LECTOR WORD */
-
-async function leerWord(archivo) {
- if(!window.mammoth) throw new Error("La biblioteca Word no está disponible.");
-
- const buffer = await archivo.arrayBuffer();
- const resultado = await mammoth.extractRawText({arrayBuffer:buffer});
-
- textoDocumento = resultado.value;
+async function leerWord(archivo){
+ if(!window.mammoth)throw new Error("Biblioteca Word no disponible.");
+ const resultado=await mammoth.extractRawText({arrayBuffer:await archivo.arrayBuffer()});
+ textoDocumento=resultado.value;
 }
-
-/* LECTOR EXCEL */
-
-async function leerExcel(archivo) {
- if(!window.XLSX) throw new Error("La biblioteca Excel no está disponible.");
-
- const buffer = await archivo.arrayBuffer();
- const libro = XLSX.read(buffer,{type:"array"});
-
- let contenido = "";
-
- libro.SheetNames.forEach(nombre => {
-  const hoja = libro.Sheets[nombre];
-
-  contenido += "\n\n================================\n";
-  contenido += "HOJA: " + nombre + "\n";
-  contenido += "================================\n";
-
-  contenido += XLSX.utils.sheet_to_csv(hoja);
+async function leerExcel(archivo){
+ if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
+ const libro=XLSX.read(await archivo.arrayBuffer(),{type:"array"});
+ let contenido="";
+ libro.SheetNames.forEach(nombre=>{
+  contenido+="\n\n===== HOJA: "+nombre+" =====\n";
+  contenido+=XLSX.utils.sheet_to_csv(libro.Sheets[nombre]);
  });
-
- textoDocumento = contenido;
+ textoDocumento=contenido;
 }
-
-/* LECTOR POWERPOINT */
-
-async function leerPowerPoint(archivo) {
- if(!window.JSZip) throw new Error("La biblioteca PowerPoint no está disponible.");
-
- const zip = await JSZip.loadAsync(archivo);
-
- const diapositivas = Object.keys(zip.files)
-  .filter(nombre => /^ppt\/slides\/slide\d+\.xml$/.test(nombre))
-  .sort((a,b) => {
-   const numeroA = Number(a.match(/slide(\d+)/)[1]);
-   const numeroB = Number(b.match(/slide(\d+)/)[1]);
-   return numeroA - numeroB;
-  });
-
- let contenido = "";
-
- for(let i=0;i<diapositivas.length;i++) {
-  const xml = await zip.file(diapositivas[i]).async("string");
-
-  const documento = new DOMParser().parseFromString(xml,"application/xml");
-  const textos = Array.from(documento.getElementsByTagName("a:t"))
-   .map(nodo => nodo.textContent);
-
-  contenido += "\n\nDIAPOSITIVA " + (i+1) + "\n";
-  contenido += textos.join(" ");
+async function leerPowerPoint(archivo){
+ if(!window.JSZip)throw new Error("Biblioteca PPTX no disponible.");
+ const zip=await JSZip.loadAsync(archivo);
+ const slides=Object.keys(zip.files)
+ .filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n))
+ .sort((a,b)=>Number(a.match(/slide(\d+)/)[1])-Number(b.match(/slide(\d+)/)[1]));
+ let contenido="";
+ for(let i=0;i<slides.length;i++){
+  const xml=await zip.file(slides[i]).async("string");
+  const dom=new DOMParser().parseFromString(xml,"application/xml");
+  const textos=Array.from(dom.getElementsByTagName("a:t")).map(n=>n.textContent);
+  contenido+="\n\nDIAPOSITIVA "+(i+1)+"\n"+textos.join(" ");
  }
-
- textoDocumento = contenido;
+ textoDocumento=contenido;
 }
-
-/* LECTOR PDF */
-
-async function leerPDF(archivo) {
- if(!window.pdfjsLib) throw new Error("La biblioteca PDF no está disponible.");
-
- const buffer = await archivo.arrayBuffer();
-
- const pdf = await pdfjsLib.getDocument({
-  data:new Uint8Array(buffer)
- }).promise;
-
- let contenido = "";
-
- for(let pagina=1;pagina<=pdf.numPages;pagina++) {
-  const paginaPDF = await pdf.getPage(pagina);
-  const contenidoPagina = await paginaPDF.getTextContent();
-
-  const texto = contenidoPagina.items
-   .map(item => item.str)
-   .join(" ");
-
-  contenido += "\n\nPÁGINA " + pagina + "\n";
-  contenido += texto;
+async function leerPDF(archivo){
+ if(!window.pdfjsLib)throw new Error("Biblioteca PDF no disponible.");
+ const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await archivo.arrayBuffer())}).promise;
+ let contenido="";
+ for(let i=1;i<=pdf.numPages;i++){
+  const pagina=await pdf.getPage(i);
+  const datos=await pagina.getTextContent();
+  contenido+="\n\nPÁGINA "+i+"\n"+datos.items.map(x=>x.str).join(" ");
  }
-
- textoDocumento = contenido;
+ textoDocumento=contenido;
 }
 
-/* DIVIDIR DOCUMENTOS GRANDES */
-
-function dividirEnPartes(texto) {
- const partes = [];
- const tamano = OFFICE_CONFIG.tamanoParte;
- const solapamiento = OFFICE_CONFIG.solapamiento;
-
- let inicio = 0;
-
- while(inicio < texto.length && partes.length < OFFICE_CONFIG.maxPartes) {
-  let fin = Math.min(inicio + tamano,texto.length);
-
-  if(fin < texto.length) {
-   const corte = texto.lastIndexOf("\n",fin);
-   if(corte > inicio + tamano * 0.65) fin = corte;
+/* DOCUMENTOS GRANDES */
+function dividirEnPartes(texto){
+ const partes=[];
+ const tam=OFFICE_CONFIG.tamanoParte;
+ const overlap=OFFICE_CONFIG.solapamiento;
+ let inicio=0;
+ while(inicio<texto.length&&partes.length<OFFICE_CONFIG.maxPartes){
+  let fin=Math.min(inicio+tam,texto.length);
+  if(fin<texto.length){
+   const corte=texto.lastIndexOf("\n",fin);
+   if(corte>inicio+tam*.65)fin=corte;
   }
-
-  partes.push({
-   numero:partes.length+1,
-   contenido:texto.slice(inicio,fin)
-  });
-
-  if(fin >= texto.length) break;
-
-  inicio = Math.max(fin-solapamiento,inicio+1);
+  partes.push({numero:partes.length+1,contenido:texto.slice(inicio,fin)});
+  if(fin>=texto.length)break;
+  inicio=Math.max(fin-overlap,inicio+1);
  }
-
- return {
-  partes,
-  completo:inicio >= texto.length || partes.length === 0 ||
-   partes[partes.length-1].contenido.length >= texto.length-inicio
- };
+ return {partes,completo:partes.length>0&&
+  (partes[partes.length-1].contenido.length>=texto.length-(partes[partes.length-1].numero-1)*(tam-overlap))};
 }
-
-/* ANÁLISIS POR PARTES */
-
-async function analizarPorPartes(instruccion) {
- const division = dividirEnPartes(textoDocumento);
- const partes = division.partes;
- const resultados = [];
-
- if(!partes.length) throw new Error("No se pudo dividir el documento.");
-
- for(let i=0;i<partes.length;i++) {
-  estadoOffice(
-   "documentStatus",
-   "🧠 Analizando parte " + (i+1) + " de " + partes.length +
-   "...\n\nKatia está leyendo y estudiando el contenido."
+async function analizarPorPartes(instruccion){
+ const division=dividirEnPartes(textoDocumento);
+ const resultados=[];
+ for(let i=0;i<division.partes.length;i++){
+  estadoOffice("documentStatus","🧠 Analizando parte "+(i+1)+" de "+division.partes.length+"...");
+  const r=await consultarWorkerDocumental(
+   "Analizá esta sección. Instrucción del usuario: "+instruccion+
+   ". Identificá puntos importantes sin asumir que es todo el documento.",
+   division.partes[i].contenido
   );
-
-  const resultado = await consultarWorkerDocumental(
-   "Analizá esta sección del documento. " +
-   "Seguí la instrucción del usuario: " + instruccion +
-   "\n\nIdentificá los puntos importantes de esta sección. " +
-   "No supongas que esta sección representa todo el documento.",
-   partes[i].contenido,
-   "Estás trabajando en un análisis documental por secciones. " +
-   "Indicá claramente qué parte estás analizando."
-  );
-
-  resultados.push(
-   "RESULTADO DE LA PARTE " + (i+1) + ":\n" + resultado
-  );
+  resultados.push("PARTE "+(i+1)+":\n"+r);
  }
-
- estadoOffice(
-  "documentStatus",
-  "✨ Katia está reuniendo los resultados para preparar el análisis final..."
+ estadoOffice("documentStatus","✨ Preparando síntesis general...");
+ const sintesis=await consultarWorkerDocumental(
+  "Unificá estos análisis, evitá repeticiones y respondé la instrucción original: "+instruccion,
+  resultados.join("\n\n")
  );
-
- const sintesis = await consultarWorkerDocumental(
-  "Prepará un análisis general utilizando los resultados parciales. " +
-  "Respondé a la instrucción original del usuario: " + instruccion +
-  "\n\nUnificá los resultados, evitá repetir información y señalá " +
-  "qué conclusiones están respaldadas por el documento. " +
-  "Si faltan secciones, advertí esa limitación.",
-  resultados.join("\n\n--------------------\n\n"),
-  "Los siguientes textos son análisis parciales del mismo documento. " +
-  "Debés sintetizarlos sin inventar información."
- );
-
- let aviso = "";
- if(!division.completo) {
-  aviso =
-   "\n\n⚠️ AVISO: El documento era demasiado grande para procesarlo completo " +
-   "en esta versión. Se analizaron las primeras " + partes.length +
-   " partes disponibles. Algunas secciones podrían haber quedado fuera.";
- }
-
- return sintesis + aviso;
+ return sintesis+(division.completo?"":"\n\n⚠️ Se alcanzó el máximo de partes; algunas secciones pueden haber quedado fuera.");
 }
-
-/* CONSULTA PRINCIPAL */
-
-async function consultarDocumento() {
- if(!documentoActual || !textoDocumento || !documentoCargado) {
-  alert("Primero seleccioná un documento y esperá a que termine de leerse.");
-  return;
+async function consultarDocumento(){
+ if(!documentoActual||!textoDocumento||!documentoCargado){
+  alert("Primero seleccioná un documento.");return;
  }
-
- const instruccion = document.getElementById("documentPrompt").value.trim();
-
- if(!instruccion) {
-  alert("Escribí qué querés que Katia haga con el documento.");
-  return;
- }
-
- const boton = document.getElementById("analyzeButton");
- const modo = document.getElementById("documentMode").value;
-
- boton.disabled = true;
- boton.textContent = "⏳ Katia está trabajando...";
-
- contenidoModificado = "";
-
- try {
-  let resultado = "";
-
-  if(modo === "question") {
-   estadoOffice("documentStatus","💬 Katia está buscando la respuesta en el documento...");
-
-   const contextoAnterior = historialDocumento.length
-    ? "\n\nANÁLISIS Y CONVERSACIÓN ANTERIOR:\n" +
-      historialDocumento.slice(-3).join("\n\n")
-    : "\n\nTodavía no hay análisis anteriores.";
-
-   resultado = await consultarWorkerDocumental(
-    instruccion +
-    "\n\nRespondé específicamente a la pregunta. " +
-    "Si el documento no contiene la respuesta, decilo.",
-    textoDocumento.slice(0,20000),
-    "Respondé preguntas sobre el documento. " +
-    "Tené en cuenta el contexto anterior: " + contextoAnterior
+ const instruccion=document.getElementById("documentPrompt").value.trim();
+ if(!instruccion){alert("Escribí qué querés que Katia haga.");return}
+ const boton=document.getElementById("analyzeButton");
+ const modo=document.getElementById("documentMode").value;
+ boton.disabled=true;boton.textContent="⏳ Katia está trabajando...";
+ if(modo!=="modify")contenidoModificado="";
+ try{
+  let resultado="";
+  if(modo==="question"){
+   const contexto=historialDocumento.slice(-3).join("\n\n");
+   resultado=await consultarWorkerDocumental(
+    instruccion+"\nRespondé solo con información del documento. Si no está, decilo.",
+    textoDocumento.slice(0,30000),
+    "Contexto previo: "+contexto
    );
-
-  } else if(modo === "modify") {
-   if(textoDocumento.length > OFFICE_CONFIG.limiteModificacion) {
-    throw new Error(
-     "El documento es demasiado grande para reconstruirlo completo de forma segura. " +
-     "Probá primero el análisis por partes o trabajá con una sección más pequeña."
-    );
+  }else if(modo==="modify"){
+   if(textoDocumento.length>OFFICE_CONFIG.limiteModificacion){
+    throw new Error("El archivo es demasiado grande para reconstruirlo completo. Trabajá con una sección más pequeña.");
    }
-
-   estadoOffice("documentStatus","✍️ Katia está preparando una versión modificada...");
-
-   resultado = await consultarWorkerDocumental(
-    "MODIFICACIÓN COMPLETA DEL CONTENIDO.\n" +
-    instruccion +
-    "\n\nEntregá el contenido completo ya modificado. " +
-    "No entregues solamente una lista de sugerencias. " +
-    "Conservá los datos importantes y la estructura lógica. " +
-    "No inventes información. " +
-    "No agregues una introducción sobre lo que hiciste.",
-    textoDocumento,
-    "El usuario quiere una nueva versión del contenido. " +
-    "Tu respuesta se utilizará para reconstruir un archivo descargable. " +
-    "Entregá el contenido final completo."
+   estadoOffice("documentStatus","✍️ Modificando contenido...");
+   resultado=await consultarWorkerDocumental(
+    "Entregá el contenido completo ya modificado. No des sugerencias: devolvé la nueva versión. Conservá los datos, no inventes información. Instrucción: "+instruccion,
+    textoDocumento
    );
-
-   contenidoModificado = resultado;
-
-  } else if(
-   modo === "parts" ||
-   (modo === "auto" && textoDocumento.length > OFFICE_CONFIG.limiteAnalisisSimple)
-  ) {
-   resultado = await analizarPorPartes(instruccion);
-
-  } else {
-   estadoOffice("documentStatus","🧠 Katia está analizando el documento...");
-
-   resultado = await consultarWorkerDocumental(
-    instruccion,
-    textoDocumento,
-    "Realizá un análisis documental claro, ordenado y fundamentado."
-   );
+   contenidoModificado=resultado;
+  }else if(modo==="parts"||(modo==="auto"&&textoDocumento.length>OFFICE_CONFIG.limiteAnalisisSimple)){
+   resultado=await analizarPorPartes(instruccion);
+  }else{
+   estadoOffice("documentStatus","🧠 Analizando documento...");
+   resultado=await consultarWorkerDocumental(instruccion,textoDocumento);
   }
-
-  resultadoAnalisis = resultado;
-
-  historialDocumento.push(
-   "INSTRUCCIÓN: " + instruccion +
-   "\nRESULTADO: " + resultado.slice(0,9000)
-  );
-
-  if(historialDocumento.length > 6) {
-   historialDocumento = historialDocumento.slice(-6);
-  }
-
-  document.getElementById("documentPreview").textContent = resultado;
-
-  if(modo === "modify") {
-   estadoOffice(
-    "documentStatus",
-    "✅ Katia terminó la modificación. Revisá el contenido antes de descargarlo."
-   );
-  } else {
-   estadoOffice(
-    "documentStatus",
-    "✅ Análisis terminado. Podés hacer otra pregunta sobre el mismo documento."
-   );
-  }
-
- } catch(error) {
+  resultadoAnalisis=resultado;
+  historialDocumento.push("INSTRUCCIÓN: "+instruccion+"\nRESULTADO: "+resultado.slice(0,9000));
+  if(historialDocumento.length>6)historialDocumento=historialDocumento.slice(-6);
+  document.getElementById("documentPreview").textContent=resultado;
+  estadoOffice("documentStatus",modo==="modify"?
+   "✅ Modificación lista. Revisá antes de descargar.":
+   "✅ Análisis terminado. Podés hacer otra pregunta.");
+ }catch(error){
   console.error(error);
-  estadoOffice(
-   "documentStatus",
-   "❌ No se pudo completar el trabajo: " + error.message
-  );
- } finally {
-  boton.disabled = false;
-  boton.textContent = "✨ Trabajar con Katia";
+  estadoOffice("documentStatus","❌ Error: "+error.message);
+ }finally{
+  boton.disabled=false;
+  boton.textContent="✨ Trabajar con Katia";
  }
 }
-
-/* LIMPIAR DOCUMENTO */
-
-function limpiarDocumento() {
- documentoActual = null;
- textoDocumento = "";
- contenidoModificado = "";
- resultadoAnalisis = "";
- tipoDocumentoActual = "";
- nombreDocumentoActual = "";
- historialDocumento = [];
- documentoCargado = false;
-
- document.getElementById("documentFile").value = "";
- document.getElementById("documentPrompt").value = "";
- document.getElementById("documentPreview").textContent = "";
- document.getElementById("documentMode").value = "auto";
-
+function limpiarDocumento(){
+ documentoActual=null;textoDocumento="";contenidoModificado="";
+ resultadoAnalisis="";tipoDocumentoActual="";nombreDocumentoActual="";
+ historialDocumento=[];documentoCargado=false;
+ document.getElementById("documentFile").value="";
+ document.getElementById("documentPrompt").value="";
+ document.getElementById("documentPreview").textContent="";
+ document.getElementById("documentMode").value="auto";
  actualizarDescripcionModo();
-
  estadoOffice("fileStatus","Todavía no seleccionaste ningún archivo.");
  estadoOffice("documentStatus","Documento eliminado de la sesión.");
 }
 
-/* CREAR WORD */
-
-async function generarWord(texto,nombre) {
- if(!window.docx) throw new Error("La biblioteca Word no está disponible.");
-
- const {Document,Packer,Paragraph,TextRun,HeadingLevel} = window.docx;
-
- const parrafos = texto.split(/\r?\n/).map(linea => {
-  const contenido = linea.trim();
-
-  if(/^#{1,2}\s/.test(contenido)) {
-   return new Paragraph({
-    text:contenido.replace(/^#{1,2}\s/,""),
-    heading:HeadingLevel.HEADING_1
-   });
+/* WORD */
+async function generarWord(texto,nombre){
+ if(!window.docx)throw new Error("Biblioteca Word no disponible.");
+ const {Document,Packer,Paragraph,TextRun,HeadingLevel}=window.docx;
+ const parrafos=texto.split(/\r?\n/).map(linea=>{
+  const t=linea.trim();
+  if(/^#{1,2}\s/.test(t)){
+   return new Paragraph({text:t.replace(/^#{1,2}\s/,""),heading:HeadingLevel.HEADING_1});
   }
-
-  return new Paragraph({
-   children:[new TextRun({text:contenido})]
-  });
+  return new Paragraph({children:[new TextRun({text:t})]});
  });
-
- const documento = new Document({
-  sections:[{children:parrafos}]
- });
-
- const blob = await Packer.toBlob(documento);
+ const documento=new Document({sections:[{children:parrafos}]});
+ const blob=await Packer.toBlob(documento);
  descargarBlob(blob,nombre+".docx");
 }
 
-/* CREAR EXCEL */
+/* ==========================================
+   EXCEL INTELIGENTE 2.0
+========================================== */
 
-function generarExcel(texto,nombre) {
- if(!window.XLSX) throw new Error("La biblioteca Excel no está disponible.");
+/* Permite crear varias hojas con:
+   ### HOJA: Ventas
+   Producto    Cantidad    Precio
+   Cuaderno    10          5000
 
- const filas = texto.split(/\r?\n/)
-  .map(linea => linea.split(/\t|;/).map(celda => celda.trim()))
-  .filter(fila => fila.some(celda => celda));
-
- const hoja = XLSX.utils.aoa_to_sheet(filas);
- const libro = XLSX.utils.book_new();
-
- XLSX.utils.book_append_sheet(libro,hoja,"Datos");
+   Las columnas numéricas se reconocen.
+   Las fórmulas que empiezan con = se conservan.
+*/
+function separarHojasExcel(texto){
+ const partes=texto.split(/^\s*###\s*HOJA\s*:\s*(.+)\s*$/im);
+ const hojas=[];
+ if(partes.length===1){
+  hojas.push({nombre:"Datos",contenido:texto});
+  return hojas;
+ }
+ for(let i=1;i<partes.length;i+=2){
+  hojas.push({
+   nombre:partes[i].trim(),
+   contenido:partes[i+1]||""
+  });
+ }
+ return hojas.length?hojas:[{nombre:"Datos",contenido:texto}];
+}
+function convertirCeldaExcel(valor){
+ const v=String(valor??"").trim();
+ if(!v)return "";
+ if(/^[-+]?\d+([.,]\d+)?$/.test(v)){
+  return Number(v.replace(",","."));
+ }
+ if(v.startsWith("="))return {f:v.slice(1)};
+ return v;
+}
+function generarExcel(texto,nombre){
+ if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
+ const estilo=document.getElementById("xlsxStyle")?.value||"purple";
+ const paletas={
+  purple:{header:"6D28D9",light:"EDE9FE"},
+  blue:{header:"1D4ED8",light:"DBEAFE"},
+  green:{header:"15803D",light:"DCFCE7"},
+  gray:{header:"374151",light:"E5E7EB"}
+ };
+ const paleta=paletas[estilo]||paletas.purple;
+ const libro=XLSX.utils.book_new();
+ const hojas=separarHojasExcel(texto);
+ hojas.slice(0,20).forEach((hojaInfo,index)=>{
+  const filas=hojaInfo.contenido.split(/\r?\n/)
+   .map(linea=>linea.trim())
+   .filter(Boolean)
+   .map(linea=>linea.includes("\t")?linea.split("\t"):linea.split(/\s*\|\s*|;/))
+   .map(fila=>fila.map(convertirCeldaExcel));
+  if(!filas.length)return;
+  const hoja=XLSX.utils.aoa_to_sheet(filas);
+  const rango=XLSX.utils.decode_range(hoja["!ref"]||"A1");
+  hoja["!cols"]=Array.from({length:rango.e.c+1},(_,c)=>{
+   let max=12;
+   filas.forEach(f=>{max=Math.max(max,String(f[c]??"").length)});
+   return {wch:Math.min(max+3,34)};
+  });
+  hoja["!autofilter"]={ref:XLSX.utils.encode_range({
+   s:{r:0,c:0},e:{r:rango.e.r,c:rango.e.c}
+  })};
+  hoja["!freeze"]={xSplit:0,ySplit:1,topLeftCell:"A2",activePane:"bottomLeft",state:"frozen"};
+  XLSX.utils.book_append_sheet(libro,hoja,
+   (hojaInfo.nombre||"Hoja"+(index+1)).replace(/[\\/?*[\]:]/g," ").slice(0,31)||"Datos");
+ });
+ if(!libro.SheetNames.length)throw new Error("No se encontraron datos para Excel.");
  XLSX.writeFile(libro,nombre+".xlsx");
 }
 
-/* CREAR POWERPOINT */
+/* ==========================================
+   POWERPOINT PROFESIONAL 2.0
+========================================== */
 
-async function generarPowerPoint(texto,nombre) {
- if(typeof pptxgen === "undefined") {
-  throw new Error("La biblioteca PowerPoint no está disponible.");
- }
-
- const presentacion = new pptxgen();
-
- presentacion.layout = "LAYOUT_WIDE";
- presentacion.author = "Katia AI";
- presentacion.subject = "Presentación creada con Katia AI";
- presentacion.title = nombre;
-
- presentacion.theme = {
-  headFontFace:"Aptos Display",
-  bodyFontFace:"Aptos"
+function obtenerPaletaPPTX(){
+ const tema=document.getElementById("pptxTheme")?.value||"purple";
+ const paletas={
+  purple:{bg:"100B1D",panel:"211339",accent:"A855F7",accent2:"EC4899",text:"F7F0FF",muted:"C4B5FD"},
+  blue:{bg:"071426",panel:"102B4C",accent:"38BDF8",accent2:"2563EB",text:"F0F9FF",muted:"BAE6FD"},
+  green:{bg:"071A13",panel:"123B2A",accent:"4ADE80",accent2:"15803D",text:"F0FDF4",muted:"BBF7D0"},
+  dark:{bg:"111111",panel:"262626",accent:"F59E0B",accent2:"D97706",text:"FAFAFA",muted:"D4D4D4"},
+  light:{bg:"F8FAFC",panel:"E2E8F0",accent:"6D28D9",accent2:"9333EA",text:"172033",muted:"475569"}
  };
-
- let secciones = texto
-  .split(/\n(?=#{1,2}\s)|\n(?=DIAPOSITIVA\s+\d+)/i)
-  .map(item => item.trim())
-  .filter(Boolean);
-
- if(secciones.length < 2) {
-  const lineas = texto.split(/\r?\n/).filter(Boolean);
-  secciones = [];
-
-  for(let i=0;i<lineas.length;i+=5) {
-   secciones.push(lineas.slice(i,i+5).join("\n"));
-  }
- }
-
- secciones.forEach((seccion,index) => {
-  const lineas = seccion.split(/\r?\n/).filter(Boolean);
-
-  const titulo = lineas[0]
-   .replace(/^#{1,2}\s/,"")
-   .replace(/^DIAPOSITIVA\s+\d+/i,"Diapositiva "+(index+1));
-
-  const cuerpo = lineas.slice(1).join("\n") || seccion;
-
-  const slide = presentacion.addSlide();
-  slide.background = {color:"100B1D"};
-
-  slide.addText(titulo || "Katia AI",{
-   x:0.6,y:0.45,w:12,h:0.8,
-   fontFace:"Aptos Display",fontSize:27,bold:true,
-   color:"D8B4FE",margin:0.05
-  });
-
-  slide.addShape(presentacion.ShapeType.line,{
-   x:0.6,y:1.35,w:11.8,h:0,
-   line:{color:"A855F7",width:2}
-  });
-
-  slide.addText(cuerpo,{
-   x:0.8,y:1.7,w:11.5,h:5.1,
-   fontFace:"Aptos",fontSize:19,color:"F7F0FF",
-   valign:"top",margin:0.1,fit:"shrink"
-  });
-
-  slide.addText("KATIA AI  •  "+(index+1),{
-   x:10.8,y:7.05,w:1.8,h:0.2,
-   fontSize:9,color:"A99BBD",align:"right"
-  });
+ return paletas[tema]||paletas.purple;
+}
+function dividirDiapositivas(texto){
+ const secciones=texto.split(/\n(?=#{1,2}\s)|\n(?=DIAPOSITIVA\s+\d+)/i)
+  .map(x=>x.trim()).filter(Boolean);
+ if(secciones.length>1)return secciones;
+ const lineas=texto.split(/\r?\n/).filter(x=>x.trim());
+ const bloques=[];
+ for(let i=0;i<lineas.length;i+=5)bloques.push(lineas.slice(i,i+5).join("\n"));
+ return bloques;
+}
+function limpiarTextoSlide(texto){
+ return texto
+  .replace(/^\s*[-*•]\s*/gm,"")
+  .replace(/\*\*(.*?)\*\*/g,"$1")
+  .replace(/`([^`]+)`/g,"$1")
+  .trim();
+}
+async function generarPowerPoint(texto,nombre){
+ if(typeof pptxgen==="undefined")throw new Error("Biblioteca PowerPoint no disponible.");
+ const pptx=new pptxgen();
+ const pal=obtenerPaletaPPTX();
+ const estilo=document.getElementById("pptxLayout")?.value||"modern";
+ pptx.layout="LAYOUT_WIDE";
+ pptx.author="Katia AI";
+ pptx.subject="Presentación profesional creada con Katia AI";
+ pptx.title=nombre;
+ pptx.company="Katia AI";
+ pptx.lang="es-PY";
+ pptx.theme={
+  headFontFace:"Aptos Display",
+  bodyFontFace:"Aptos",
+  lang:"es-PY"
+ };
+ pptx.defineSlideMaster({
+  title:"KATIA_MASTER",
+  background:{color:pal.bg},
+  objects:[
+   {line:{x:.55,y:7.12,w:12.2,h:0,line:{color:pal.accent,transparency:35,width:1}}},
+   {text:{text:"KATIA AI  •  OFFICE STUDIO",options:{x:.6,y:7.18,w:5,h:.15,fontFace:"Aptos",fontSize:7,color:pal.muted,margin:0}}},
+   {text:{text:"",options:{x:12,y:7.15,w:.5,h:.2,fontSize:8,color:pal.muted,align:"right",margin:0}}}
+  ],
+  slideNumber:{x:12.25,y:7.15,color:pal.muted,fontFace:"Aptos",fontSize:8}
+ });
+ const secciones=dividirDiapositivas(texto);
+ if(!secciones.length)throw new Error("No hay contenido para crear diapositivas.");
+ const portada=pptx.addSlide();
+ portada.background={color:pal.bg};
+ portada.addShape(pptx.ShapeType.rect,{x:0,y:0,w:13.333,h:7.5,fill:{color:pal.bg},line:{color:pal.bg}});
+ portada.addShape(pptx.ShapeType.rect,{x:0,y:0,w:.22,h:7.5,fill:{color:pal.accent},line:{color:pal.accent}});
+ portada.addShape(pptx.ShapeType.ellipse,{x:9.1,y:-1.4,w:5.4,h:5.4,fill:{color:pal.accent,transparency:75},line:{color:pal.accent,transparency:100}});
+ portada.addText("KATIA AI  /  PRESENTACIÓN",{x:.85,y:.85,w:7,h:.35,fontFace:"Aptos",fontSize:12,bold:true,charSpacing:2,color:pal.accent,margin:0});
+ const primera=secciones[0].split(/\r?\n/).filter(x=>x.trim());
+ let titulo=primera[0]||nombre;
+ titulo=titulo.replace(/^#{1,2}\s/,"").replace(/^DIAPOSITIVA\s+\d+/i,"").trim()||nombre;
+ portada.addText(titulo,{
+  x:.85,y:2.05,w:10.8,h:2.1,
+  fontFace:"Aptos Display",fontSize:34,bold:true,
+  color:pal.text,breakLine:false,fit:"shrink",margin:0.04,
+  valign:"mid"
+ });
+ const subtitulo=primera.slice(1,3).join(" ").slice(0,170);
+ if(subtitulo)portada.addText(subtitulo,{
+  x:.9,y:4.45,w:9.5,h:.8,fontFace:"Aptos",
+  fontSize:17,color:pal.muted,breakLine:false,fit:"shrink",margin:0
+ });
+ portada.addText(new Date().toLocaleDateString("es-PY"),{
+  x:.9,y:6.55,w:4,h:.3,fontFace:"Aptos",fontSize:10,color:pal.muted
  });
 
- await presentacion.writeFile({fileName:nombre+".pptx"});
+ secciones.forEach((seccion,index)=>{
+  const slide=pptx.addSlide("KATIA_MASTER");
+  slide.background={color:pal.bg};
+  const lineas=seccion.split(/\r?\n/).filter(x=>x.trim());
+  let encabezado=(lineas.shift()||"Tema "+(index+1))
+   .replace(/^#{1,2}\s/,"")
+   .replace(/^DIAPOSITIVA\s+\d+/i,"").trim();
+  const contenido=lineas.join("\n");
+  const bullets=contenido.split(/\r?\n/)
+   .map(x=>x.trim()).filter(Boolean)
+   .map(x=>x.replace(/^[-*•]\s*/,""));
+  slide.addShape(pptx.ShapeType.roundRect,{
+   x:.55,y:.45,w:12.2,h:1.0,
+   rectRadius:.08,fill:{color:pal.panel},
+   line:{color:pal.panel,transparency:100}
+  });
+  slide.addText(encabezado||"Ideas principales",{
+   x:.85,y:.68,w:11.5,h:.55,fontFace:"Aptos Display",
+   fontSize:estilo==="minimal"?25:27,bold:true,
+   color:pal.accent,margin:0,fit:"shrink"
+  });
+  slide.addShape(pptx.ShapeType.line,{
+   x:.85,y:1.62,w:11.55,h:0,
+   line:{color:pal.accent,width:1.5,transparency:15}
+  });
+  if(bullets.length){
+   const usarTarjetas=estilo==="modern"&&bullets.length<=4;
+   if(usarTarjetas){
+    const gap=.18;
+    const alto=Math.min(1.05,4.2/bullets.length);
+    bullets.slice(0,6).forEach((item,i)=>{
+     const y=1.92+i*(alto+gap);
+     slide.addShape(pptx.ShapeType.roundRect,{
+      x:.9,y,w:11.45,h:alto,
+      rectRadius:.06,fill:{color:pal.panel},
+      line:{color:pal.panel,transparency:100}
+     });
+     slide.addShape(pptx.ShapeType.ellipse,{
+      x:1.12,y:y+.25,w:.18,h:.18,
+      fill:{color:pal.accent},line:{color:pal.accent}
+     });
+     slide.addText(item,{
+      x:1.5,y:y+.12,w:10.45,h:alto-.2,
+      fontFace:"Aptos",fontSize:Math.min(19,estilo==="corporate"?17:19),
+      color:pal.text,margin:.04,breakLine:false,
+      valign:"mid",fit:"shrink"
+     });
+    });
+   }else{
+    const lista=bullets.slice(0,9).map(item=>({
+     text:item,
+     options:{bullet:{indent:18},hanging:4,breakLine:true}
+    }));
+    slide.addText(lista,{
+     x:1.05,y:1.95,w:11.15,h:4.75,
+     fontFace:"Aptos",fontSize:estilo==="corporate"?18:20,
+     color:pal.text,breakLine:false,paraSpaceAfterPt:14,
+     valign:"top",margin:.08,fit:"shrink"
+    });
+   }
+  }else{
+   slide.addText(contenido||" ",{
+    x:1.0,y:2.0,w:11.2,h:4.7,
+    fontFace:"Aptos",fontSize:20,color:pal.text,
+    margin:.1,breakLine:false,valign:"top",fit:"shrink"
+   });
+  }
+ });
+
+ const final=pptx.addSlide();
+ final.background={color:pal.bg};
+ final.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:13.333,h:7.5,fill:{color:pal.bg},line:{color:pal.bg}
+ });
+ final.addText("¡GRACIAS!",{
+  x:1,y:2.25,w:11.3,h:1.1,
+  fontFace:"Aptos Display",fontSize:40,bold:true,
+  align:"center",color:pal.accent,margin:0
+ });
+ final.addText("Presentación creada con Katia AI",{
+  x:1,y:3.55,w:11.3,h:.5,fontFace:"Aptos",
+  fontSize:17,align:"center",color:pal.muted,margin:0
+ });
+ await pptx.writeFile({fileName:nombre+".pptx"});
 }
 
-/* CREAR PDF */
-
-function generarPDF(texto,nombre) {
- if(!window.jspdf || !window.jspdf.jsPDF) {
-  throw new Error("La biblioteca PDF no está disponible.");
- }
-
- const {jsPDF} = window.jspdf;
-
- const pdf = new jsPDF({
-  orientation:"portrait",
-  unit:"mm",
-  format:"a4"
+/* PDF */
+function generarPDF(texto,nombre){
+ if(!window.jspdf||!window.jspdf.jsPDF)throw new Error("Biblioteca PDF no disponible.");
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+ const margen=18,ancho=174,altoPagina=280;
+ let y=20;
+ pdf.setFont("helvetica","normal");pdf.setFontSize(11);
+ const lineas=pdf.splitTextToSize(texto,ancho);
+ lineas.forEach(linea=>{
+  if(y>altoPagina){pdf.addPage();y=20}
+  pdf.text(linea,margen,y);y+=6;
  });
-
- const margen = 18;
- const ancho = 174;
- const altoPagina = 280;
- let y = 20;
-
- pdf.setFont("helvetica","normal");
- pdf.setFontSize(11);
-
- const lineas = pdf.splitTextToSize(texto,ancho);
-
- lineas.forEach(linea => {
-  if(y > altoPagina) {
-   pdf.addPage();
-   y = 20;
-  }
-
-  pdf.text(linea,margen,y);
-  y += 6;
- });
-
  pdf.save(nombre+".pdf");
 }
 
-/* MOTOR GENERAL DE ARCHIVOS */
-
-async function crearArchivo(tipo,texto,nombre) {
- nombre = nombreSeguro(nombre);
-
- if(!texto || !texto.trim()) {
-  throw new Error("No hay contenido para crear el archivo.");
- }
-
- if(tipo === "docx") {
-  await generarWord(texto,nombre);
- } else if(tipo === "xlsx") {
-  generarExcel(texto,nombre);
- } else if(tipo === "pptx") {
-  await generarPowerPoint(texto,nombre);
- } else if(tipo === "pdf") {
-  generarPDF(texto,nombre);
- } else {
-  throw new Error("Formato de archivo desconocido.");
- }
+/* MOTOR GENERAL */
+async function crearArchivo(tipo,texto,nombre){
+ nombre=nombreSeguro(nombre);
+ if(!texto||!texto.trim())throw new Error("No hay contenido para crear.");
+ if(tipo==="docx")await generarWord(texto,nombre);
+ else if(tipo==="xlsx")generarExcel(texto,nombre);
+ else if(tipo==="pptx")await generarPowerPoint(texto,nombre);
+ else if(tipo==="pdf")generarPDF(texto,nombre);
+ else throw new Error("Formato desconocido.");
 }
-
-/* DESCARGAR MODIFICACIÓN */
-
-async function descargarDocumentoModificado() {
- if(!contenidoModificado.trim()) {
-  alert(
-   "Todavía no hay una modificación lista.\n\n" +
-   "Seleccioná el modo 'Modificar el contenido completo' y pedile a Katia que modifique el documento."
-  );
+async function descargarDocumentoModificado(){
+ if(!contenidoModificado.trim()){
+  alert("Todavía no hay una modificación lista. Seleccioná el modo de modificación.");
   return;
  }
-
- if(!tipoDocumentoActual) {
-  alert("No se reconoce el formato del documento original.");
-  return;
- }
-
- const nombre = nombreSeguro(nombreDocumentoActual)+"_Katia";
-
- try {
-  estadoOffice("documentStatus","📦 Preparando el archivo modificado...");
-
+ if(!tipoDocumentoActual){alert("No se reconoce el formato original.");return}
+ const nombre=nombreSeguro(nombreDocumentoActual)+"_Katia";
+ try{
+  estadoOffice("documentStatus","📦 Preparando archivo...");
   await crearArchivo(tipoDocumentoActual,contenidoModificado,nombre);
-
-  estadoOffice(
-   "documentStatus",
-   "📥 Se preparó una nueva versión. Revisá tus descargas."
-  );
- } catch(error) {
-  console.error(error);
-  alert("No se pudo crear el archivo: "+error.message);
+  estadoOffice("documentStatus","📥 Archivo preparado. Revisá tus descargas.");
+ }catch(error){
+  console.error(error);alert("No se pudo crear: "+error.message);
  }
 }
 
-/* CREAR DOCUMENTOS NUEVOS */
-
-async function crearDocumentoNuevo() {
- const tipo = document.getElementById("newFileType").value;
-
- const nombre =
-  document.getElementById("newFileName").value.trim() ||
-  "Documento_Katia";
-
- const instrucciones =
-  document.getElementById("newFileContent").value.trim();
-
- if(!instrucciones) {
-  alert("Describí qué archivo querés crear.");
-  return;
- }
-
- const boton = document.getElementById("createButton");
-
- boton.disabled = true;
- boton.textContent = "⏳ Creando archivo...";
-
+/* CREACIÓN CON IA */
+async function crearDocumentoNuevo(){
+ const tipo=document.getElementById("newFileType").value;
+ const nombre=document.getElementById("newFileName").value.trim()||"Documento_Katia";
+ const instrucciones=document.getElementById("newFileContent").value.trim();
+ if(!instrucciones){alert("Describí qué archivo querés crear.");return}
+ const boton=document.getElementById("createButton");
+ boton.disabled=true;boton.textContent="⏳ Creando archivo...";
  estadoOffice("createStatus","🧠 Katia está preparando el contenido...");
-
- try {
-  let formato = "";
-
-  if(tipo === "xlsx") {
-   formato =
-    "Devolvé una tabla para Excel. Usá tabulaciones entre columnas y saltos de línea entre filas. No uses tablas Markdown. Incluí encabezados cuando corresponda.";
-  } else if(tipo === "pptx") {
-   formato =
-    "Prepará una presentación PowerPoint. Separá cada diapositiva con un título que comience con ##. Usá texto breve, organizado y adecuado para diapositivas.";
-  } else {
-   formato =
-    "Prepará un documento completo, organizado, con títulos y párrafos claros.";
+ try{
+  let formato="";
+  if(tipo==="xlsx"){
+   formato=
+    "Prepará datos para Excel. Podés crear varias hojas. " +
+    "Separá cada hoja con una línea ### HOJA: NombreDeHoja. " +
+    "Dentro de cada hoja usá tabulaciones entre columnas y saltos de línea entre filas. " +
+    "La primera fila debe ser encabezados. Incluí fórmulas cuando sean útiles, comenzando con =. " +
+    "No uses tablas Markdown ni explicaciones fuera de los datos.";
+  }else if(tipo==="pptx"){
+   formato=
+    "Prepará una presentación profesional para PowerPoint. " +
+    "Separá cada diapositiva con un encabezado ## Título. " +
+    "La primera diapositiva debe contener el título y un subtítulo. " +
+    "Usá entre 3 y 5 ideas breves por diapositiva, no párrafos largos. " +
+    "Usá listas con guiones cuando sea adecuado. " +
+    "Creá una diapositiva final de conclusiones o cierre. " +
+    "No incluyas explicaciones fuera de las diapositivas.";
+  }else{
+   formato="Prepará un documento completo, organizado, con títulos y párrafos claros.";
   }
-
-  const contenido = await llamarWorker([
+  const contenido=await llamarWorker([
    {
     role:"system",
-    content:
-     "Sos Katia AI, especialista en creación de archivos. " +
-     "Entregá contenido útil, completo y bien organizado. " +
-     "No agregues explicaciones sobre el proceso. " +
-     formato
+    content:"Sos Katia AI, especialista en creación de archivos. Entregá contenido completo, útil y ordenado. "+formato
    },
-   {
-    role:"user",
-    content:instrucciones
-   }
+   {role:"user",content:instrucciones}
   ]);
-
-  estadoOffice("createStatus","📦 Preparando el archivo "+tipo.toUpperCase()+"...");
-
+  estadoOffice("createStatus","📦 Generando archivo "+tipo.toUpperCase()+"...");
   await crearArchivo(tipo,contenido,nombre);
-
-  estadoOffice(
-   "createStatus",
-   "✅ ¡Archivo creado! Revisá tus descargas."
-  );
-
- } catch(error) {
+  estadoOffice("createStatus","✅ ¡Archivo creado! Revisá tus descargas.");
+ }catch(error){
   console.error(error);
-  estadoOffice("createStatus","❌ No se pudo crear el archivo: "+error.message);
- } finally {
-  boton.disabled = false;
-  boton.textContent = "🚀 Crear archivo con Katia";
+  estadoOffice("createStatus","❌ No se pudo crear: "+error.message);
+ }finally{
+  boton.disabled=false;
+  boton.textContent="🚀 Crear archivo con Katia";
  }
 }
 
-/* DESCRIPCIÓN INICIAL */
-
 actualizarDescripcionModo();
-
+actualizarOpcionesCreacion();
 </script>
 </body>
-</html>
+ </html>
