@@ -97,8 +97,7 @@ color:#cdbde0;font-size:12px;line-height:1.6;margin-top:12px
 .progress{margin-top:18px;display:none}
 .step{
 padding:12px;border:1px solid #a855f733;border-radius:11px;
-margin-top:9px;color:var(--muted);font-size:12px;
-background:#0d0916
+margin-top:9px;color:var(--muted);font-size:12px;background:#0d0916
 }
 .step.active{border-color:var(--purple);color:white}
 .step.done{border-color:var(--green);color:var(--green)}
@@ -113,7 +112,6 @@ padding:12px;border-radius:10px;font-size:12px;
 line-height:1.5;margin-top:12px;display:none;overflow-wrap:anywhere
 }
 .message.error{display:block;background:#401723;color:#ffb3c0}
-.message.success{display:block;background:#123528;color:#9bffd0}
 .complete{
 padding:12px;border:1px solid #55e6a555;border-radius:12px;
 background:#12352855;color:#9bffd0;font-size:12px;
@@ -156,6 +154,8 @@ line-height:1.6;margin-bottom:14px
     ✨ <strong>Modo automático:</strong> Katia preparará el plan completo y comprobará que las cuatro etapas estén terminadas.
     <br><br>
     💾 <strong>Guardado inteligente:</strong> si una etapa falla, las anteriores quedan guardadas para continuar después.
+    <br><br>
+    ⏳ <strong>Control de consumo:</strong> Katia hará pausas entre etapas y ajustará el tamaño de cada solicitud.
   </div>
 
   <details>
@@ -235,7 +235,7 @@ line-height:1.6;margin-bottom:14px
     Lista para transformar tu idea en un proyecto audiovisual. 💜
   </div>
 
-  <div class="message error" id="error"></div>
+  <div class="message" id="error"></div>
 
   <div class="progress" id="progress">
     <h3>⚡ Producción automática</h3>
@@ -248,7 +248,7 @@ line-height:1.6;margin-bottom:14px
   </div>
 
   <p class="note">
-    Si Groq limita temporalmente las solicitudes, Katia esperará y volverá a intentarlo. No se garantiza que el servicio esté siempre disponible.
+    Groq puede aplicar límites temporales. Katia respetará los tiempos de espera informados por el servicio y conservará las etapas completadas.
   </p>
 </section>
 
@@ -281,7 +281,7 @@ line-height:1.6;margin-bottom:14px
 const KATIA_API="https://katia-braine.gio09062009.workers.dev/";
 const $=id=>document.getElementById(id);
 
-const PROGRESS_KEY="katia_video_progress_v2";
+const PROGRESS_KEY="katia_video_progress_v3";
 const PROJECTS_KEY="katia_video_projects_v1";
 
 let currentPlan="";
@@ -296,6 +296,11 @@ const STAGE_MARKERS={
   3:"[FIN_ETAPA_3]",
   4:"[FIN_ETAPA_4]"
 };
+
+/* Configuración de pausas */
+
+const PAUSE_BETWEEN_STAGES=35000;
+const MAX_RATE_RETRIES=5;
 
 function setStatus(message){
   $("status").textContent=message;
@@ -363,8 +368,6 @@ function getFingerprint(settings){
   return JSON.stringify(settings);
 }
 
-/* Duración y límites de tokens */
-
 function getDurationSeconds(duration){
   if(duration.includes("30"))return 30;
   if(duration.includes("60"))return 60;
@@ -374,17 +377,32 @@ function getDurationSeconds(duration){
   return 60;
 }
 
-function getTokenLimit(settings){
+/*
+  Límites por etapa.
+  Son topes de salida, no una garantía de consumo total.
+*/
+
+function getTokenLimit(settings,stage){
+
   const seconds=getDurationSeconds(settings.duration);
 
-  // Menor reserva para reducir rechazos por TPM.
+  const base={
+    1:1700,
+    2:1800,
+    3:1900,
+    4:2100
+  };
+
+  const extra=Math.floor(seconds/60)*150;
+
   return Math.min(
-    4096,
-    Math.max(2650,Math.round(2500+seconds*5))
+    2600,
+    base[stage]+extra
   );
 }
 
 function getMinimumWords(settings){
+
   if(
     settings.language==="Sin narración" ||
     settings.voice==="Sin narración"
@@ -399,18 +417,13 @@ function countWords(text){
   return (text.match(/[\p{L}\p{N}]+/gu)||[]).length;
 }
 
-/* Detección de secuencias */
-
 function detectSequences(text){
 
   const found=new Set();
-  const lines=text.split(/\r?\n/);
 
-  for(const line of lines){
+  for(const line of text.split(/\r?\n/)){
 
-    let match;
-
-    match=line.match(
+    let match=line.match(
       /^\s*(?:#{1,6}\s*)?(?:🎬\s*)?(?:SECUENCIA|SEQUENCE)\s*(?:N[.º°]\s*)?#?\s*(\d{1,2})\b/i
     );
 
@@ -432,28 +445,15 @@ function detectSequences(text){
 
     if(match){
       found.add(Number(match[1]));
-      continue;
-    }
-
-    match=line.match(
-      /^\s*(\d{1,2})[.)]\s*.*\b\d{1,2}:\d{2}\b.*(?:-|–|—|a\b|hasta\b)/i
-    );
-
-    if(match){
-      found.add(Number(match[1]));
     }
   }
 
   return [...found].sort((a,b)=>a-b);
 }
 
-/* Pausa */
-
 function sleep(ms){
   return new Promise(resolve=>setTimeout(resolve,ms));
 }
-
-/* Detección de límite de Groq */
 
 function isRateLimit(data,message){
 
@@ -467,37 +467,58 @@ function isRateLimit(data,message){
 
 function getRetryDelay(message){
 
-  const match=String(message||"").match(
+  const text=String(message||"");
+
+  const secondsMatch=text.match(
     /(?:try again in|retry after)\s*([\d.]+)\s*(s|sec|seconds?)/i
   );
 
-  if(match){
-    return Math.ceil(Number(match[1])*1000)+3000;
+  if(secondsMatch){
+    return Math.ceil(Number(secondsMatch[1])*1000)+4000;
   }
 
-  return 30000;
+  const msMatch=text.match(
+    /retry-after["'\s:=]+([\d.]+)/i
+  );
+
+  if(msMatch){
+    return Math.ceil(Number(msMatch[1])*1000)+3000;
+  }
+
+  return 35000;
+}
+
+function makeErrorMessage(response,data){
+
+  let message="HTTP "+response.status+
+    " | "+(data.error||"Error desconocido");
+
+  if(data.status){
+    message+=" | Estado de Groq: "+data.status;
+  }
+
+  if(data.detail){
+    message+=" | Detalle: "+data.detail;
+  }
+
+  return message;
 }
 
 /* Comunicación con Katia Brain */
 
 async function askKatia(system,prompt,settings,stage){
 
-  if(system.length>48000){
-    throw new Error("Las instrucciones de la etapa superan el límite permitido.");
-  }
-
-  if(prompt.length>48000){
-    throw new Error("El contenido de esta etapa es demasiado largo para enviarlo.");
+  if(system.length>48000 || prompt.length>48000){
+    throw new Error("Las instrucciones de esta etapa son demasiado extensas.");
   }
 
   if(system.length+prompt.length>95000){
-    throw new Error("La solicitud completa supera el límite de texto permitido.");
+    throw new Error("La solicitud supera el límite de texto permitido.");
   }
 
-  const maxTokens=getTokenLimit(settings);
+  const maxTokens=getTokenLimit(settings,stage);
 
-  // Hasta cuatro intentos ante errores temporales de límite.
-  for(let attempt=1;attempt<=4;attempt++){
+  for(let attempt=1;attempt<=MAX_RATE_RETRIES;attempt++){
 
     const controller=new AbortController();
 
@@ -510,7 +531,7 @@ async function askKatia(system,prompt,settings,stage){
 
       setStatus(
         "Katia está trabajando en la etapa "+stage+
-        ". Solicitud "+attempt+" de 4."
+        ". Solicitud "+attempt+" de "+MAX_RATE_RETRIES+"."
       );
 
       const response=await fetch(KATIA_API,{
@@ -535,47 +556,37 @@ async function askKatia(system,prompt,settings,stage){
       }catch{
         data={
           error:"El servidor devolvió una respuesta que no es JSON.",
-          detail:responseText.slice(0,1500)
+          detail:responseText.slice(0,1200)
         };
       }
 
       if(!response.ok){
 
+        const message=makeErrorMessage(response,data);
+
         console.error("Error de Katia Brain:",data);
-
-        let message="HTTP "+response.status+
-          " | "+(data.error||"Error desconocido");
-
-        if(data.status){
-          message+=" | Estado de Groq: "+data.status;
-        }
-
-        if(data.detail){
-          message+=" | Detalle: "+data.detail;
-        }
 
         if(isRateLimit(data,message)){
 
-          if(attempt>=4){
+          if(attempt>=MAX_RATE_RETRIES){
             throw new Error(
-              "Groq sigue limitando las solicitudes después de cuatro intentos. "+
-              message
+              "Groq sigue limitando las solicitudes después de "+
+              MAX_RATE_RETRIES+" intentos.\n"+message
             );
           }
 
           const delay=getRetryDelay(message);
-
           const seconds=Math.ceil(delay/1000);
 
           setStatus(
-            "⏳ Groq necesita liberar capacidad. "+
-            "Katia esperará aproximadamente "+seconds+
-            " segundos y reintentará automáticamente."
+            "⏳ Groq alcanzó su límite temporal. "+
+            "Katia esperará "+seconds+
+            " segundos antes de reintentar."
           );
 
           setProgress(
             Math.min((stage-1)*25+8,95),
-            "Esperando disponibilidad de Groq..."
+            "Esperando que Groq libere capacidad..."
           );
 
           clearTimeout(timeout);
@@ -605,7 +616,9 @@ async function askKatia(system,prompt,settings,stage){
       }
 
       if(error instanceof TypeError){
-        throw new Error("No se pudo conectar con Katia Brain. Revisá la conexión o el Worker.");
+        throw new Error(
+          "No se pudo conectar con Katia Brain. Revisá la conexión o el Worker."
+        );
       }
 
       throw error;
@@ -618,7 +631,7 @@ async function askKatia(system,prompt,settings,stage){
   throw new Error("No se pudo completar la solicitud.");
 }
 
-/* Instrucciones generales */
+/* Instrucciones de las etapas */
 
 function buildStageSystem(stage,settings){
 
@@ -627,193 +640,120 @@ function buildStageSystem(stage,settings){
   const common=`
 Sos Katia, una productora audiovisual profesional.
 
-Tu trabajo consiste en desarrollar una producción audiovisual
-completa y coherente dividida en cuatro etapas.
+Desarrollá esta etapa de una producción audiovisual.
+Respondé en ${settings.language}.
+Respetá la idea original y la duración de ${duration} segundos.
 
-REGLAS OBLIGATORIAS:
+No hagas preguntas.
+No inventes que generaste archivos multimedia.
+No uses puntos suspensivos para reemplazar contenido.
+No dejes frases incompletas.
+Sé concreta, organizada y útil.
+Mantené continuidad con el material recibido.
 
-- Respondé en el idioma solicitado.
-- Respetá exactamente la idea original.
-- No hagas preguntas.
-- No omitas secciones solicitadas.
-- No entregues respuestas resumidas.
-- No termines abruptamente.
-- No dejes frases incompletas.
-- No reemplaces contenido por puntos suspensivos.
-- No inventes que generaste archivos multimedia.
-- Mantené continuidad entre las cuatro etapas.
-- Desarrollá cada sección con contenido útil y concreto.
-
-DURACIÓN DEL PROYECTO: ${duration} segundos.
-
-La respuesta debe terminar con el marcador exacto:
+La respuesta debe terminar con este marcador exacto:
 ${STAGE_MARKERS[stage]}
 
-El marcador debe aparecer en la última línea,
-después de completar absolutamente todo el contenido.
+El marcador debe estar en la última línea.
 `;
 
   const instructions={
 
     1:`
-ETAPA 1: GUION COMPLETO Y NARRACIÓN.
+ETAPA 1: GUION Y NARRACIÓN.
 
-Creá el guion definitivo de principio a fin.
+Creá un guion completo con:
+- Título.
+- Concepto y objetivo.
+- Gancho inicial.
+- Introducción.
+- Desarrollo.
+- Momento principal.
+- Conclusión.
+- Llamada a la acción.
 
-ESTRUCTURA GENERAL:
+OBLIGATORIO: mínimo tres secuencias numeradas.
 
-1. TÍTULO DEL VIDEO.
-2. CONCEPTO GENERAL.
-3. OBJETIVO Y GANCHO INICIAL.
-4. INTRODUCCIÓN.
-5. DESARROLLO COMPLETO.
-6. MOMENTO MÁS IMPORTANTE O IMPACTANTE.
-7. CONCLUSIÓN.
-8. DESPEDIDA Y LLAMADA A LA ACCIÓN.
-
-OBLIGACIÓN FUNDAMENTAL: SECUENCIAS NUMERADAS.
-
-El guion DEBE contener como mínimo TRES SECUENCIAS.
-
-Usá obligatoriamente este formato:
+Usá este formato:
 
 SECUENCIA 1 — [00:00 a 00:20]
 Narración:
-[Texto completo que debe pronunciar la voz]
+Texto completo.
 
 Visual:
-[Qué se verá en pantalla]
+Descripción visual.
 
 SECUENCIA 2 — [00:20 a 00:40]
 Narración:
-[Texto completo que debe pronunciar la voz]
+Texto completo.
 
 Visual:
-[Qué se verá en pantalla]
+Descripción visual.
 
 SECUENCIA 3 — [00:40 a 01:00]
 Narración:
-[Texto completo que debe pronunciar la voz]
+Texto completo.
 
 Visual:
-[Qué se verá en pantalla]
+Descripción visual.
 
-Los tiempos del ejemplo son ilustrativos.
 Calculá los tiempos reales según la duración solicitada.
-
-Si el video necesita más de tres secuencias, agregá todas las necesarias.
-
-REGLAS DE LAS SECUENCIAS:
-
-- Numerá cada secuencia en orden.
-- Cada secuencia debe tener un tiempo inicial y final.
-- Cada secuencia debe incluir narración completa.
-- Cada secuencia debe incluir una descripción visual.
-- No repitas números.
-- No dejes huecos temporales.
-- La primera comienza en 00:00.
-- La última termina exactamente en ${duration} segundos.
-- La suma de los tiempos debe cubrir toda la duración.
-
-NARRACIÓN:
-
-- Escribí cada frase que debe pronunciar la voz.
-- No utilices indicaciones como "continuar hablando".
-- No sustituyas párrafos por resúmenes.
-- No cortes explicaciones.
-- Desarrollá todos los elementos anunciados en el gancho.
-- Adaptá el ritmo a la duración solicitada.
-
-EXTENSIÓN:
+La primera secuencia comienza en 00:00.
+La última termina exactamente al final del video.
+No dejes huecos temporales.
 
 La narración debe tener aproximadamente entre 100 y 150 palabras por minuto.
+Si no hay narración, reemplazala por indicaciones visuales y textos en pantalla.
 
-Para un video de 60 segundos, prepará una narración adecuada
-para aproximadamente un minuto de locución.
-
-No entregues un guion de diez segundos para un video de un minuto.
-
-Si el usuario selecciona sin narración, reemplazá el texto hablado
-por instrucciones visuales completas y textos en pantalla.
-Aun así, conservá como mínimo tres secuencias numeradas.
-
-IMPORTANTE:
-Antes de terminar, comprobá que existan SECUENCIA 1,
-SECUENCIA 2 y SECUENCIA 3 como mínimo.
-
-No avances a las siguientes etapas.
-
+No avances a otras etapas.
 Terminá con ${STAGE_MARKERS[1]}
 `,
 
     2:`
-ETAPA 2: STORYBOARD COMPLETO.
+ETAPA 2: STORYBOARD.
 
-Usá el guion original de la etapa anterior.
+Convertí el guion recibido en escenas ordenadas.
+Representá todas las partes importantes de la narración.
 
-Convertí TODO el guion en escenas ordenadas.
+Para cada escena incluí:
+1. Número y tiempo.
+2. Duración.
+3. Narración correspondiente.
+4. Descripción visual.
+5. Acción principal.
+6. Encuadre y movimiento de cámara.
+7. Iluminación y ambiente.
+8. Transición.
+9. Texto en pantalla.
 
-Para cada escena indicá:
-
-1. Número de escena.
-2. Tiempo inicial y final.
-3. Duración exacta.
-4. Fragmento exacto de narración correspondiente.
-5. Descripción visual.
-6. Acción principal.
-7. Encuadre.
-8. Movimiento de cámara.
-9. Iluminación y ambiente.
-10. Transición hacia la siguiente escena.
-11. Texto que aparecerá en pantalla.
-
-REGLAS:
-
-- Ninguna parte de la narración puede quedar sin escena.
-- No cambies el significado del guion.
-- No elimines escenas importantes.
-- No repitas escenas innecesariamente.
-- La primera escena comienza en 00:00.
-- La última escena termina en ${duration} segundos.
-- No dejes huecos temporales.
-- Todas las escenas deben estar ordenadas cronológicamente.
-
-Entregá todas las escenas necesarias para cubrir el video completo.
+La primera escena comienza en 00:00.
+La última termina al final del video.
+No dejes huecos temporales ni cambies el sentido del guion.
 
 Terminá con ${STAGE_MARKERS[2]}
 `,
 
     3:`
-ETAPA 3: PROMPTS VISUALES COMPLETOS.
+ETAPA 3: PROMPTS VISUALES.
 
-Creá un prompt visual independiente para CADA escena del storyboard.
+Creá un prompt independiente para cada escena del storyboard.
 
-No omitas ninguna escena.
-
-Cada prompt debe poder copiarse individualmente
-en una herramienta de generación de imágenes o videos.
+Cada prompt debe poder copiarse individualmente en una herramienta de imágenes o video.
 
 Incluí:
-
-1. Número de escena correspondiente.
+1. Número de escena.
 2. Sujeto principal.
 3. Elementos secundarios.
 4. Ubicación y ambiente.
-5. Composición.
-6. Encuadre.
-7. Iluminación.
-8. Colores.
-9. Estilo artístico.
-10. Cámara y profundidad.
-11. Nivel de detalle.
-12. Continuidad visual.
+5. Composición y encuadre.
+6. Iluminación y colores.
+7. Estilo artístico.
+8. Cámara y profundidad.
+9. Nivel de detalle.
+10. Continuidad visual.
 
-Mantené la apariencia consistente de personajes,
-vestuario, escenarios y objetos.
-
-No imites la apariencia de personas reales.
-
-Entregá todos los prompts correspondientes al storyboard.
+Mantené consistentes los personajes, escenarios, vestuario y objetos.
+No omitas escenas.
 
 Terminá con ${STAGE_MARKERS[3]}
 `,
@@ -821,75 +761,41 @@ Terminá con ${STAGE_MARKERS[3]}
     4:`
 ETAPA 4: AUDIO, SUBTÍTULOS, EDICIÓN Y PUBLICACIÓN.
 
-Prepará todos los elementos necesarios para finalizar la producción.
-
-INCLUÍ OBLIGATORIAMENTE:
+Prepará:
 
 1. DIRECCIÓN DE VOZ:
-   - Tipo de voz.
-   - Velocidad.
-   - Emoción.
-   - Entonación.
-   - Pausas.
-   - Pronunciación.
+Tipo de voz, velocidad, emoción, entonación y pausas.
 
 2. MÚSICA:
-   - Estilo musical.
-   - Ambiente.
-   - Intensidad.
-   - Momentos de entrada y salida.
+Estilo, ambiente, intensidad y momentos de entrada y salida.
 
 3. EFECTOS SONOROS:
-   - Efectos necesarios.
-   - Tiempo de aparición.
-   - Función de cada efecto.
+Efecto, momento y función.
 
 4. SUBTÍTULOS:
-   - Texto completo.
-   - Tiempos de aparición.
-   - Tiempos de desaparición.
-   - Correspondencia exacta con la narración.
-   - No omitir ninguna frase hablada.
+Texto completo y tiempos de aparición y desaparición.
+Deben corresponder con la narración.
 
 5. TEXTOS EN PANTALLA:
-   - Frases.
-   - Títulos.
-   - Palabras destacadas.
-   - Tiempos.
+Frases, títulos, palabras destacadas y tiempos.
 
-6. PLAN DE EDICIÓN:
-   - Orden de escenas.
-   - Ritmo.
-   - Cortes.
-   - Transiciones.
-   - Corrección de color.
-   - Efectos visuales.
+6. EDICIÓN:
+Orden de escenas, ritmo, cortes, transiciones y color.
 
 7. MEZCLA DE AUDIO.
 
-8. DISEÑO DE MINIATURA:
-   - Concepto.
-   - Composición.
-   - Texto.
-   - Prompt visual.
+8. MINIATURA:
+Concepto, composición, texto y prompt visual.
 
 9. PUBLICACIÓN:
-   - Título.
-   - Descripción.
-   - Hashtags.
-   - Llamada a la acción.
+Título, descripción, hashtags y llamada a la acción.
 
 10. RECURSOS NECESARIOS.
 
 11. FLUJO DE TRABAJO DESDE ANDROID:
-    - Opciones gratuitas.
-    - Orden de utilización.
-    - Procedimiento general.
+Opciones gratuitas y orden general de trabajo.
 
 12. LISTA DE CONTROL FINAL.
-
-Los subtítulos deben cubrir toda la narración.
-La edición debe respetar los tiempos del storyboard.
 
 No recomiendes servicios pagos como requisito.
 No afirmes que el video ya está renderizado.
@@ -901,7 +807,7 @@ Terminá con ${STAGE_MARKERS[4]}
   return common+"\n"+instructions[stage];
 }
 
-/* Validación de etapas */
+/* Validación */
 
 function validateStage(number,content,settings){
 
@@ -911,7 +817,7 @@ function validateStage(number,content,settings){
   if(!trimmed.endsWith(marker)){
     return {
       valid:false,
-      reason:"Falta el marcador al final. La respuesta podría estar incompleta."
+      reason:"Falta el marcador final. La respuesta podría estar incompleta."
     };
   }
 
@@ -925,17 +831,15 @@ function validateStage(number,content,settings){
     if(words<minimum){
       return {
         valid:false,
-        reason:
-          "El guion contiene "+words+
-          " palabras, pero necesita aproximadamente "+
-          minimum+" o más para cubrir la duración seleccionada."
+        reason:"El guion tiene "+words+
+        " palabras y necesita aproximadamente "+minimum+" o más."
       };
     }
 
     if(cleaned.length<350){
       return {
         valid:false,
-        reason:"El guion es demasiado corto para considerarse completo."
+        reason:"El guion es demasiado corto."
       };
     }
 
@@ -949,53 +853,34 @@ function validateStage(number,content,settings){
     ){
       return {
         valid:false,
-        reason:
-          "El guion necesita al menos tres secuencias numeradas: "+
-          "SECUENCIA 1, SECUENCIA 2 y SECUENCIA 3."
+        reason:"Faltan las tres secuencias numeradas obligatorias."
       };
     }
   }
 
-  if(number===2 && cleaned.length<450){
+  if(number!==1 && cleaned.length<350){
     return {
       valid:false,
-      reason:"El storyboard tiene muy poco contenido o faltan escenas."
-    };
-  }
-
-  if(number===3 && cleaned.length<450){
-    return {
-      valid:false,
-      reason:"Los prompts visuales están incompletos."
-    };
-  }
-
-  if(number===4 && cleaned.length<450){
-    return {
-      valid:false,
-      reason:"La etapa de audio y edición está incompleta."
+      reason:"Esta etapa tiene muy poco contenido."
     };
   }
 
   if(number===2){
 
-    const timeMatches=cleaned.match(/\b\d{1,2}:\d{2}\b/g)||[];
+    const times=cleaned.match(/\b\d{1,2}:\d{2}\b/g)||[];
 
-    if(timeMatches.length<4){
+    if(times.length<4){
       return {
         valid:false,
-        reason:"Faltan suficientes marcas de tiempo en el storyboard."
+        reason:"Faltan marcas de tiempo suficientes en el storyboard."
       };
     }
   }
 
-  return {
-    valid:true,
-    content:cleaned
-  };
+  return {valid:true,content:cleaned};
 }
 
-/* Guardado y recuperación de etapas */
+/* Guardado y recuperación */
 
 function saveProgress(settings){
 
@@ -1003,21 +888,19 @@ function saveProgress(settings){
 
     const data={
       fingerprint:getFingerprint(settings),
-      settings:settings,
+      settings,
       stages:completedStages,
       updatedAt:new Date().toISOString()
     };
 
-    localStorage.setItem(
-      PROGRESS_KEY,
-      JSON.stringify(data)
-    );
+    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data));
 
   }catch(error){
+
     console.warn("No se pudo guardar el progreso:",error);
+
     setStatus(
-      "Advertencia: el navegador no pudo guardar el progreso. "+
-      "No cierres esta página todavía."
+      "Advertencia: el navegador no pudo guardar el progreso. No cierres la página."
     );
   }
 }
@@ -1038,7 +921,6 @@ function loadProgress(settings){
       return [];
     }
 
-    // Recuperar únicamente etapas consecutivas y válidas.
     const restored=[];
 
     for(let number=1;number<=4;number++){
@@ -1075,7 +957,7 @@ function clearProgress(){
   }
 }
 
-/* Generación con reintentos por respuestas incompletas */
+/* Generación y comprobación */
 
 async function generateValidatedStage(number,prompt,settings){
 
@@ -1090,34 +972,23 @@ async function generateValidatedStage(number,prompt,settings){
 
     if(attempt>1){
 
-      const previousShort=previousResponse.slice(-10000);
-
       request=`
-INSTRUCCIONES ORIGINALES DE ESTA ETAPA:
+TAREA ORIGINAL:
 ${prompt}
 
-LA RESPUESTA ANTERIOR NO SUPERÓ LA COMPROBACIÓN.
+LA RESPUESTA ANTERIOR NO SUPERÓ LA VALIDACIÓN.
 
 MOTIVO:
 ${lastReason}
 
 RESPUESTA ANTERIOR:
-${previousShort}
+${previousResponse.slice(-4500)}
 
-RECONSTRUÍ LA ETAPA COMPLETA DESDE EL PRINCIPIO.
-
-No entregues solamente un fragmento.
-No resumas el contenido anterior.
+Reconstruí la etapa completa desde el principio.
+No entregues solo un fragmento.
 No omitas secciones.
-Conservá la idea original y todos los datos del proyecto.
-
-Si esta es la etapa 1:
-- Incluí como mínimo SECUENCIA 1, SECUENCIA 2 y SECUENCIA 3.
-- Cada secuencia debe tener tiempo y narración.
-- Comprobá la numeración antes de terminar.
-
-Cumplí todas las instrucciones originales.
-Terminá obligatoriamente con:
+Respetá la idea original y la duración.
+Terminá con el marcador exacto:
 ${STAGE_MARKERS[number]}
 `;
     }
@@ -1150,8 +1021,7 @@ ${STAGE_MARKERS[number]}
   }
 
   throw new Error(
-    "La etapa "+number+
-    " no pudo completarse después de 3 intentos. "+
+    "La etapa "+number+" no pudo completarse después de tres intentos. "+
     lastReason
   );
 }
@@ -1172,23 +1042,21 @@ async function runStage(number,title,prompt,settings){
   );
 
   completedStages.push({
-    number:number,
-    title:title,
+    number,
+    title,
     content:result
   });
 
   completedStages.sort((a,b)=>a.number-b.number);
 
-  // Guardar inmediatamente después de cada etapa.
+  // Guardar inmediatamente cada etapa completada.
   saveProgress(settings);
 
   setStep(number,"done");
-  setProgress(number*25,"Etapa "+number+" de 4 completada y guardada.");
+  setProgress(number*25,"Etapa "+number+" completada y guardada.");
 
   return result;
 }
-
-/* Recuperar una etapa o generarla */
 
 async function getOrRunStage(number,title,prompt,settings){
 
@@ -1199,6 +1067,7 @@ async function getOrRunStage(number,title,prompt,settings){
   if(existing){
 
     setStep(number,"done");
+
     setProgress(
       number*25,
       "Etapa "+number+" recuperada del progreso guardado."
@@ -1207,15 +1076,33 @@ async function getOrRunStage(number,title,prompt,settings){
     return existing.content;
   }
 
-  return await runStage(
-    number,
-    title,
-    prompt,
-    settings
-  );
+  return await runStage(number,title,prompt,settings);
 }
 
-/* Documento final */
+/* Pausa preventiva entre etapas */
+
+async function waitBetweenStages(nextStage){
+
+  const total=Math.ceil(PAUSE_BETWEEN_STAGES/1000);
+
+  for(let remaining=total;remaining>0;remaining--){
+
+    setStatus(
+      "✓ Etapa anterior guardada. Katia esperará "+
+      remaining+" segundos antes de comenzar la etapa "+
+      nextStage+"."
+    );
+
+    setProgress(
+      (nextStage-1)*25,
+      "Pausa preventiva para controlar el consumo de Groq..."
+    );
+
+    await sleep(1000);
+  }
+}
+
+/* Plan final */
 
 function buildFinalPlan(settings,stages){
 
@@ -1245,6 +1132,7 @@ Voz: ${settings.voice}
 `;
 
   stages.forEach((stage,index)=>{
+
     output+=`
 ========================================
 ${headings[index]}
@@ -1280,7 +1168,7 @@ con herramientas externas.
   return output;
 }
 
-/* Generación principal */
+/* Producción principal */
 
 async function crearPlan(){
 
@@ -1299,7 +1187,6 @@ async function crearPlan(){
   currentTitle=settings.idea.slice(0,65);
   activeFingerprint=getFingerprint(settings);
 
-  // Intentar recuperar las etapas del mismo proyecto.
   completedStages=loadProgress(settings);
 
   const btn=$("generate");
@@ -1316,11 +1203,11 @@ async function crearPlan(){
     setStep(i,"");
   }
 
-  if(completedStages.length>0){
+  if(completedStages.length){
 
-    for(const stage of completedStages){
+    completedStages.forEach(stage=>{
       setStep(stage.number,"done");
-    }
+    });
 
     setProgress(
       completedStages.length*25,
@@ -1334,68 +1221,67 @@ async function crearPlan(){
 
   }else{
 
-    setStatus("Conectando con Katia. Preparando las cuatro etapas.");
+    setStatus("Conectando con Katia Brain. Preparando la producción.");
     setProgress(0,"Iniciando producción...");
   }
 
   try{
 
-    /* ETAPA 1 */
+    /* ETAPA 1: GUION */
 
     const stage1=await getOrRunStage(
       1,
       "Creando guion completo...",
       `
-Creá el guion audiovisual definitivo para este proyecto.
-
+PROYECTO:
 ${settingsText(settings)}
 
-Desarrollá todas las partes necesarias para cumplir la idea.
+Creá el guion audiovisual definitivo.
 
-Si el título promete tres teorías, desarrollá las tres.
-Si promete cinco consejos, desarrollá los cinco.
+Desarrollá todos los elementos anunciados en la idea.
+Si la idea promete varias teorías, consejos o ejemplos,
+desarrollá cada uno.
 
-No dejes ningún elemento anunciado sin desarrollar.
+Incluí título, gancho, introducción, desarrollo,
+momento principal, conclusión y llamada a la acción.
 
 OBLIGATORIO:
-El guion debe contener al menos tres secuencias numeradas.
-
-Usá exactamente este tipo de encabezados:
+Mínimo tres secuencias numeradas.
 
 SECUENCIA 1 — [tiempo inicial a tiempo final]
 Narración:
 Texto completo.
 
 Visual:
-Descripción de lo que aparece en pantalla.
+Descripción.
 
 SECUENCIA 2 — [tiempo inicial a tiempo final]
 Narración:
 Texto completo.
 
 Visual:
-Descripción de lo que aparece en pantalla.
+Descripción.
 
 SECUENCIA 3 — [tiempo inicial a tiempo final]
 Narración:
 Texto completo.
 
 Visual:
-Descripción de lo que aparece en pantalla.
+Descripción.
 
-Agregá más secuencias si la duración lo requiere.
+Agregá más secuencias si hace falta.
+Cada una debe tener tiempo, narración y descripción visual.
+La primera comienza en 00:00.
+La última termina al final de la duración.
 
-No uses solamente una lista de apartados.
-Las secuencias deben representar partes reales del video.
-
-Entregá la narración completa y sus tiempos.
-El guion debe tener un principio, desarrollo y final.
-No avances a las siguientes etapas.
+No avances a otras etapas.
 `,
       settings
     );
 
-    /* ETAPA 2 */
+    await waitBetweenStages(2);
+
+    /* ETAPA 2: STORYBOARD */
 
     const stage2=await getOrRunStage(
       2,
@@ -1407,58 +1293,88 @@ ${settingsText(settings)}
 GUION COMPLETO:
 ${stage1}
 
-Construí el storyboard de TODAS las partes del guion.
+Convertí el guion en un storyboard cronológico.
 
-Cada frase debe estar representada en alguna escena.
+Para cada escena incluí:
+- Número y tiempo.
+- Duración.
+- Narración correspondiente.
+- Descripción visual.
+- Acción.
+- Encuadre y cámara.
+- Iluminación.
+- Transición.
+- Texto en pantalla.
 
-Cubrir desde 00:00 hasta el final de la duración solicitada.
-No inventes un guion diferente.
-No resumas el contenido.
+Representá todas las partes importantes del guion.
+La primera escena comienza en 00:00.
+La última termina al final del video.
+No dejes huecos temporales.
 `,
       settings
     );
 
-    /* ETAPA 3 */
+    await waitBetweenStages(3);
+
+    /* ETAPA 3: PROMPTS */
 
     const stage3=await getOrRunStage(
       3,
       "Diseñando prompts visuales...",
       `
-GUION:
-${stage1}
+PROYECTO:
+${settingsText(settings)}
 
 STORYBOARD:
 ${stage2}
 
-Generá un prompt visual independiente para CADA escena.
+Creá un prompt visual independiente para cada escena.
 
+Cada prompt debe poder copiarse individualmente.
+
+Incluí sujeto, elementos secundarios, ubicación,
+composición, encuadre, iluminación, colores,
+estilo artístico, cámara, profundidad y detalles.
+
+Mantené continuidad entre personajes y escenarios.
 No omitas ninguna escena.
-Mantené la continuidad visual del proyecto.
 `,
       settings
     );
 
-    /* ETAPA 4 */
+    await waitBetweenStages(4);
+
+    /* ETAPA 4: AUDIO Y EDICIÓN */
 
     const stage4=await getOrRunStage(
       4,
       "Preparando audio y edición...",
       `
+PROYECTO:
+${settingsText(settings)}
+
 GUION:
 ${stage1}
 
 STORYBOARD:
 ${stage2}
 
-PROMPTS VISUALES:
-${stage3}
+Prepará:
+1. Dirección de voz.
+2. Música y momentos de entrada y salida.
+3. Efectos sonoros y tiempos.
+4. Subtítulos completos con tiempos.
+5. Textos en pantalla.
+6. Plan de edición.
+7. Mezcla de audio.
+8. Miniatura y prompt.
+9. Título, descripción y hashtags.
+10. Recursos necesarios.
+11. Flujo de trabajo gratuito desde Android.
+12. Lista de control final.
 
-Prepará todos los elementos finales de producción.
-
-Los subtítulos deben corresponder al guion original
-y cubrir toda la narración.
-
-No omitas ninguna parte del proyecto.
+Los subtítulos deben corresponder al guion.
+No afirmes que el video ya está renderizado.
 `,
       settings
     );
@@ -1472,11 +1388,9 @@ No omitas ninguna parte del proyecto.
     $("result").textContent=currentPlan;
     $("resultPanel").hidden=false;
 
-    // El proyecto ya está completo: limpiar el progreso temporal.
     clearProgress();
 
     setProgress(100,"¡Las cuatro etapas terminaron correctamente!");
-
     setStatus("🎉 ¡Proyecto completo! Katia terminó las cuatro etapas.");
 
     $("resultPanel").scrollIntoView({
@@ -1497,16 +1411,14 @@ No omitas ninguna parte del proyecto.
       setStep(next,"failed");
     }
 
-    // Asegurar que el progreso parcial quede guardado.
     saveProgress(settings);
 
     showError(
       "La producción no pudo completarse: "+
       error.message+
       "\n\nEtapas verificadas y guardadas: "+
-      completedStages.length+
-      " de 4."+
-      "\n\nPodés volver a pulsar el botón para continuar desde la etapa pendiente."
+      completedStages.length+" de 4."+
+      "\n\nPodés pulsar CONTINUAR PRODUCCIÓN para retomar."
     );
 
     setStatus(
@@ -1536,7 +1448,7 @@ async function copiarPlan(){
     await navigator.clipboard.writeText(currentPlan);
     setStatus("¡Plan completo copiado correctamente! 💜");
   }catch(error){
-    setStatus("No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente.");
+    setStatus("No se pudo copiar automáticamente. Seleccioná el texto y copialo manualmente.");
   }
 }
 
@@ -1564,7 +1476,7 @@ function descargarPlan(){
   setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-/* Guardar proyecto completo */
+/* Guardar proyecto */
 
 function guardarProyecto(){
 
