@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -28,93 +27,66 @@
 }
 *{box-sizing:border-box}
 body{
- margin:0;
- min-height:100vh;
- color:var(--text);
+ margin:0;min-height:100vh;color:var(--text);
  background:
  radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),
  radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),
  var(--bg);
- font-family:Arial,sans-serif;
- overflow-x:hidden
+ font-family:Arial,sans-serif;overflow-x:hidden
 }
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 button:disabled{opacity:.55;cursor:not-allowed}
 .app{
- position:relative;
- z-index:1;
- max-width:1150px;
- min-height:100vh;
- margin:auto;
- padding:20px;
- display:flex;
- flex-direction:column
+ position:relative;z-index:1;max-width:1150px;min-height:100vh;
+ margin:auto;padding:20px;display:flex;flex-direction:column
 }
 header{
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:12px;
- padding:8px 0 18px;
- border-bottom:1px solid #c084fc22
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;padding:8px 0 18px;border-bottom:1px solid #c084fc22
 }
 .brand{display:flex;align-items:center;gap:11px}
 .brand-icon{
- width:42px;height:42px;
- border-radius:14px;
- display:grid;place-items:center;
- font-size:22px;
+ width:42px;height:42px;border-radius:14px;display:grid;
+ place-items:center;font-size:22px;
  background:linear-gradient(135deg,#a855f7,#ec4899);
  box-shadow:0 0 25px #a855f755
 }
 .brand h1{font-size:19px;margin:0;letter-spacing:1px}
 .brand small{
- display:block;color:var(--muted);
- font-size:10px;letter-spacing:2px;margin-top:4px
+ display:block;color:var(--muted);font-size:10px;
+ letter-spacing:2px;margin-top:4px
 }
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .icon-btn,.office-open{
- border:1px solid #a855f755;
- border-radius:13px;
- color:white;background:#ffffff08;padding:11px
+ border:1px solid #a855f755;border-radius:13px;color:white;
+ background:#ffffff08;padding:11px
 }
 .office-open{
  background:linear-gradient(135deg,#9333ea,#6b21a8);
  font-size:12px;font-weight:bold
 }
 main{
- flex:1;
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:30px;
- align-items:center;
- padding:25px 0
+ flex:1;display:grid;grid-template-columns:1fr 1fr;
+ gap:30px;align-items:center;padding:25px 0
 }
-.left{
- display:flex;flex-direction:column;
- align-items:center;justify-content:center
-}
+.left{display:flex;flex-direction:column;align-items:center;justify-content:center}
 .orb-area{
- width:100%;min-height:340px;
- display:grid;place-items:center;position:relative
+ width:100%;min-height:340px;display:grid;place-items:center;position:relative
 }
 .orb{
- width:205px;height:205px;
- position:relative;border-radius:50%;
+ width:205px;height:205px;position:relative;border-radius:50%;
  background:radial-gradient(circle at 32% 28%,#fff 0%,#e9baff 4%,#bd73ff 13%,#8529d5 35%,#42106f 65%,#170625 100%);
  box-shadow:0 0 20px #c084fc,0 0 55px #a855f799,0 0 110px #9333ea66,inset -15px -18px 35px #090313;
  animation:float 4s ease-in-out infinite
 }
 .orb:before{
- content:"";position:absolute;inset:-16px;
- border-radius:50%;border:1px solid #c084fc88;
- animation:rotate 12s linear infinite
+ content:"";position:absolute;inset:-16px;border-radius:50%;
+ border:1px solid #c084fc88;animation:rotate 12s linear infinite
 }
 .orb:after{
- content:"";position:absolute;inset:-32px;
- border-radius:50%;border:1px dashed #67e8f955;
- animation:rotate 20s linear infinite reverse
+ content:"";position:absolute;inset:-32px;border-radius:50%;
+ border:1px dashed #67e8f955;animation:rotate 20s linear infinite reverse
 }
 .orb-core{
  position:absolute;inset:22%;border-radius:50%;
@@ -122,45 +94,33 @@ main{
  filter:blur(3px);animation:core 3s infinite
 }
 .orb-ring{
- position:absolute;width:270px;height:90px;
- border:2px solid #c084fc77;border-radius:50%;
- transform:rotate(-20deg);animation:ring 5s infinite
+ position:absolute;width:270px;height:90px;border:2px solid #c084fc77;
+ border-radius:50%;transform:rotate(-20deg);animation:ring 5s infinite
 }
 .orb-ring.second{
- width:290px;height:110px;
- transform:rotate(55deg);border-color:#67e8f955
+ width:290px;height:110px;transform:rotate(55deg);border-color:#67e8f955
 }
 @keyframes float{50%{transform:translateY(-12px)}}
 @keyframes rotate{to{transform:rotate(360deg)}}
 @keyframes core{50%{transform:scale(1.12);opacity:1}}
 @keyframes ring{50%{opacity:1;scale:1.08}}
-.orb.speaking{
- filter:brightness(1.4);
- animation:float 4s infinite,voicePulse .22s infinite alternate
-}
+.orb.speaking{filter:brightness(1.4);animation:float 4s infinite,voicePulse .22s infinite alternate}
 .orb.listening{filter:hue-rotate(35deg) brightness(1.2)}
 .orb.thinking{filter:hue-rotate(65deg) brightness(1.4)}
 @keyframes voicePulse{to{scale:1.075}}
 .orb-status{margin-top:28px;text-align:center}
 .orb-status strong{display:block;font-size:20px;letter-spacing:2px}
-.orb-status span{
- color:var(--muted);font-size:12px;
- display:block;margin-top:8px
-}
+.orb-status span{color:var(--muted);font-size:12px;display:block;margin-top:8px}
 .quick-actions{
- display:flex;flex-wrap:wrap;
- justify-content:center;gap:9px;margin-top:18px
+ display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:18px
 }
 .quick-actions button,.tool-btn{
- color:#e9d5ff;background:#ffffff08;
- border:1px solid #a855f744;
+ color:#e9d5ff;background:#ffffff08;border:1px solid #a855f744;
  border-radius:12px;padding:10px 13px;font-size:12px
 }
 .chat-panel{
- height:590px;max-height:75vh;
- display:flex;flex-direction:column;
- border:1px solid #a855f733;
- background:var(--panel);
+ height:590px;max-height:75vh;display:flex;flex-direction:column;
+ border:1px solid #a855f733;background:var(--panel);
  border-radius:22px;overflow:hidden
 }
 .chat-top{
@@ -168,39 +128,24 @@ main{
  display:flex;justify-content:space-between
 }
 .messages{
- flex:1;overflow-y:auto;padding:18px;
- display:flex;flex-direction:column;gap:14px
+ flex:1;overflow-y:auto;padding:18px;display:flex;
+ flex-direction:column;gap:14px
 }
 .message{
- max-width:88%;padding:12px 14px;
- border-radius:16px;line-height:1.5;
- font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere
+ max-width:88%;padding:12px 14px;border-radius:16px;
+ line-height:1.5;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere
 }
-.message.katia{
- align-self:flex-start;background:#51217a99;
- border:1px solid #c084fc33
-}
-.message.user{
- align-self:flex-end;
- background:linear-gradient(135deg,#8b35c9,#6324a1)
-}
-.sender{
- display:block;color:#e9baff;
- font-size:10px;margin-bottom:5px
-}
-.composer{
- padding:13px;border-top:1px solid #a855f722;
- display:flex;gap:8px
-}
+.message.katia{align-self:flex-start;background:#51217a99;border:1px solid #c084fc33}
+.message.user{align-self:flex-end;background:linear-gradient(135deg,#8b35c9,#6324a1)}
+.sender{display:block;color:#e9baff;font-size:10px;margin-bottom:5px}
+.composer{padding:13px;border-top:1px solid #a855f722;display:flex;gap:8px}
 .composer input{
- flex:1;min-width:0;color:white;
- background:#ffffff0b;border:1px solid #a855f744;
- border-radius:14px;padding:14px
+ flex:1;min-width:0;color:white;background:#ffffff0b;
+ border:1px solid #a855f744;border-radius:14px;padding:14px
 }
 .send-btn,.mic-btn{
- border:0;width:44px;height:44px;
- border-radius:14px;color:white;
- background:linear-gradient(135deg,#a855f7,#7e22ce)
+ border:0;width:44px;height:44px;border-radius:14px;
+ color:white;background:linear-gradient(135deg,#a855f7,#7e22ce)
 }
 footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 .overlay,.office-overlay{
@@ -209,39 +154,32 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 }
 .overlay.open,.office-overlay.open{display:block}
 .drawer,.office-wrap{
- max-width:850px;margin:12px auto;
- background:#130c20;border:1px solid #a855f755;
- border-radius:20px;padding:20px
+ max-width:900px;margin:12px auto;background:#130c20;
+ border:1px solid #a855f755;border-radius:20px;padding:20px
 }
 .drawer{max-width:390px}
 .drawer textarea,.drawer input,.drawer select,
 .office-field input,.office-field textarea,.office-field select{
- width:100%;padding:12px;margin:7px 0;
- border-radius:12px;border:1px solid #a855f744;
- background:#ffffff0b;color:white
+ width:100%;padding:12px;margin:7px 0;border-radius:12px;
+ border:1px solid #a855f744;background:#ffffff0b;color:white
 }
 .drawer button.action,.office-primary{
- width:100%;padding:13px;border:0;
- border-radius:12px;color:white;
- background:linear-gradient(135deg,#9333ea,#6b21a8);
- margin-top:8px
+ width:100%;padding:13px;border:0;border-radius:12px;color:white;
+ background:linear-gradient(135deg,#9333ea,#6b21a8);margin-top:8px
 }
 .office-head{
- display:flex;justify-content:space-between;
- align-items:center;gap:10px;
- border-bottom:1px solid #a855f733;padding-bottom:15px
+ display:flex;justify-content:space-between;align-items:center;
+ gap:10px;border-bottom:1px solid #a855f733;padding-bottom:15px
 }
 .office-head h2{margin:0;font-size:21px}
-.office-head p,.small-note{
- color:var(--muted);font-size:12px;line-height:1.5
-}
+.office-head p,.small-note{color:var(--muted);font-size:12px;line-height:1.5}
 .office-close{
- background:#ffffff0b;color:white;
- border:1px solid #a855f755;border-radius:10px;padding:10px
+ background:#ffffff0b;color:white;border:1px solid #a855f755;
+ border-radius:10px;padding:10px
 }
 .office-intro,.document-panel{
- padding:16px;border:1px solid #a855f733;
- border-radius:15px;background:#a855f70d;margin:17px 0
+ padding:16px;border:1px solid #a855f733;border-radius:15px;
+ background:#a855f70d;margin:17px 0
 }
 .office-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .office-field{margin:10px 0}
@@ -251,8 +189,8 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 .office-field textarea{min-height:100px}
 .office-primary{font-weight:bold;padding:15px}
 .office-status{
- font-size:12px;color:#c4b5fd;
- min-height:22px;margin-top:12px;white-space:pre-wrap
+ font-size:12px;color:#c4b5fd;min-height:22px;
+ margin-top:12px;white-space:pre-wrap;line-height:1.5
 }
 .office-modules{
  display:grid;grid-template-columns:repeat(4,1fr);
@@ -265,27 +203,46 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 .office-module strong{display:block;font-size:13px;margin-bottom:5px}
 .office-module small{font-size:10px;color:var(--muted)}
 .file-label{
- display:block;padding:20px;
- border:2px dashed #a855f766;border-radius:15px;
- text-align:center;color:#e9d5ff;
+ display:block;padding:20px;border:2px dashed #a855f766;
+ border-radius:15px;text-align:center;color:#e9d5ff;
  cursor:pointer;background:#a855f70b
 }
 .file-label input{display:none}
-.document-actions{display:flex;gap:8px;flex-wrap:wrap}
+.document-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .document-actions button{flex:1;min-width:120px}
 #documentPrompt{min-height:100px}
 #documentPreview{
- white-space:pre-wrap;max-height:350px;overflow:auto;
+ white-space:pre-wrap;max-height:380px;overflow:auto;
  background:#080510;padding:12px;border-radius:12px;
- font-size:12px;color:#d8c5e8;margin-top:12px;
- overflow-wrap:anywhere
+ font-size:12px;color:#d8c5e8;line-height:1.6
 }
-select option{background:#180e27;color:white}
+.mode-description{color:#a99bbd;font-size:11px;line-height:1.5;margin-top:5px}
+
+/* NUEVO: SELECTOR DE PROVEEDOR */
+.provider-status{
+ color:#c4b5fd;font-size:10px;margin-top:6px;
+ letter-spacing:.5px
+}
+.provider-box{
+ margin-top:15px;padding:13px;
+ border:1px solid #a855f744;
+ border-radius:13px;background:#a855f70d
+}
+.provider-box label{
+ display:block;color:#d8b4fe;font-size:12px;margin-bottom:8px
+}
+.provider-box select{
+ width:100%;padding:12px;border-radius:10px;
+ border:1px solid #a855f755;background:#1b102b;color:white
+}
+.provider-info{
+ color:var(--muted);font-size:11px;
+ margin-top:8px;line-height:1.5
+}
 @media(max-width:760px){
  .app{padding:14px}
  main{grid-template-columns:1fr;gap:10px;padding:12px 0}
- .orb-area{min-height:260px}
- .orb{width:155px;height:155px}
+ .orb-area{min-height:260px}.orb{width:155px;height:155px}
  .orb-ring{width:215px;height:70px}
  .orb-ring.second{width:235px;height:85px}
  .chat-panel{height:480px;max-height:58vh}
@@ -297,15 +254,11 @@ select option{background:#180e27;color:white}
 </head>
 
 <body>
-
 <div class="app">
 <header>
  <div class="brand">
   <div class="brand-icon">💜</div>
-  <div>
-   <h1>KATIA AI</h1>
-   <small>YOUR VIRTUAL COMPANION</small>
-  </div>
+  <div><h1>KATIA AI</h1><small>YOUR VIRTUAL COMPANION</small></div>
  </div>
  <div class="header-actions">
   <button class="office-open" onclick="abrirOffice()">🏢 Office Studio</button>
@@ -338,6 +291,7 @@ select option{background:#180e27;color:white}
    <div>
     <strong>CONVERSACIÓN</strong><br>
     <small>Un espacio entre vos y Katia 💜</small>
+    <div class="provider-status" id="activeProvider">Modo: AUTOMÁTICO</div>
    </div>
    <button class="icon-btn" onclick="limpiarChat()">🗑️</button>
   </div>
@@ -345,14 +299,13 @@ select option{background:#180e27;color:white}
   <div class="composer">
    <button class="mic-btn" id="micButton" onclick="alternarMicrofono()">🎙️</button>
    <input id="userInput" placeholder="Escribile algo a Katia..." autocomplete="off">
-   <button class="send-btn" onclick="enviarMensaje()">➤</button>
+   <button class="send-btn" id="sendButton" onclick="enviarMensaje()">➤</button>
   </div>
  </section>
 </main>
 <footer>KATIA AI · UN UNIVERSO DE POSIBILIDADES 💜</footer>
 </div>
 
-<!-- PANEL LATERAL -->
 <div class="overlay" id="overlay" onclick="cerrarPanel(event)">
  <aside class="drawer" onclick="event.stopPropagation()">
   <div class="office-head">
@@ -363,10 +316,8 @@ select option{background:#180e27;color:white}
  </aside>
 </div>
 
-<!-- OFFICE STUDIO -->
 <div class="office-overlay" id="officeOverlay">
  <div class="office-wrap">
-
   <div class="office-head">
    <div>
     <h2>🏢 Katia Office Studio</h2>
@@ -377,10 +328,7 @@ select option{background:#180e27;color:white}
 
   <div class="office-intro">
    <strong>💜 Tu espacio de trabajo inteligente</strong>
-   <p class="small-note">
-    Subí un documento y conversá con Katia. Podés pedirle que lo explique,
-    revise, corrija, resuma o prepare una versión modificada.
-   </p>
+   <p class="small-note">Subí un documento y conversá con Katia. Podés pedirle que lo explique, revise, corrija, resuma o prepare una versión modificada.</p>
   </div>
 
   <div class="document-panel">
@@ -389,38 +337,28 @@ select option{background:#180e27;color:white}
     📎 Seleccionar archivo DOCX, XLSX, PPTX o PDF
     <input type="file" id="documentFile" accept=".docx,.xlsx,.pptx,.pdf">
    </label>
-   <div class="office-status" id="fileStatus">
-    Todavía no seleccionaste ningún archivo.
-   </div>
+   <div class="office-status" id="fileStatus">Todavía no seleccionaste ningún archivo.</div>
   </div>
 
   <div class="document-panel">
-   <h3>🧠 2. Conversar con Katia sobre el documento</h3>
-
+   <h3>🧠 2. Inteligencia documental</h3>
    <div class="office-field">
     <label>¿Qué querés que haga Katia?</label>
-    <textarea id="documentPrompt" placeholder="Ejemplo: Leé este documento, explicame su contenido y señalá qué cosas debería mejorar."></textarea>
+    <textarea id="documentPrompt" placeholder="Ejemplo: Analizá este documento, explicame sus ideas principales y señalá qué debería mejorar."></textarea>
    </div>
-
    <div class="office-field">
-    <label>Modo de análisis</label>
-    <select id="documentMode">
-     <option value="normal">⚡ Análisis normal</option>
-     <option value="complete">🧠 Análisis completo por partes</option>
+    <label>Modo de trabajo</label>
+    <select id="documentMode" onchange="actualizarDescripcionModo()">
+     <option value="auto">✨ Análisis inteligente</option>
+     <option value="parts">🧠 Análisis profundo por partes</option>
+     <option value="question">💬 Preguntar sobre el documento</option>
+     <option value="modify">✍️ Modificar el contenido completo</option>
     </select>
-    <p class="small-note">
-     El análisis por partes permite trabajar con documentos largos.
-     Puede realizar varias consultas al servidor.
-    </p>
+    <div class="mode-description" id="modeDescription"></div>
    </div>
-
-   <button class="office-primary" id="analyzeButton" onclick="consultarDocumento()">
-    ✨ Analizar / modificar con Katia
-   </button>
-
+   <button class="office-primary" id="analyzeButton" onclick="consultarDocumento()">✨ Trabajar con Katia</button>
    <div class="office-status" id="documentStatus"></div>
    <div id="documentPreview"></div>
-
    <div class="document-actions">
     <button class="tool-btn" onclick="descargarDocumentoModificado()">📥 Descargar versión modificada</button>
     <button class="tool-btn" onclick="limpiarDocumento()">🗑️ Limpiar documento</button>
@@ -429,14 +367,11 @@ select option{background:#180e27;color:white}
 
   <div class="office-intro">
    <strong>✨ Crear archivos nuevos</strong>
-   <p class="small-note">
-    Describí lo que necesitás y Katia preparará el contenido para crear el archivo.
-   </p>
-
+   <p class="small-note">Describí lo que necesitás y Katia preparará el contenido para crear el archivo.</p>
    <div class="office-grid">
     <div class="office-field">
      <label>Tipo de archivo</label>
-     <select id="newFileType">
+     <select id="newFileType" onchange="actualizarOpcionesCreacion()">
       <option value="docx">Word (.docx)</option>
       <option value="xlsx">Excel (.xlsx)</option>
       <option value="pptx">PowerPoint (.pptx)</option>
@@ -449,21 +384,54 @@ select option{background:#180e27;color:white}
     </div>
    </div>
 
+   <div id="pptxOptions" style="display:none">
+    <div class="office-grid">
+     <div class="office-field">
+      <label>Estilo de presentación</label>
+      <select id="pptxTheme">
+       <option value="purple">Violeta futurista</option>
+       <option value="blue">Azul profesional</option>
+       <option value="green">Verde naturaleza</option>
+       <option value="dark">Oscuro elegante</option>
+       <option value="light">Claro minimalista</option>
+      </select>
+     </div>
+     <div class="office-field">
+      <label>Diseño de diapositivas</label>
+      <select id="pptxLayout">
+       <option value="modern">Moderno</option>
+       <option value="minimal">Minimalista</option>
+       <option value="corporate">Corporativo</option>
+      </select>
+     </div>
+    </div>
+   </div>
+
+   <div id="xlsxOptions" style="display:none">
+    <div class="office-field">
+     <label>Estilo de tabla</label>
+     <select id="xlsxStyle">
+      <option value="purple">Violeta</option>
+      <option value="blue">Azul profesional</option>
+      <option value="green">Verde</option>
+      <option value="gray">Gris elegante</option>
+     </select>
+    </div>
+    <p class="small-note">Katia podrá crear varias hojas usando encabezados como «### HOJA: Ventas» en el contenido.</p>
+   </div>
+
    <div class="office-field">
     <label>Contenido e instrucciones</label>
     <textarea id="newFileContent" placeholder="Describí qué querés crear..."></textarea>
    </div>
-
-   <button class="office-primary" id="createButton" onclick="crearDocumentoNuevo()">
-    🚀 Crear archivo con Katia
-   </button>
+   <button class="office-primary" id="createButton" onclick="crearDocumentoNuevo()">🚀 Crear archivo con Katia</button>
    <div class="office-status" id="createStatus"></div>
   </div>
 
   <div class="office-modules">
    <div class="office-module"><strong>📝 Word</strong><small>Leer y crear</small></div>
-   <div class="office-module"><strong>📊 Excel</strong><small>Datos y tablas</small></div>
-   <div class="office-module"><strong>📽️ PowerPoint</strong><small>Presentaciones</small></div>
+   <div class="office-module"><strong>📊 Excel 2.0</strong><small>Hojas y fórmulas</small></div>
+   <div class="office-module"><strong>📽️ PowerPoint 2.0</strong><small>Diseño profesional</small></div>
    <div class="office-module"><strong>📕 PDF</strong><small>Lectura y creación</small></div>
   </div>
  </div>
@@ -495,32 +463,46 @@ let reconociendo = false;
 let reconocimiento = null;
 let typingElement = null;
 
+/* NUEVO: ESTADO DE PROVEEDOR Y SOLICITUD */
+let ultimoProveedorRespuesta = "";
+let ultimoFallback = false;
+let enviandoMensaje = false;
+
 function cargar(key,fallback){
  try{
   const data=localStorage.getItem(key);
   return data?JSON.parse(data):fallback;
- }catch(error){
-  return fallback;
- }
+ }catch(e){return fallback}
 }
-
 function guardar(key,value){
- try{
-  localStorage.setItem(key,JSON.stringify(value));
- }catch(error){
-  console.warn("No se pudo guardar:",key,error);
- }
+ try{localStorage.setItem(key,JSON.stringify(value))}
+ catch(e){console.warn("No se pudo guardar",key,e)}
 }
+function nombreUsuario(){return localStorage.getItem(STORAGE.username)||""}
 
-function guardarTodo(){
- guardar(STORAGE.history,historial);
- guardar(STORAGE.memories,memorias);
- guardar(STORAGE.diary,diario);
- guardar(STORAGE.likes,gustos);
+/* NUEVO: CONFIGURACIÓN DEL PROVEEDOR */
+function obtenerProveedor(){
+ const proveedor=localStorage.getItem(STORAGE.provider)||"auto";
+ return ["groq","gemini","auto"].includes(proveedor)?proveedor:"auto";
 }
-
-function nombreUsuario(){
- return localStorage.getItem(STORAGE.username)||"";
+function guardarProveedor(){
+ const selector=document.getElementById("providerSelect");
+ if(!selector)return;
+ const proveedor=selector.value;
+ if(!["groq","gemini","auto"].includes(proveedor))return;
+ localStorage.setItem(STORAGE.provider,proveedor);
+ actualizarProveedorVisible();
+ alert("Preferencia de proveedor guardada 💜");
+}
+function actualizarProveedorVisible(){
+ const elemento=document.getElementById("activeProvider");
+ if(!elemento)return;
+ const nombres={
+  groq:"GROQ",
+  gemini:"GEMINI",
+  auto:"AUTOMÁTICO"
+ };
+ elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
 }
 
 function estadoOrb(estado,texto){
@@ -532,59 +514,55 @@ function estadoOrb(estado,texto){
  status.textContent=texto||"🟢 En línea";
 }
 
-/* ==========================================
-   MENSAJES
-========================================== */
-
-function agregarMensaje(tipo,texto,guardarEnHistorial=true){
+function agregarMensaje(tipo,texto,guardarEnHistorial=true,infoProveedor=null){
  const messages=document.getElementById("messages");
- if(!messages)return;
-
  const div=document.createElement("div");
  div.className="message "+tipo;
 
  const sender=document.createElement("span");
  sender.className="sender";
- sender.textContent=tipo==="user"?"VOS":"KATIA 💜";
+
+ if(tipo==="user"){
+  sender.textContent="VOS";
+ }else{
+  let etiqueta="KATIA 💜";
+  const info=infoProveedor||{};
+  const proveedor=info.provider||"";
+  if(proveedor){
+   etiqueta+=" · "+String(proveedor).toUpperCase();
+   if(info.fallback)etiqueta+=" (RESPALDO)";
+  }
+  sender.textContent=etiqueta;
+ }
 
  const content=document.createElement("div");
  content.textContent=texto;
-
- div.appendChild(sender);
- div.appendChild(content);
+ div.append(sender,content);
  messages.appendChild(div);
  messages.scrollTop=messages.scrollHeight;
 
  if(guardarEnHistorial){
   historial.push({
    role:tipo==="user"?"user":"assistant",
-   content:texto,
-   time:new Date().toISOString()
+   content:texto,time:new Date().toISOString()
   });
   if(historial.length>80)historial=historial.slice(-80);
   guardar(STORAGE.history,historial);
  }
-
  if(tipo==="katia")ultimoMensaje=texto;
  return div;
 }
 
 function restaurarHistorial(){
  const messages=document.getElementById("messages");
- if(!messages)return;
  messages.innerHTML="";
-
  if(!historial.length){
   agregarMensaje("katia","¡Holaaa! 💜 Soy Katia. ¿Qué hacemos hoy?",false);
   return;
  }
-
  historial.slice(-50).forEach(item=>{
-  agregarMensaje(
-   item.role==="user"?"user":"katia",
-   item.content,
-   false
-  );
+  agregarMensaje(item.role==="user"?"user":"katia",item.content,false);
+  if(item.role==="assistant")ultimoMensaje=item.content;
  });
 }
 
@@ -597,78 +575,60 @@ function mostrarTyping(){
  messages.appendChild(typingElement);
  messages.scrollTop=messages.scrollHeight;
 }
-
 function quitarTyping(){
- if(typingElement){
-  typingElement.remove();
-  typingElement=null;
- }
+ if(typingElement){typingElement.remove();typingElement=null}
 }
-
-/* ==========================================
-   CONTEXTO DE KATIA
-========================================== */
 
 function construirMensajesIA(){
  const usuario=nombreUsuario();
-
- let contexto=`
+ const contexto=`
 Sos Katia AI, una asistente virtual inteligente.
-Respondé en español natural, con personalidad amable,
-alegre, clara y cercana.
-
-Podés ayudar con:
-- Explicaciones y aprendizaje.
-- Escritura y corrección.
-- Organización de ideas.
-- Programación.
-- Análisis de documentos.
-- Creación de documentos.
-- Conversaciones generales.
-
+Respondé en español natural, amable, clara y cercana.
 Tu nombre es Katia.
 ${usuario?"El nombre del usuario es "+usuario+".":""}
 
-MEMORIA DEL USUARIO:
-${memorias.slice(-15).join("\n")||"Todavía no hay recuerdos guardados."}
+MEMORIA:
+${memorias.slice(-15).join("\n")||"Sin recuerdos guardados."}
 
 GUSTOS:
-${gustos.slice(-15).join("\n")||"Todavía no hay gustos guardados."}
+${gustos.slice(-15).join("\n")||"Sin gustos guardados."}
 
 DIARIO:
-${diario.slice(-10).map(x=>typeof x==="string"?x:x.text).join("\n")||"Todavía no hay entradas."}
+${diario.slice(-10).map(x=>x.text).join("\n")||"Sin entradas."}
 
-No inventes datos que no conozcas.
-Si no sabés algo, explicalo con honestidad.
+No inventes datos. Si no sabés algo, explicalo honestamente.
 `;
-
  const recent=historial.slice(-20).map(item=>({
-  role:item.role,
-  content:item.content
+  role:item.role,content:item.content
  }));
-
  return [{role:"system",content:contexto},...recent];
 }
 
-/* ==========================================
-   CONEXIÓN CON EL WORKER
-========================================== */
+/* NUEVO: LLAMADA AL WORKER CON INFORMACIÓN DEL PROVEEDOR */
+async function llamarWorker(messages){
+ ultimoProveedorRespuesta="";
+ ultimoFallback=false;
 
-async function llamarKatia(messages){
  const response=await fetch(KATIA_API,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({messages})
+  body:JSON.stringify({
+   messages,
+   provider:obtenerProveedor()
+  })
  });
 
- if(!response.ok){
-  throw new Error("El servidor respondió con error: "+response.status);
- }
+ if(!response.ok)throw new Error("Error del servidor: "+response.status);
 
  const data=await response.json();
+
+ /* El proveedor solo se identifica si el Worker lo informa */
+ ultimoProveedorRespuesta=typeof data.provider==="string"?data.provider:"";
+ ultimoFallback=data.fallback===true;
+
  const resultado=data.reply||data.response||data.message;
 
- if(typeof resultado!=="string"){
+ if(typeof resultado!=="string"||!resultado.trim()){
   throw new Error("El servidor no devolvió una respuesta reconocible.");
  }
 
@@ -676,43 +636,61 @@ async function llamarKatia(messages){
 }
 
 async function responderConIA(){
- return await llamarKatia(construirMensajesIA());
+ return await llamarWorker(construirMensajesIA());
 }
 
-/* ==========================================
-   CONVERSACIÓN PRINCIPAL
-========================================== */
-
+/* NUEVO: BLOQUEO DE MENSAJES SIMULTÁNEOS */
 async function enviarMensaje(){
+ if(enviandoMensaje)return;
+
  const input=document.getElementById("userInput");
+ const boton=document.getElementById("sendButton");
+ const mic=document.getElementById("micButton");
  const texto=input.value.trim();
+
  if(!texto)return;
 
+ enviandoMensaje=true;
  input.value="";
+ input.disabled=true;
+ boton.disabled=true;
+ mic.disabled=true;
+
  agregarMensaje("user",texto);
  mostrarTyping();
  estadoOrb("thinking","🧠 Katia está pensando...");
 
  try{
   const respuesta=await responderConIA();
+  const proveedorInfo={
+   provider:ultimoProveedorRespuesta,
+   fallback:ultimoFallback
+  };
+
   quitarTyping();
-  agregarMensaje("katia",respuesta);
+  agregarMensaje("katia",respuesta,true,proveedorInfo);
   estadoOrb("","🟢 En línea · Lista para hablar");
+
  }catch(error){
   quitarTyping();
   agregarMensaje(
    "katia",
-   "Tuve un problema al conectarme con mi cerebro. 💜\n\n"+
-   "Revisá tu conexión a internet o el Worker e intentá nuevamente.\n\n"+
-   "Detalle: "+error.message
+   "Tuve un problema al conectarme con mi cerebro. 💜\n\nRevisá tu conexión o el Worker e intentá nuevamente.\n\nDetalle: "+error.message
   );
   estadoOrb("","⚠️ Problema de conexión");
   console.error(error);
+
+ }finally{
+  enviandoMensaje=false;
+  input.disabled=false;
+  boton.disabled=false;
+  mic.disabled=false;
+  input.focus();
  }
 }
 
-document.getElementById("userInput").addEventListener("keydown",event=>{
- if(event.key==="Enter")enviarMensaje();
+document.getElementById("userInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter")enviarMensaje();
 });
 
 function saludar(){
@@ -728,21 +706,15 @@ function limpiarChat(){
  ultimoMensaje="";
 }
 
-/* ==========================================
-   MEMORIA
-========================================== */
-
+/* MEMORIA */
 function abrirMemoria(){
- const panel=document.getElementById("panelContent");
- panel.innerHTML=`
-  <p>🧠 Recuerdos guardados de Katia.</p>
-  <textarea id="memoryInput" placeholder="Escribí algo que Katia debería recordar..."></textarea>
-  <button class="action" onclick="guardarMemoria()">Guardar recuerdo</button>
-  <div id="memoryList"></div>
- `;
+ document.getElementById("panelContent").innerHTML=`
+ <p>🧠 Recuerdos guardados de Katia.</p>
+ <textarea id="memoryInput" placeholder="Escribí algo que Katia debería recordar..."></textarea>
+ <button class="action" onclick="guardarMemoria()">Guardar recuerdo</button>
+ <div id="memoryList"></div>`;
  mostrarMemorias();
 }
-
 function guardarMemoria(){
  const input=document.getElementById("memoryInput");
  const texto=input.value.trim();
@@ -752,18 +724,15 @@ function guardarMemoria(){
  input.value="";
  mostrarMemorias();
 }
-
 function mostrarMemorias(){
  const list=document.getElementById("memoryList");
  if(!list)return;
  list.innerHTML="<h3>Recuerdos</h3>";
-
  memorias.forEach((item,index)=>{
   const div=document.createElement("div");
   div.style.padding="10px";
   div.style.borderBottom="1px solid #ffffff22";
   div.textContent=item;
-
   const btn=document.createElement("button");
   btn.textContent="Eliminar";
   btn.className="tool-btn";
@@ -773,75 +742,55 @@ function mostrarMemorias(){
    guardar(STORAGE.memories,memorias);
    mostrarMemorias();
   };
-
-  div.appendChild(document.createElement("br"));
-  div.appendChild(btn);
+  div.append(document.createElement("br"),btn);
   list.appendChild(div);
  });
 }
 
-/* ==========================================
-   DIARIO
-========================================== */
-
+/* DIARIO */
 function abrirDiario(){
- const panel=document.getElementById("panelContent");
- panel.innerHTML=`
-  <p>📖 Tu diario personal.</p>
-  <textarea id="diaryInput" placeholder="Escribí una nueva entrada..."></textarea>
-  <button class="action" onclick="guardarDiario()">Guardar entrada</button>
-  <div id="diaryList"></div>
- `;
+ document.getElementById("panelContent").innerHTML=`
+ <p>📖 Tu diario personal.</p>
+ <textarea id="diaryInput" placeholder="Escribí una nueva entrada..."></textarea>
+ <button class="action" onclick="guardarDiario()">Guardar entrada</button>
+ <div id="diaryList"></div>`;
  mostrarDiario();
 }
-
 function guardarDiario(){
  const input=document.getElementById("diaryInput");
  const texto=input.value.trim();
  if(!texto)return;
-
  diario.push({text:texto,date:new Date().toLocaleString()});
  guardar(STORAGE.diary,diario);
  input.value="";
  mostrarDiario();
 }
-
 function mostrarDiario(){
  const list=document.getElementById("diaryList");
  if(!list)return;
  list.innerHTML="<h3>Entradas</h3>";
-
  diario.slice().reverse().forEach(item=>{
   const div=document.createElement("div");
   div.style.padding="12px";
   div.style.borderBottom="1px solid #ffffff22";
-
   const date=document.createElement("small");
-  date.textContent=item.date||"";
-
+  date.textContent=item.date;
   const content=document.createElement("p");
-  content.textContent=typeof item==="string"?item:item.text;
-
+  content.textContent=item.text;
   div.append(date,content);
   list.appendChild(div);
  });
 }
 
-/* ==========================================
-   GUSTOS
-========================================== */
-
+/* GUSTOS */
 function abrirGustos(){
- const panel=document.getElementById("panelContent");
- panel.innerHTML=`
-  <p>✨ Cosas que te gustan.</p>
-  <textarea id="likeInput" placeholder="Agregá algo que te guste..."></textarea>
-  <button class="action" onclick="guardarGusto()">Guardar gusto</button>
-  <div id="likesList"></div>
- `;
+ document.getElementById("panelContent").innerHTML=`
+ <p>✨ Cosas que te gustan.</p>
+ <textarea id="likeInput" placeholder="Agregá algo que te guste..."></textarea>
+ <button class="action" onclick="guardarGusto()">Guardar gusto</button>
+ <div id="likesList"></div>`;
  mostrarGustos();
 }
-
 function guardarGusto(){
  const input=document.getElementById("likeInput");
  const texto=input.value.trim();
@@ -851,18 +800,15 @@ function guardarGusto(){
  input.value="";
  mostrarGustos();
 }
-
 function mostrarGustos(){
  const list=document.getElementById("likesList");
  if(!list)return;
  list.innerHTML="<h3>Mis gustos</h3>";
-
  gustos.forEach((item,index)=>{
   const div=document.createElement("div");
   div.style.padding="10px";
   div.style.borderBottom="1px solid #ffffff22";
   div.textContent=item;
-
   const btn=document.createElement("button");
   btn.className="tool-btn";
   btn.textContent="Eliminar";
@@ -871,64 +817,64 @@ function mostrarGustos(){
    guardar(STORAGE.likes,gustos);
    mostrarGustos();
   };
-
-  div.appendChild(document.createElement("br"));
-  div.appendChild(btn);
+  div.append(document.createElement("br"),btn);
   list.appendChild(div);
  });
 }
 
-/* ==========================================
-   CONFIGURACIÓN
-========================================== */
-
+/* CONFIGURACIÓN */
 function abrirConfiguracion(){
- const panel=document.getElementById("panelContent");
+ const proveedor=obtenerProveedor();
 
- panel.innerHTML=`
-  <h3>⚙️ Configuración</h3>
-  <label>¿Cómo querés que te llame Katia?</label>
-  <input id="userNameInput" placeholder="Tu nombre">
-  <button class="action" onclick="guardarNombre()">Guardar nombre</button>
+ document.getElementById("panelContent").innerHTML=`
+ <h3>⚙️ Configuración</h3>
 
-  <hr style="border-color:#ffffff22;margin:20px 0">
+ <label>¿Cómo querés que te llame Katia?</label>
+ <input id="userNameInput" placeholder="Tu nombre">
+ <button class="action" onclick="guardarNombre()">Guardar nombre</button>
 
-  <label>Clave API de Gemini (opcional)</label>
-  <input id="geminiKeyInput" type="password" placeholder="API Key">
-  <button class="action" onclick="guardarApiKey()">Guardar clave</button>
+ <hr style="border-color:#ffffff22;margin:20px 0">
 
-  <p class="small-note">
-   La conexión principal de Katia utiliza el Worker configurado.
-   No compartas tu clave API con otras personas.
-  </p>
+ <div class="provider-box">
+  <label>🧠 Proveedor de inteligencia artificial</label>
 
-  <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
+  <select id="providerSelect">
+   <option value="auto">Automático (Groq + Gemini)</option>
+   <option value="groq">Groq</option>
+   <option value="gemini">Gemini</option>
+  </select>
+
+  <button class="action" onclick="guardarProveedor()">Guardar proveedor</button>
+
+  <div class="provider-info">
+   Automático: permite que el Worker utilice su sistema de selección y respaldo.<br><br>
+   Groq: solicita utilizar Groq.<br>
+   Gemini: solicita utilizar Gemini.<br><br>
+   La selección requiere que el Worker esté actualizado para respetarla.
+  </div>
+ </div>
+
+ <hr style="border-color:#ffffff22;margin:20px 0">
+
+ <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
  `;
 
  document.getElementById("userNameInput").value=nombreUsuario();
- document.getElementById("geminiKeyInput").value=
-  localStorage.getItem(STORAGE.apiKey)||"";
+ document.getElementById("providerSelect").value=proveedor;
 }
 
 function guardarNombre(){
- const value=document.getElementById("userNameInput").value.trim();
- localStorage.setItem(STORAGE.username,value);
+ localStorage.setItem(
+  STORAGE.username,
+  document.getElementById("userNameInput").value.trim()
+ );
  alert("Nombre guardado 💜");
 }
-
-function guardarApiKey(){
- const value=document.getElementById("geminiKeyInput").value.trim();
- localStorage.setItem(STORAGE.apiKey,value);
- alert("Configuración guardada.");
-}
-
-/* ==========================================
-   PANELES
-========================================== */
 
 function abrirPanel(tipo){
  const overlay=document.getElementById("overlay");
  const title=document.getElementById("panelTitle");
+
  overlay.classList.add("open");
 
  if(tipo==="memory"){
@@ -954,54 +900,35 @@ function cerrarPanel(event){
 function abrirOffice(){
  document.getElementById("officeOverlay").classList.add("open");
 }
-
 function cerrarOffice(){
  document.getElementById("officeOverlay").classList.remove("open");
 }
-
-/* ==========================================
-   EXPORTAR DATOS
-========================================== */
 
 function exportarDatos(){
  const datos={
   historial,memorias,diario,gustos,
   exportado:new Date().toISOString()
  };
-
- const blob=new Blob(
-  [JSON.stringify(datos,null,2)],
-  {type:"application/json"}
- );
-
+ const blob=new Blob([JSON.stringify(datos,null,2)],{
+  type:"application/json"
+ });
  descargarBlob(blob,"katia-datos.json");
 }
 
-/* ==========================================
-   VOZ - SÍNTESIS
-========================================== */
-
+/* VOZ */
 function hablar(texto){
  if(!("speechSynthesis" in window)){
-  alert("Tu navegador no permite reproducir voz.");
-  return;
+  alert("Tu navegador no permite reproducir voz.");return;
  }
-
  speechSynthesis.cancel();
  const utterance=new SpeechSynthesisUtterance(texto);
  utterance.lang="es-ES";
  utterance.rate=1;
  utterance.pitch=1.05;
 
- utterance.onstart=()=>{
-  estadoOrb("speaking","🔊 Katia está hablando...");
- };
- utterance.onend=()=>{
-  estadoOrb("","🟢 En línea · Lista para hablar");
- };
- utterance.onerror=()=>{
-  estadoOrb("","🟢 En línea");
- };
+ utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
+ utterance.onend=()=>estadoOrb("","🟢 En línea · Lista para hablar");
+ utterance.onerror=()=>estadoOrb("","🟢 En línea");
 
  speechSynthesis.speak(utterance);
 }
@@ -1019,13 +946,8 @@ function detenerVoz(){
  estadoOrb("","🟢 En línea");
 }
 
-/* ==========================================
-   VOZ - RECONOCIMIENTO
-========================================== */
-
 function alternarMicrofono(){
- const SpeechRecognition=
-  window.SpeechRecognition||window.webkitSpeechRecognition;
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 
  if(!SpeechRecognition){
   alert("El reconocimiento de voz no está disponible en este navegador.");
@@ -1049,14 +971,11 @@ function alternarMicrofono(){
  };
 
  reconocimiento.onresult=event=>{
-  const texto=event.results[0][0].transcript;
-  document.getElementById("userInput").value=texto;
+  document.getElementById("userInput").value=event.results[0][0].transcript;
   enviarMensaje();
  };
 
- reconocimiento.onerror=event=>{
-  console.warn("Error de micrófono:",event.error);
- };
+ reconocimiento.onerror=event=>console.warn("Error de micrófono:",event.error);
 
  reconocimiento.onend=()=>{
   reconociendo=false;
@@ -1067,31 +986,38 @@ function alternarMicrofono(){
  reconocimiento.start();
 }
 
-/* ==========================================
-   INICIALIZACIÓN
-========================================== */
-
 document.addEventListener("DOMContentLoaded",()=>{
  restaurarHistorial();
+ actualizarProveedorVisible();
 
  if(window.pdfjsLib){
   pdfjsLib.GlobalWorkerOptions.workerSrc=
    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
  }
 });
-</script>
 
-<script>
 /* ==========================================
-   KATIA OFFICE STUDIO - MOTOR DOCUMENTAL
+   KATIA OFFICE STUDIO 2.0
+   INTELIGENCIA DOCUMENTAL + OFFICE AVANZADO
 ========================================== */
 
 let documentoActual=null;
 let textoDocumento="";
 let contenidoModificado="";
+let resultadoAnalisis="";
 let tipoDocumentoActual="";
 let nombreDocumentoActual="";
-let analisisEnCurso=false;
+let historialDocumento=[];
+let documentoCargado=false;
+
+const OFFICE_CONFIG={
+ maxCaracteresLectura:120000,
+ limiteAnalisisSimple:12000,
+ tamanoParte:6500,
+ solapamiento:350,
+ maxPartes:8,
+ limiteModificacion:18000
+};
 
 function estadoOffice(id,mensaje){
  const elemento=document.getElementById(id);
@@ -1100,10 +1026,10 @@ function estadoOffice(id,mensaje){
 
 function nombreSeguro(nombre){
  return (nombre||"Documento_Katia")
-  .replace(/[\\/:*?"<>|]/g,"_")
-  .replace(/\s+/g,"_")
-  .replace(/\.[^.]+$/,"")
-  .slice(0,70)||"Documento_Katia";
+ .replace(/[\\/:*?"<>|]/g,"_")
+ .replace(/\s+/g,"_")
+ .replace(/\.[^.]+$/,"")
+ .slice(0,70)||"Documento_Katia";
 }
 
 function descargarBlob(blob,nombre){
@@ -1117,16 +1043,53 @@ function descargarBlob(blob,nombre){
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-function limitarTexto(texto,limite=100000){
+function limitarTexto(texto,limite=OFFICE_CONFIG.maxCaracteresLectura){
  if(texto.length<=limite)return texto;
  return texto.slice(0,limite)+
-  "\n\n[El documento supera el límite de lectura de esta versión.]";
+ "\n\n[AVISO: Se alcanzó el límite de lectura. El resto no fue incluido.]";
 }
 
-/* ==========================================
-   LECTURA DE ARCHIVOS
-========================================== */
+function actualizarDescripcionModo(){
+ const modo=document.getElementById("documentMode").value;
 
+ const descripciones={
+  auto:"Katia analizará el documento y decidirá si necesita dividirlo en partes.",
+  parts:"Katia analizará el documento por secciones y preparará una síntesis.",
+  question:"Podés hacer preguntas sobre el documento y el análisis anterior.",
+  modify:"Katia preparará una versión nueva del contenido para descargar."
+ };
+
+ document.getElementById("modeDescription").textContent=
+  descripciones[modo]||"";
+}
+
+function actualizarOpcionesCreacion(){
+ const tipo=document.getElementById("newFileType").value;
+
+ document.getElementById("pptxOptions").style.display=
+  tipo==="pptx"?"block":"none";
+
+ document.getElementById("xlsxOptions").style.display=
+  tipo==="xlsx"?"block":"none";
+}
+
+/* LLAMADA DOCUMENTAL */
+async function consultarWorkerDocumental(instruccion,contenido,contextoExtra=""){
+ const mensajes=[
+  {
+   role:"system",
+   content:"Sos Katia AI, especialista en lectura y análisis documental. Respondé en español claro. No inventes datos. "+contextoExtra
+  },
+  {
+   role:"user",
+   content:"INSTRUCCIÓN:\n"+instruccion+"\n\nCONTENIDO DEL DOCUMENTO:\n"+contenido
+  }
+ ];
+
+ return await llamarWorker(mensajes);
+}
+
+/* LECTURA DE ARCHIVOS */
 document.getElementById("documentFile").addEventListener("change",async function(event){
  const archivo=event.target.files[0];
  if(!archivo)return;
@@ -1134,147 +1097,126 @@ document.getElementById("documentFile").addEventListener("change",async function
  documentoActual=archivo;
  nombreDocumentoActual=archivo.name;
  tipoDocumentoActual=archivo.name.split(".").pop().toLowerCase();
+
  textoDocumento="";
  contenidoModificado="";
+ resultadoAnalisis="";
+ historialDocumento=[];
+ documentoCargado=false;
 
  estadoOffice("fileStatus","⏳ Leyendo "+archivo.name+"...");
  estadoOffice("documentStatus","");
  document.getElementById("documentPreview").textContent="";
 
  try{
-  if(tipoDocumentoActual==="docx"){
-   await leerWord(archivo);
-  }else if(tipoDocumentoActual==="xlsx"){
-   await leerExcel(archivo);
-  }else if(tipoDocumentoActual==="pptx"){
-   await leerPowerPoint(archivo);
-  }else if(tipoDocumentoActual==="pdf"){
-   await leerPDF(archivo);
-  }else{
-   throw new Error("Formato no compatible.");
-  }
-
-  if(!textoDocumento.trim()){
-   throw new Error("No se encontró texto legible en el archivo.");
-  }
+  if(tipoDocumentoActual==="docx")await leerWord(archivo);
+  else if(tipoDocumentoActual==="xlsx")await leerExcel(archivo);
+  else if(tipoDocumentoActual==="pptx")await leerPowerPoint(archivo);
+  else if(tipoDocumentoActual==="pdf")await leerPDF(archivo);
+  else throw new Error("Formato no compatible.");
 
   textoDocumento=limitarTexto(textoDocumento);
+
+  if(!textoDocumento.trim())throw new Error("No se encontró texto legible.");
+
+  documentoCargado=true;
 
   estadoOffice(
    "fileStatus",
    "✅ Archivo leído: "+archivo.name+
-   "\nCaracteres extraídos: "+textoDocumento.length+
-   "\nPodés comenzar a trabajar con Katia."
+   "\nFormato: "+tipoDocumentoActual.toUpperCase()+
+   "\nCaracteres: "+textoDocumento.length.toLocaleString()+
+   "\n\nYa podés trabajar con Katia."
   );
 
  }catch(error){
   console.error(error);
   documentoActual=null;
   textoDocumento="";
+  documentoCargado=false;
   estadoOffice("fileStatus","❌ No se pudo leer: "+error.message);
  }
 });
 
-/* ==========================================
-   LECTOR WORD
-========================================== */
-
 async function leerWord(archivo){
- if(!window.mammoth)throw new Error("La biblioteca Word no está disponible.");
- const buffer=await archivo.arrayBuffer();
- const resultado=await mammoth.extractRawText({arrayBuffer:buffer});
+ if(!window.mammoth)throw new Error("Biblioteca Word no disponible.");
+
+ const resultado=await mammoth.extractRawText({
+  arrayBuffer:await archivo.arrayBuffer()
+ });
+
  textoDocumento=resultado.value;
 }
 
-/* ==========================================
-   LECTOR EXCEL
-========================================== */
-
 async function leerExcel(archivo){
- if(!window.XLSX)throw new Error("La biblioteca Excel no está disponible.");
+ if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
 
- const buffer=await archivo.arrayBuffer();
- const libro=XLSX.read(buffer,{type:"array"});
+ const libro=XLSX.read(await archivo.arrayBuffer(),{type:"array"});
  let contenido="";
 
  libro.SheetNames.forEach(nombre=>{
-  const hoja=libro.Sheets[nombre];
-  contenido+="\n\nHOJA: "+nombre+"\n";
-  contenido+=XLSX.utils.sheet_to_csv(hoja);
+  contenido+="\n\n===== HOJA: "+nombre+" =====\n";
+  contenido+=XLSX.utils.sheet_to_csv(libro.Sheets[nombre]);
  });
 
  textoDocumento=contenido;
 }
 
-/* ==========================================
-   LECTOR POWERPOINT
-========================================== */
-
 async function leerPowerPoint(archivo){
- if(!window.JSZip)throw new Error("La biblioteca PowerPoint no está disponible.");
+ if(!window.JSZip)throw new Error("Biblioteca PPTX no disponible.");
 
  const zip=await JSZip.loadAsync(archivo);
 
- const diapositivas=Object.keys(zip.files)
-  .filter(nombre=>/^ppt\/slides\/slide\d+\.xml$/.test(nombre))
-  .sort((a,b)=>{
-   const na=Number(a.match(/slide(\d+)/)[1]);
-   const nb=Number(b.match(/slide(\d+)/)[1]);
-   return na-nb;
-  });
+ const slides=Object.keys(zip.files)
+ .filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n))
+ .sort((a,b)=>Number(a.match(/slide(\d+)/)[1])-Number(b.match(/slide(\d+)/)[1]));
 
  let contenido="";
 
- for(let i=0;i<diapositivas.length;i++){
-  const xml=await zip.file(diapositivas[i]).async("string");
-  const documento=new DOMParser().parseFromString(xml,"application/xml");
-  const textos=Array.from(documento.getElementsByTagName("a:t"))
-   .map(nodo=>nodo.textContent);
+ for(let i=0;i<slides.length;i++){
+  const xml=await zip.file(slides[i]).async("string");
+  const dom=new DOMParser().parseFromString(xml,"application/xml");
+  const textos=Array.from(dom.getElementsByTagName("a:t")).map(n=>n.textContent);
 
-  contenido+="\n\nDIAPOSITIVA "+(i+1)+"\n";
-  contenido+=textos.join(" ");
+  contenido+="\n\nDIAPOSITIVA "+(i+1)+"\n"+textos.join(" ");
  }
 
  textoDocumento=contenido;
 }
-
-/* ==========================================
-   LECTOR PDF
-========================================== */
 
 async function leerPDF(archivo){
- if(!window.pdfjsLib)throw new Error("La biblioteca PDF no está disponible.");
+ if(!window.pdfjsLib)throw new Error("Biblioteca PDF no disponible.");
 
- const buffer=await archivo.arrayBuffer();
- const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;
+ const pdf=await pdfjsLib.getDocument({
+  data:new Uint8Array(await archivo.arrayBuffer())
+ }).promise;
+
  let contenido="";
 
- for(let pagina=1;pagina<=pdf.numPages;pagina++){
-  const paginaPDF=await pdf.getPage(pagina);
-  const contenidoPagina=await paginaPDF.getTextContent();
-  const texto=contenidoPagina.items.map(item=>item.str).join(" ");
+ for(let i=1;i<=pdf.numPages;i++){
+  const pagina=await pdf.getPage(i);
+  const datos=await pagina.getTextContent();
 
-  contenido+="\n\nPÁGINA "+pagina+"\n";
-  contenido+=texto;
+  contenido+="\n\nPÁGINA "+i+"\n"+
+   datos.items.map(x=>x.str).join(" ");
  }
 
  textoDocumento=contenido;
 }
 
-/* ==========================================
-   DIVISIÓN INTELIGENTE DEL DOCUMENTO
-========================================== */
-
-function dividirDocumento(texto,maximo=7500,solapamiento=500){
+/* DOCUMENTOS GRANDES */
+function dividirEnPartes(texto){
  const partes=[];
+ const tam=OFFICE_CONFIG.tamanoParte;
+ const overlap=OFFICE_CONFIG.solapamiento;
  let inicio=0;
 
- while(inicio<texto.length){
-  let fin=Math.min(inicio+maximo,texto.length);
+ while(inicio<texto.length&&partes.length<OFFICE_CONFIG.maxPartes){
+  let fin=Math.min(inicio+tam,texto.length);
 
   if(fin<texto.length){
    const corte=texto.lastIndexOf("\n",fin);
-   if(corte>inicio+maximo*0.65)fin=corte;
+   if(corte>inicio+tam*.65)fin=corte;
   }
 
   partes.push({
@@ -1283,183 +1225,174 @@ function dividirDocumento(texto,maximo=7500,solapamiento=500){
   });
 
   if(fin>=texto.length)break;
-  inicio=Math.max(fin-solapamiento,inicio+1);
+
+  inicio=Math.max(fin-overlap,inicio+1);
  }
 
- return partes;
+ return {
+  partes,
+  completo:partes.length>0&&
+   (partes[partes.length-1].contenido.length>=
+   texto.length-(partes[partes.length-1].numero-1)*(tam-overlap))
+ };
 }
 
-/* ==========================================
-   SOLICITUD DOCUMENTAL A KATIA
-========================================== */
+async function analizarPorPartes(instruccion){
+ const division=dividirEnPartes(textoDocumento);
+ const resultados=[];
 
-async function solicitarAnalisis(instruccion,contenido,extra=""){
- return await llamarKatia([
-  {
-   role:"system",
-   content:
-    "Sos Katia AI, una asistente experta en lectura y análisis de documentos. "+
-    "Trabajás con Word, Excel, PowerPoint y PDF. "+
-    "Analizá el contenido con atención. No inventes datos. "+
-    "Diferenciá los hechos de las sugerencias. "+
-    "Respondé en español claro y organizado. "+
-    extra
-  },
-  {
-   role:"user",
-   content:
-    "INSTRUCCIÓN DEL USUARIO:\n"+instruccion+
-    "\n\nCONTENIDO DEL DOCUMENTO:\n"+contenido
-  }
- ]);
+ for(let i=0;i<division.partes.length;i++){
+  estadoOffice(
+   "documentStatus",
+   "🧠 Analizando parte "+(i+1)+" de "+division.partes.length+"..."
+  );
+
+  const r=await consultarWorkerDocumental(
+   "Analizá esta sección. Instrucción del usuario: "+instruccion+
+   ". Identificá puntos importantes sin asumir que es todo el documento.",
+   division.partes[i].contenido
+  );
+
+  resultados.push("PARTE "+(i+1)+":\n"+r);
+ }
+
+ estadoOffice("documentStatus","✨ Preparando síntesis general...");
+
+ const sintesis=await consultarWorkerDocumental(
+  "Unificá estos análisis, evitá repeticiones y respondé la instrucción original: "+instruccion,
+  resultados.join("\n\n")
+ );
+
+ return sintesis+(division.completo?"":
+  "\n\n⚠️ Se alcanzó el máximo de partes; algunas secciones pueden haber quedado fuera."
+ );
 }
-
-/* ==========================================
-   ANÁLISIS NORMAL Y COMPLETO
-========================================== */
 
 async function consultarDocumento(){
- if(analisisEnCurso)return;
-
- if(!documentoActual||!textoDocumento){
+ if(!documentoActual||!textoDocumento||!documentoCargado){
   alert("Primero seleccioná un documento.");
   return;
  }
 
  const instruccion=document.getElementById("documentPrompt").value.trim();
+
  if(!instruccion){
-  alert("Escribí qué querés que Katia haga con el documento.");
+  alert("Escribí qué querés que Katia haga.");
   return;
  }
 
  const boton=document.getElementById("analyzeButton");
  const modo=document.getElementById("documentMode").value;
 
- analisisEnCurso=true;
  boton.disabled=true;
  boton.textContent="⏳ Katia está trabajando...";
- contenidoModificado="";
+
+ if(modo!=="modify")contenidoModificado="";
 
  try{
   let resultado="";
 
-  if(modo==="normal"||textoDocumento.length<=9000){
-   estadoOffice("documentStatus","🧠 Katia está analizando el documento...");
+  if(modo==="question"){
+   const contexto=historialDocumento.slice(-3).join("\n\n");
 
-   resultado=await solicitarAnalisis(
-    instruccion,
-    textoDocumento,
-    "El contenido puede incluir varias páginas, hojas o diapositivas. "
+   resultado=await consultarWorkerDocumental(
+    instruccion+"\nRespondé solo con información del documento. Si no está, decilo.",
+    textoDocumento.slice(0,30000),
+    "Contexto previo: "+contexto
    );
+
+  }else if(modo==="modify"){
+   if(textoDocumento.length>OFFICE_CONFIG.limiteModificacion){
+    throw new Error("El archivo es demasiado grande para reconstruirlo completo. Trabajá con una sección más pequeña.");
+   }
+
+   estadoOffice("documentStatus","✍️ Modificando contenido...");
+
+   resultado=await consultarWorkerDocumental(
+    "Entregá el contenido completo ya modificado. No des sugerencias: devolvé la nueva versión. Conservá los datos, no inventes información. Instrucción: "+instruccion,
+    textoDocumento
+   );
+
+   contenidoModificado=resultado;
+
+  }else if(modo==="parts"||
+   (modo==="auto"&&textoDocumento.length>OFFICE_CONFIG.limiteAnalisisSimple)){
+
+   resultado=await analizarPorPartes(instruccion);
 
   }else{
-   const partes=dividirDocumento(textoDocumento,7500,500);
-
-   if(partes.length>8){
-    throw new Error(
-     "Este documento necesita más de 8 partes. "+
-     "Para evitar demasiadas solicitudes, dividilo en archivos más pequeños."
-    );
-   }
-
-   const analisisPartes=[];
-
-   for(let i=0;i<partes.length;i++){
-    estadoOffice(
-     "documentStatus",
-     "🧠 Analizando parte "+(i+1)+" de "+partes.length+"..."
-    );
-
-    const respuesta=await solicitarAnalisis(
-     "Analizá esta parte del documento teniendo en cuenta la siguiente solicitud: "+
-     instruccion+
-     "\nNo inventes información. Identificá los puntos importantes.",
-     partes[i].contenido,
-     "Esta es la parte "+(i+1)+" de "+partes.length+
-     " de un documento más grande. No supongas que esta parte contiene todo el documento."
-    );
-
-    analisisPartes.push(
-     "ANÁLISIS DE LA PARTE "+(i+1)+":\n"+respuesta
-    );
-   }
-
-   estadoOffice(
-    "documentStatus",
-    "🧩 Uniendo los análisis y preparando una conclusión general..."
-   );
-
-   resultado=await solicitarAnalisis(
-    "Elaborá una respuesta final unificada a esta solicitud: "+
-    instruccion+
-    "\nIntegrá los análisis, evitá repeticiones y señalá cualquier límite de información. "+
-    "No inventes datos ni afirmes que revisaste contenido que no aparece en los análisis.",
-    analisisPartes.join("\n\n"),
-    "Estás realizando una síntesis de análisis parciales de un documento extenso."
-   );
+   estadoOffice("documentStatus","🧠 Analizando documento...");
+   resultado=await consultarWorkerDocumental(instruccion,textoDocumento);
   }
 
-  contenidoModificado=resultado;
+  resultadoAnalisis=resultado;
+
+  historialDocumento.push(
+   "INSTRUCCIÓN: "+instruccion+"\nRESULTADO: "+resultado.slice(0,9000)
+  );
+
+  if(historialDocumento.length>6){
+   historialDocumento=historialDocumento.slice(-6);
+  }
+
   document.getElementById("documentPreview").textContent=resultado;
 
   estadoOffice(
    "documentStatus",
-   "✅ Katia terminó. Revisá el resultado antes de descargarlo."
+   modo==="modify"?
+    "✅ Modificación lista. Revisá antes de descargar.":
+    "✅ Análisis terminado. Podés hacer otra pregunta."
   );
 
  }catch(error){
   console.error(error);
-  estadoOffice(
-   "documentStatus",
-   "❌ No se pudo completar el análisis: "+error.message
-  );
+  estadoOffice("documentStatus","❌ Error: "+error.message);
+
  }finally{
-  analisisEnCurso=false;
   boton.disabled=false;
-  boton.textContent="✨ Analizar / modificar con Katia";
+  boton.textContent="✨ Trabajar con Katia";
  }
 }
-
-/* ==========================================
-   LIMPIAR DOCUMENTO
-========================================== */
 
 function limpiarDocumento(){
  documentoActual=null;
  textoDocumento="";
  contenidoModificado="";
+ resultadoAnalisis="";
  tipoDocumentoActual="";
  nombreDocumentoActual="";
+ historialDocumento=[];
+ documentoCargado=false;
 
  document.getElementById("documentFile").value="";
  document.getElementById("documentPrompt").value="";
  document.getElementById("documentPreview").textContent="";
+ document.getElementById("documentMode").value="auto";
+
+ actualizarDescripcionModo();
 
  estadoOffice("fileStatus","Todavía no seleccionaste ningún archivo.");
  estadoOffice("documentStatus","Documento eliminado de la sesión.");
 }
 
-/* ==========================================
-   CREAR WORD
-========================================== */
-
+/* WORD */
 async function generarWord(texto,nombre){
- if(!window.docx)throw new Error("La biblioteca Word no está disponible.");
+ if(!window.docx)throw new Error("Biblioteca Word no disponible.");
 
  const {Document,Packer,Paragraph,TextRun,HeadingLevel}=window.docx;
 
  const parrafos=texto.split(/\r?\n/).map(linea=>{
-  const contenido=linea.trim();
+  const t=linea.trim();
 
-  if(/^#{1,2}\s/.test(contenido)){
+  if(/^#{1,2}\s/.test(t)){
    return new Paragraph({
-    text:contenido.replace(/^#{1,2}\s/,""),
+    text:t.replace(/^#{1,2}\s/,""),
     heading:HeadingLevel.HEADING_1
    });
   }
 
   return new Paragraph({
-   children:[new TextRun({text:contenido})]
+   children:[new TextRun({text:t})]
   });
  });
 
@@ -1472,104 +1405,363 @@ async function generarWord(texto,nombre){
 }
 
 /* ==========================================
-   CREAR EXCEL
+   EXCEL INTELIGENTE 2.0
 ========================================== */
 
+function separarHojasExcel(texto){
+ const partes=texto.split(/^\s*###\s*HOJA\s*:\s*(.+)\s*$/im);
+ const hojas=[];
+
+ if(partes.length===1){
+  hojas.push({nombre:"Datos",contenido:texto});
+  return hojas;
+ }
+
+ for(let i=1;i<partes.length;i+=2){
+  hojas.push({
+   nombre:partes[i].trim(),
+   contenido:partes[i+1]||""
+  });
+ }
+
+ return hojas.length?hojas:[{nombre:"Datos",contenido:texto}];
+}
+
+function convertirCeldaExcel(valor){
+ const v=String(valor??"").trim();
+
+ if(!v)return "";
+
+ if(/^[-+]?\d+([.,]\d+)?$/.test(v)){
+  return Number(v.replace(",","."));
+ }
+
+ if(v.startsWith("="))return {f:v.slice(1)};
+
+ return v;
+}
+
 function generarExcel(texto,nombre){
- if(!window.XLSX)throw new Error("La biblioteca Excel no está disponible.");
+ if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");
 
- const filas=texto.split(/\r?\n/).map(linea=>
-  linea.split(/\t|;/).map(celda=>celda.trim())
- ).filter(fila=>fila.some(celda=>celda));
+ const estilo=document.getElementById("xlsxStyle")?.value||"purple";
 
- const hoja=XLSX.utils.aoa_to_sheet(filas);
+ const paletas={
+  purple:{header:"6D28D9",light:"EDE9FE"},
+  blue:{header:"1D4ED8",light:"DBEAFE"},
+  green:{header:"15803D",light:"DCFCE7"},
+  gray:{header:"374151",light:"E5E7EB"}
+ };
+
+ const paleta=paletas[estilo]||paletas.purple;
  const libro=XLSX.utils.book_new();
+ const hojas=separarHojasExcel(texto);
 
- XLSX.utils.book_append_sheet(libro,hoja,"Datos");
+ hojas.slice(0,20).forEach((hojaInfo,index)=>{
+  const filas=hojaInfo.contenido.split(/\r?\n/)
+   .map(linea=>linea.trim())
+   .filter(Boolean)
+   .map(linea=>linea.includes("\t")?
+    linea.split("\t"):linea.split(/\s*\|\s*|;/))
+   .map(fila=>fila.map(convertirCeldaExcel));
+
+  if(!filas.length)return;
+
+  const hoja=XLSX.utils.aoa_to_sheet(filas);
+  const rango=XLSX.utils.decode_range(hoja["!ref"]||"A1");
+
+  hoja["!cols"]=Array.from({length:rango.e.c+1},(_,c)=>{
+   let max=12;
+   filas.forEach(f=>{
+    max=Math.max(max,String(f[c]??"").length);
+   });
+   return {wch:Math.min(max+3,34)};
+  });
+
+  hoja["!autofilter"]={
+   ref:XLSX.utils.encode_range({
+    s:{r:0,c:0},
+    e:{r:rango.e.r,c:rango.e.c}
+   })
+  };
+
+  hoja["!freeze"]={
+   xSplit:0,ySplit:1,topLeftCell:"A2",
+   activePane:"bottomLeft",state:"frozen"
+  };
+
+  XLSX.utils.book_append_sheet(
+   libro,
+   hoja,
+   (hojaInfo.nombre||"Hoja"+(index+1))
+    .replace(/[\\/?*[\]:]/g," ")
+    .slice(0,31)||"Datos"
+  );
+ });
+
+ if(!libro.SheetNames.length){
+  throw new Error("No se encontraron datos para Excel.");
+ }
+
  XLSX.writeFile(libro,nombre+".xlsx");
 }
 
 /* ==========================================
-   CREAR POWERPOINT
+   POWERPOINT PROFESIONAL 2.0
 ========================================== */
+
+function obtenerPaletaPPTX(){
+ const tema=document.getElementById("pptxTheme")?.value||"purple";
+
+ const paletas={
+  purple:{bg:"100B1D",panel:"211339",accent:"A855F7",accent2:"EC4899",text:"F7F0FF",muted:"C4B5FD"},
+  blue:{bg:"071426",panel:"102B4C",accent:"38BDF8",accent2:"2563EB",text:"F0F9FF",muted:"BAE6FD"},
+  green:{bg:"071A13",panel:"123B2A",accent:"4ADE80",accent2:"15803D",text:"F0FDF4",muted:"BBF7D0"},
+  dark:{bg:"111111",panel:"262626",accent:"F59E0B",accent2:"D97706",text:"FAFAFA",muted:"D4D4D4"},
+  light:{bg:"F8FAFC",panel:"E2E8F0",accent:"6D28D9",accent2:"9333EA",text:"172033",muted:"475569"}
+ };
+
+ return paletas[tema]||paletas.purple;
+}
+
+function dividirDiapositivas(texto){
+ const secciones=texto.split(/\n(?=#{1,2}\s)|\n(?=DIAPOSITIVA\s+\d+)/i)
+  .map(x=>x.trim()).filter(Boolean);
+
+ if(secciones.length>1)return secciones;
+
+ const lineas=texto.split(/\r?\n/).filter(x=>x.trim());
+ const bloques=[];
+
+ for(let i=0;i<lineas.length;i+=5){
+  bloques.push(lineas.slice(i,i+5).join("\n"));
+ }
+
+ return bloques;
+}
+
+function limpiarTextoSlide(texto){
+ return texto
+  .replace(/^\s*[-*•]\s*/gm,"")
+  .replace(/\*\*(.*?)\*\*/g,"$1")
+  .replace(/`([^`]+)`/g,"$1")
+  .trim();
+}
 
 async function generarPowerPoint(texto,nombre){
  if(typeof pptxgen==="undefined"){
-  throw new Error("La biblioteca PowerPoint no está disponible.");
+  throw new Error("Biblioteca PowerPoint no disponible.");
  }
 
- const presentacion=new pptxgen();
- presentacion.layout="LAYOUT_WIDE";
- presentacion.author="Katia AI";
- presentacion.subject="Presentación creada con Katia AI";
- presentacion.title=nombre;
+ const pptx=new pptxgen();
+ const pal=obtenerPaletaPPTX();
+ const estilo=document.getElementById("pptxLayout")?.value||"modern";
 
- presentacion.theme={
+ pptx.layout="LAYOUT_WIDE";
+ pptx.author="Katia AI";
+ pptx.subject="Presentación profesional creada con Katia AI";
+ pptx.title=nombre;
+ pptx.company="Katia AI";
+ pptx.lang="es-PY";
+
+ pptx.theme={
   headFontFace:"Aptos Display",
-  bodyFontFace:"Aptos"
+  bodyFontFace:"Aptos",
+  lang:"es-PY"
  };
 
- let secciones=texto
-  .split(/\n(?=#{1,2}\s)|\n(?=DIAPOSITIVA\s+\d+)/i)
-  .map(item=>item.trim())
-  .filter(Boolean);
-
- if(secciones.length<2){
-  const lineas=texto.split(/\r?\n/).filter(Boolean);
-  secciones=[];
-  for(let i=0;i<lineas.length;i+=5){
-   secciones.push(lineas.slice(i,i+5).join("\n"));
-  }
- }
-
- secciones.forEach((seccion,index)=>{
-  const lineas=seccion.split(/\r?\n/).filter(Boolean);
-
-  const titulo=lineas[0]
-   .replace(/^#{1,2}\s/,"")
-   .replace(/^DIAPOSITIVA\s+\d+/i,"Diapositiva "+(index+1));
-
-  const cuerpo=lineas.slice(1).join("\n")||seccion;
-  const slide=presentacion.addSlide();
-
-  slide.background={color:"100B1D"};
-
-  slide.addText(titulo||"Katia AI",{
-   x:0.6,y:0.45,w:12,h:0.8,
-   fontFace:"Aptos Display",
-   fontSize:27,bold:true,
-   color:"D8B4FE",margin:0.05
-  });
-
-  slide.addShape(presentacion.ShapeType.line,{
-   x:0.6,y:1.35,w:11.8,h:0,
-   line:{color:"A855F7",width:2}
-  });
-
-  slide.addText(cuerpo,{
-   x:0.8,y:1.7,w:11.5,h:5.1,
-   fontFace:"Aptos",
-   fontSize:19,color:"F7F0FF",
-   valign:"top",margin:0.1,
-   fit:"shrink"
-  });
-
-  slide.addText("KATIA AI  •  "+(index+1),{
-   x:10.8,y:7.05,w:1.8,h:0.2,
-   fontSize:9,color:"A99BBD",align:"right"
-  });
+ pptx.defineSlideMaster({
+  title:"KATIA_MASTER",
+  background:{color:pal.bg},
+  objects:[
+   {line:{x:.55,y:7.12,w:12.2,h:0,line:{color:pal.accent,transparency:35,width:1}}},
+   {text:{text:"KATIA AI  •  OFFICE STUDIO",options:{x:.6,y:7.18,w:5,h:.15,fontFace:"Aptos",fontSize:7,color:pal.muted,margin:0}}},
+   {text:{text:"",options:{x:12,y:7.15,w:.5,h:.2,fontSize:8,color:pal.muted,align:"right",margin:0}}}
+  ],
+  slideNumber:{x:12.25,y:7.15,color:pal.muted,fontFace:"Aptos",fontSize:8}
  });
 
- await presentacion.writeFile({fileName:nombre+".pptx"});
+ const secciones=dividirDiapositivas(texto);
+
+ if(!secciones.length){
+  throw new Error("No hay contenido para crear diapositivas.");
+ }
+
+ const portada=pptx.addSlide();
+ portada.background={color:pal.bg};
+
+ portada.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:13.333,h:7.5,
+  fill:{color:pal.bg},line:{color:pal.bg}
+ });
+
+ portada.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:.22,h:7.5,
+  fill:{color:pal.accent},line:{color:pal.accent}
+ });
+
+ portada.addShape(pptx.ShapeType.ellipse,{
+  x:9.1,y:-1.4,w:5.4,h:5.4,
+  fill:{color:pal.accent,transparency:75},
+  line:{color:pal.accent,transparency:100}
+ });
+
+ portada.addText("KATIA AI  /  PRESENTACIÓN",{
+  x:.85,y:.85,w:7,h:.35,
+  fontFace:"Aptos",fontSize:12,bold:true,
+  charSpacing:2,color:pal.accent,margin:0
+ });
+
+ const primera=secciones[0].split(/\r?\n/).filter(x=>x.trim());
+
+ let titulo=primera[0]||nombre;
+ titulo=titulo.replace(/^#{1,2}\s/,"")
+  .replace(/^DIAPOSITIVA\s+\d+/i,"").trim()||nombre;
+
+ portada.addText(titulo,{
+  x:.85,y:2.05,w:10.8,h:2.1,
+  fontFace:"Aptos Display",fontSize:34,bold:true,
+  color:pal.text,breakLine:false,fit:"shrink",margin:0.04,
+  valign:"mid"
+ });
+
+ const subtitulo=primera.slice(1,3).join(" ").slice(0,170);
+
+ if(subtitulo){
+  portada.addText(subtitulo,{
+   x:.9,y:4.45,w:9.5,h:.8,
+   fontFace:"Aptos",fontSize:17,
+   color:pal.muted,breakLine:false,fit:"shrink",margin:0
+  });
+ }
+
+ portada.addText(new Date().toLocaleDateString("es-PY"),{
+  x:.9,y:6.55,w:4,h:.3,
+  fontFace:"Aptos",fontSize:10,color:pal.muted
+ });
+
+ secciones.forEach((seccion,index)=>{
+  const slide=pptx.addSlide("KATIA_MASTER");
+  slide.background={color:pal.bg};
+
+  const lineas=seccion.split(/\r?\n/).filter(x=>x.trim());
+
+  let encabezado=(lineas.shift()||"Tema "+(index+1))
+   .replace(/^#{1,2}\s/,"")
+   .replace(/^DIAPOSITIVA\s+\d+/i,"").trim();
+
+  const contenido=lineas.join("\n");
+
+  const bullets=contenido.split(/\r?\n/)
+   .map(x=>x.trim()).filter(Boolean)
+   .map(x=>x.replace(/^[-*•]\s*/,""));
+
+  slide.addShape(pptx.ShapeType.roundRect,{
+   x:.55,y:.45,w:12.2,h:1.0,
+   rectRadius:.08,
+   fill:{color:pal.panel},
+   line:{color:pal.panel,transparency:100}
+  });
+
+  slide.addText(encabezado||"Ideas principales",{
+   x:.85,y:.68,w:11.5,h:.55,
+   fontFace:"Aptos Display",
+   fontSize:estilo==="minimal"?25:27,
+   bold:true,color:pal.accent,margin:0,fit:"shrink"
+  });
+
+  slide.addShape(pptx.ShapeType.line,{
+   x:.85,y:1.62,w:11.55,h:0,
+   line:{color:pal.accent,width:1.5,transparency:15}
+  });
+
+  if(bullets.length){
+   const usarTarjetas=estilo==="modern"&&bullets.length<=4;
+   const alto=Math.min(1.05,4.2/bullets.length);
+
+   if(usarTarjetas){
+    bullets.slice(0,6).forEach((item,i)=>{
+     const y=1.92+i*(alto+.18);
+
+     slide.addShape(pptx.ShapeType.roundRect,{
+      x:.9,y,w:11.45,h:alto,
+      rectRadius:.06,
+      fill:{color:pal.panel},
+      line:{color:pal.panel,transparency:100}
+     });
+
+     slide.addShape(pptx.ShapeType.ellipse,{
+      x:1.12,y:y+.25,w:.18,h:.18,
+      fill:{color:pal.accent},line:{color:pal.accent}
+     });
+
+     slide.addText(item,{
+      x:1.5,y:y+.12,w:10.45,h:alto-.2,
+      fontFace:"Aptos",
+      fontSize:Math.min(19,estilo==="corporate"?17:19),
+      color:pal.text,margin:.04,breakLine:false,
+      valign:"mid",fit:"shrink"
+     });
+    });
+
+   }else{
+    const lista=bullets.slice(0,9).map(item=>({
+     text:item,
+     options:{
+      bullet:{indent:18},
+      hanging:4,
+      breakLine:true
+     }
+    }));
+
+    slide.addText(lista,{
+     x:1.05,y:1.95,w:11.15,h:4.75,
+     fontFace:"Aptos",
+     fontSize:estilo==="corporate"?18:20,
+     color:pal.text,breakLine:false,
+     paraSpaceAfterPt:14,
+     valign:"top",margin:.08,fit:"shrink"
+    });
+   }
+
+  }else{
+   slide.addText(contenido||" ",{
+    x:1.0,y:2.0,w:11.2,h:4.7,
+    fontFace:"Aptos",fontSize:20,
+    color:pal.text,margin:.1,
+    breakLine:false,valign:"top",fit:"shrink"
+   });
+  }
+ });
+
+ const final=pptx.addSlide();
+
+ final.background={color:pal.bg};
+
+ final.addShape(pptx.ShapeType.rect,{
+  x:0,y:0,w:13.333,h:7.5,
+  fill:{color:pal.bg},line:{color:pal.bg}
+ });
+
+ final.addText("¡GRACIAS!",{
+  x:1,y:2.25,w:11.3,h:1.1,
+  fontFace:"Aptos Display",fontSize:40,
+  bold:true,align:"center",color:pal.accent,margin:0
+ });
+
+ final.addText("Presentación creada con Katia AI",{
+  x:1,y:3.55,w:11.3,h:.5,
+  fontFace:"Aptos",fontSize:17,
+  align:"center",color:pal.muted,margin:0
+ });
+
+ await pptx.writeFile({fileName:nombre+".pptx"});
 }
 
-/* ==========================================
-   CREAR PDF
-========================================== */
-
+/* PDF */
 function generarPDF(texto,nombre){
  if(!window.jspdf||!window.jspdf.jsPDF){
-  throw new Error("La biblioteca PDF no está disponible.");
+  throw new Error("Biblioteca PDF no disponible.");
  }
 
  const {jsPDF}=window.jspdf;
@@ -1582,6 +1774,7 @@ function generarPDF(texto,nombre){
  const margen=18;
  const ancho=174;
  const altoPagina=280;
+
  let y=20;
 
  pdf.setFont("helvetica","normal");
@@ -1601,64 +1794,48 @@ function generarPDF(texto,nombre){
  pdf.save(nombre+".pdf");
 }
 
-/* ==========================================
-   MOTOR GENERAL DE ARCHIVOS
-========================================== */
-
+/* MOTOR GENERAL */
 async function crearArchivo(tipo,texto,nombre){
  nombre=nombreSeguro(nombre);
 
  if(!texto||!texto.trim()){
-  throw new Error("No hay contenido para crear el archivo.");
+  throw new Error("No hay contenido para crear.");
  }
 
- if(tipo==="docx"){
-  await generarWord(texto,nombre);
- }else if(tipo==="xlsx"){
-  generarExcel(texto,nombre);
- }else if(tipo==="pptx"){
-  await generarPowerPoint(texto,nombre);
- }else if(tipo==="pdf"){
-  generarPDF(texto,nombre);
- }else{
-  throw new Error("Formato de archivo desconocido.");
- }
+ if(tipo==="docx")await generarWord(texto,nombre);
+ else if(tipo==="xlsx")generarExcel(texto,nombre);
+ else if(tipo==="pptx")await generarPowerPoint(texto,nombre);
+ else if(tipo==="pdf")generarPDF(texto,nombre);
+ else throw new Error("Formato desconocido.");
 }
-
-/* ==========================================
-   DESCARGAR DOCUMENTO MODIFICADO
-========================================== */
 
 async function descargarDocumentoModificado(){
  if(!contenidoModificado.trim()){
-  alert("Primero pedile a Katia que analice o modifique el documento.");
+  alert("Todavía no hay una modificación lista. Seleccioná el modo de modificación.");
   return;
  }
 
  if(!tipoDocumentoActual){
-  alert("No se reconoce el formato del documento original.");
+  alert("No se reconoce el formato original.");
   return;
  }
 
  const nombre=nombreSeguro(nombreDocumentoActual)+"_Katia";
 
  try{
+  estadoOffice("documentStatus","📦 Preparando archivo...");
+
   await crearArchivo(tipoDocumentoActual,contenidoModificado,nombre);
 
-  estadoOffice(
-   "documentStatus",
-   "📥 Se preparó una nueva versión del documento."
-  );
+  estadoOffice("documentStatus","📥 Archivo preparado. Revisá tus descargas.");
+
  }catch(error){
   console.error(error);
-  alert("No se pudo crear el archivo: "+error.message);
+  alert("No se pudo crear: "+error.message);
  }
 }
 
-/* ==========================================
-   CREAR DOCUMENTOS NUEVOS CON IA
-========================================== */
-
+/* CREACIÓN CON IA */
 async function crearDocumentoNuevo(){
  const tipo=document.getElementById("newFileType").value;
  const nombre=document.getElementById("newFileName").value.trim()||"Documento_Katia";
@@ -1670,7 +1847,10 @@ async function crearDocumentoNuevo(){
  }
 
  const boton=document.getElementById("createButton");
+
  boton.disabled=true;
+ boton.textContent="⏳ Creando archivo...";
+
  estadoOffice("createStatus","🧠 Katia está preparando el contenido...");
 
  try{
@@ -1678,22 +1858,30 @@ async function crearDocumentoNuevo(){
 
   if(tipo==="xlsx"){
    formato=
-    "Devolvé una tabla para Excel. Usá tabulaciones entre columnas y saltos de línea entre filas. No uses tablas Markdown.";
+    "Prepará datos para Excel. Podés crear varias hojas. " +
+    "Separá cada hoja con una línea ### HOJA: NombreDeHoja. " +
+    "Dentro de cada hoja usá tabulaciones entre columnas y saltos de línea entre filas. " +
+    "La primera fila debe ser encabezados. Incluí fórmulas cuando sean útiles, comenzando con =. " +
+    "No uses tablas Markdown ni explicaciones fuera de los datos.";
+
   }else if(tipo==="pptx"){
    formato=
-    "Prepará una presentación PowerPoint. Separá cada diapositiva con un título que comience con ##. Usá texto breve y organizado.";
+    "Prepará una presentación profesional para PowerPoint. " +
+    "Separá cada diapositiva con un encabezado ## Título. " +
+    "La primera diapositiva debe contener el título y un subtítulo. " +
+    "Usá entre 3 y 5 ideas breves por diapositiva, no párrafos largos. " +
+    "Usá listas con guiones cuando sea adecuado. " +
+    "Creá una diapositiva final de conclusiones o cierre. " +
+    "No incluyas explicaciones fuera de las diapositivas.";
+
   }else{
-   formato=
-    "Prepará un documento completo, organizado, con títulos y párrafos claros.";
+   formato="Prepará un documento completo, organizado, con títulos y párrafos claros.";
   }
 
-  const contenido=await llamarKatia([
+  const contenido=await llamarWorker([
    {
     role:"system",
-    content:
-     "Sos Katia AI, especialista en creación de archivos. "+
-     "Entregá contenido útil, completo y bien organizado. "+
-     "No agregues explicaciones sobre el proceso. "+formato
+    content:"Sos Katia AI, especialista en creación de archivos. Entregá contenido completo, útil y ordenado. "+formato
    },
    {
     role:"user",
@@ -1701,9 +1889,7 @@ async function crearDocumentoNuevo(){
    }
   ]);
 
-  if(!contenido.trim())throw new Error("Katia no devolvió contenido.");
-
-  estadoOffice("createStatus","📦 Preparando el archivo "+tipo.toUpperCase()+"...");
+  estadoOffice("createStatus","📦 Generando archivo "+tipo.toUpperCase()+"...");
 
   await crearArchivo(tipo,contenido,nombre);
 
@@ -1711,12 +1897,17 @@ async function crearDocumentoNuevo(){
 
  }catch(error){
   console.error(error);
-  estadoOffice("createStatus","❌ No se pudo crear el archivo: "+error.message);
+  estadoOffice("createStatus","❌ No se pudo crear: "+error.message);
+
  }finally{
   boton.disabled=false;
+  boton.textContent="🚀 Crear archivo con Katia";
  }
 }
-</script>
 
+actualizarDescripcionModo();
+actualizarOpcionesCreacion();
+actualizarProveedorVisible();
+</script>
 </body>
-</html>
+                                                  </html>
