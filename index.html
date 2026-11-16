@@ -293,6 +293,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
     <small>Un espacio entre vos y Katia 💜</small>
     <div class="provider-status" id="activeProvider">Modo: AUTOMÁTICO</div>
     <div class="provider-status" id="brainStatus">🧠 Cerebro: Katia 3.1 (V1)</div>
+    <div class="provider-status" id="voiceStatus">🎙️ Voz: automática</div>
    </div>
    <button class="icon-btn" onclick="limpiarChat()">🗑️</button>
   </div>
@@ -452,7 +453,8 @@ const STORAGE = {
  likes:"katia_likes_4",
  username:"katia_user_name_4",
  apiKey:"katia_gemini_key_4",
- provider:"katia_provider_4"
+ provider:"katia_provider_4",
+ voice:"katia_voice_uri"
 };
 
 let historial = cargar(STORAGE.history,[]);
@@ -469,7 +471,10 @@ let ultimoFallback = false;
 let enviandoMensaje = false;
 let ultimoSystemPromptUsado = "";
 
-function cargar(key,fallback){
+/* NUEVO ETAPA 1: ESTADO DE VOZ */
+let vocesDisponibles = [];
+let vozSeleccionadaURI = localStorage.getItem(STORAGE.voice) || "";
+ function cargar(key,fallback){
  try{
   const data=localStorage.getItem(key);
   return data?JSON.parse(data):fallback;
@@ -532,13 +537,11 @@ function verSystemPromptUsado(){
  }
 
  const esV2 = ultimoSystemPromptUsado.includes("<<INICIO DE DATOS DEL USUARIO>>");
-
  const overlay = document.getElementById("overlay");
  const panelTitle = document.getElementById("panelTitle");
  const panelContent = document.getElementById("panelContent");
 
  panelTitle.textContent = "🔍 Último system preparado";
-
  panelContent.innerHTML = "";
 
  const info = document.createElement("p");
@@ -1119,7 +1122,132 @@ function mostrarGustos(){
  });
 }
 
-/* CONFIGURACIÓN */
+/* ==========================================
+   ETAPA 1 - SELECTOR DE VOCES
+========================================== */
+
+function cargarVocesDisponibles(){
+ const todas = (window.speechSynthesis && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
+ vocesDisponibles = todas.filter(v => /^es/i.test(v.lang || ""));
+ return vocesDisponibles.length > 0;
+}
+
+function buscarVozPorURI(uri){
+ if(!uri) return null;
+ return vocesDisponibles.find(v => v.voiceURI === uri) || null;
+}
+
+function seleccionarVozPorDefecto(){
+ const prioridades = ["es-PY","es-AR","es-US","es-MX","es-ES"];
+ for(const lang of prioridades){
+  const encontrada = vocesDisponibles.find(v => (v.lang||"").toLowerCase() === lang.toLowerCase());
+  if(encontrada) return encontrada;
+ }
+ return vocesDisponibles[0] || null;
+}
+
+function obtenerVozActiva(){
+ if(!vocesDisponibles.length) return null;
+ if(vozSeleccionadaURI){
+  const guardada = buscarVozPorURI(vozSeleccionadaURI);
+  if(guardada) return guardada;
+ }
+ return seleccionarVozPorDefecto();
+}
+
+function guardarVoz(){
+ const selector = document.getElementById("voiceSelect");
+ if(!selector) return;
+ const valor = selector.value;
+ if(valor === ""){
+  vozSeleccionadaURI = "";
+  localStorage.removeItem(STORAGE.voice);
+ }else{
+  vozSeleccionadaURI = valor;
+  localStorage.setItem(STORAGE.voice, valor);
+ }
+ actualizarVozVisible();
+ alert("Voz guardada. Se aplicará en el próximo mensaje.");
+}
+
+function actualizarVozVisible(){
+ const elemento = document.getElementById("voiceStatus");
+ if(!elemento) return;
+ const voz = obtenerVozActiva();
+ if(!voz){
+  elemento.textContent = "🎙️ Voz: automática del navegador";
+  return;
+ }
+ elemento.textContent = "🎙️ Voz: " + (voz.name || "(sin nombre)") + " · " + (voz.lang || "");
+}
+
+function probarVozSeleccionada(){
+ if(!("speechSynthesis" in window)){
+  alert("Tu navegador no permite reproducir voz.");
+  return;
+ }
+ const selector = document.getElementById("voiceSelect");
+ const uri = selector ? selector.value : "";
+ const voz = uri ? buscarVozPorURI(uri) : seleccionarVozPorDefecto();
+
+ speechSynthesis.cancel();
+
+ const utterance = new SpeechSynthesisUtterance(
+  "¡Hola! Así se va a escuchar la voz de Katia. ¿Te gusta?"
+ );
+ utterance.rate = 1;
+ utterance.pitch = 1.0;
+ utterance.volume = 1;
+
+ if(voz){
+  utterance.voice = voz;
+  utterance.lang = voz.lang;
+ }else{
+  utterance.lang = "es-ES";
+ }
+
+ utterance.onstart = () => estadoOrb("speaking","🔊 Probando voz...");
+ utterance.onend = () => estadoOrb("","🟢 En línea · Lista para hablar");
+ utterance.onerror = () => estadoOrb("","🟢 En línea");
+
+ speechSynthesis.speak(utterance);
+}
+
+function mostrarSelectorVoces(){
+ const contenedor = document.getElementById("voiceSelectContainer");
+ if(!contenedor) return;
+
+ if(!vocesDisponibles.length){
+  cargarVocesDisponibles();
+ }
+
+ if(!vocesDisponibles.length){
+  contenedor.innerHTML = '<div class="provider-info">Cargando voces del dispositivo... Si tarda, cerrá y volvé a abrir este panel.</div>';
+  return;
+ }
+
+ const opciones = vocesDisponibles.map(v => {
+  const uri = v.voiceURI || "";
+  const nombre = v.name || "(sin nombre)";
+  const lang = v.lang || "";
+  const seleccionada = (uri === vozSeleccionadaURI) ? " selected" : "";
+  return `<option value="${uri.replace(/"/g,'&quot;')}"${seleccionada}>${nombre} · ${lang}</option>`;
+ }).join("");
+
+ contenedor.innerHTML = `
+  <select id="voiceSelect">
+   <option value="">Automática (recomendada)</option>
+   ${opciones}
+  </select>
+  <button class="action" onclick="probarVozSeleccionada()">🔊 Probar voz</button>
+  <button class="action" onclick="guardarVoz()">💾 Guardar voz</button>
+ `;
+}
+
+/* ==========================================
+   CONFIGURACIÓN
+========================================== */
+
 function abrirConfiguracion(){
  const proveedor=obtenerProveedor();
  const brainV2 = brainV2Activo();
@@ -1175,12 +1303,25 @@ function abrirConfiguracion(){
 
  <hr style="border-color:#ffffff22;margin:20px 0">
 
+ <div class="provider-box">
+  <label>🎙️ Voz de Katia</label>
+  <div id="voiceSelectContainer">
+   <div class="provider-info">Cargando voces del dispositivo...</div>
+  </div>
+  <div class="provider-info">
+   Las voces disponibles dependen del dispositivo y del navegador. No es posible descargar voces nuevas desde aquí. Si tenés una voz paraguaya o latinoamericana instalada en el sistema, aparecerá en la lista.
+  </div>
+ </div>
+
+ <hr style="border-color:#ffffff22;margin:20px 0">
+
  <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
  `;
 
  document.getElementById("userNameInput").value=nombreUsuario();
  document.getElementById("providerSelect").value=proveedor;
  document.getElementById("brainV2Select").value = brainV2 ? "on" : "off";
+ mostrarSelectorVoces();
 }
 
 function guardarNombre(){
@@ -1242,9 +1383,16 @@ function hablar(texto){
  }
  speechSynthesis.cancel();
  const utterance=new SpeechSynthesisUtterance(texto);
- utterance.lang="es-ES";
  utterance.rate=1;
  utterance.pitch=1.05;
+
+ const voz = obtenerVozActiva();
+ if(voz){
+  utterance.voice = voz;
+  utterance.lang = voz.lang;
+ }else{
+  utterance.lang = "es-ES";
+ }
 
  utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
  utterance.onend=()=>estadoOrb("","🟢 En línea · Lista para hablar");
@@ -1315,9 +1463,19 @@ document.addEventListener("DOMContentLoaded",()=>{
   pdfjsLib.GlobalWorkerOptions.workerSrc=
    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
  }
-});
 
-/* ==========================================
+ if(window.speechSynthesis){
+  cargarVocesDisponibles();
+  actualizarVozVisible();
+  speechSynthesis.onvoiceschanged = () => {
+   cargarVocesDisponibles();
+   actualizarVozVisible();
+   const selector = document.getElementById("voiceSelect");
+   if(selector) mostrarSelectorVoces();
+  };
+ }
+});
+ /* ==========================================
    KATIA OFFICE STUDIO 2.0
    INTELIGENCIA DOCUMENTAL + OFFICE AVANZADO
 ========================================== */
@@ -1394,7 +1552,6 @@ function actualizarOpcionesCreacion(){
   tipo==="xlsx"?"block":"none";
 }
 
-/* LLAMADA DOCUMENTAL */
 async function consultarWorkerDocumental(instruccion,contenido,contextoExtra=""){
  const mensajes=[
   {
@@ -1410,7 +1567,6 @@ async function consultarWorkerDocumental(instruccion,contenido,contextoExtra="")
  return await llamarWorker(mensajes);
 }
 
-/* LECTURA DE ARCHIVOS */
 document.getElementById("documentFile").addEventListener("change",async function(event){
  const archivo=event.target.files[0];
  if(!archivo)return;
@@ -1525,7 +1681,6 @@ async function leerPDF(archivo){
  textoDocumento=contenido;
 }
 
-/* DOCUMENTOS GRANDES */
 function dividirEnPartes(texto){
  const partes=[];
  const tam=OFFICE_CONFIG.tamanoParte;
@@ -1696,7 +1851,6 @@ function limpiarDocumento(){
  estadoOffice("documentStatus","Documento eliminado de la sesión.");
 }
 
-/* WORD */
 async function generarWord(texto,nombre){
  if(!window.docx)throw new Error("Biblioteca Word no disponible.");
 
@@ -1724,10 +1878,6 @@ async function generarWord(texto,nombre){
  const blob=await Packer.toBlob(documento);
  descargarBlob(blob,nombre+".docx");
 }
-
-/* ==========================================
-   EXCEL INTELIGENTE 2.0
-========================================== */
 
 function separarHojasExcel(texto){
  const partes=texto.split(/^\s*###\s*HOJA\s*:\s*(.+)\s*$/im);
@@ -1826,10 +1976,6 @@ function generarExcel(texto,nombre){
 
  XLSX.writeFile(libro,nombre+".xlsx");
 }
-
-/* ==========================================
-   POWERPOINT PROFESIONAL 2.0
-========================================== */
 
 function obtenerPaletaPPTX(){
  const tema=document.getElementById("pptxTheme")?.value||"purple";
@@ -2079,7 +2225,6 @@ async function generarPowerPoint(texto,nombre){
  await pptx.writeFile({fileName:nombre+".pptx"});
 }
 
-/* PDF */
 function generarPDF(texto,nombre){
  if(!window.jspdf||!window.jspdf.jsPDF){
   throw new Error("Biblioteca PDF no disponible.");
@@ -2115,7 +2260,6 @@ function generarPDF(texto,nombre){
  pdf.save(nombre+".pdf");
 }
 
-/* MOTOR GENERAL */
 async function crearArchivo(tipo,texto,nombre){
  nombre=nombreSeguro(nombre);
 
@@ -2156,7 +2300,6 @@ async function descargarDocumentoModificado(){
  }
 }
 
-/* CREACIÓN CON IA */
 async function crearDocumentoNuevo(){
  const tipo=document.getElementById("newFileType").value;
  const nombre=document.getElementById("newFileName").value.trim()||"Documento_Katia";
@@ -2231,4 +2374,4 @@ actualizarOpcionesCreacion();
 actualizarProveedorVisible();
 </script>
 </body>
- </html>
+</html>
