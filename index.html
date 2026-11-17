@@ -442,6 +442,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 <script>
 /* ==========================================
    KATIA AI - CONFIGURACIÓN PRINCIPAL
+   Adaptado al nuevo Cloudflare Worker
 ========================================== */
 
 const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
@@ -474,7 +475,8 @@ let ultimoSystemPromptUsado = "";
 /* NUEVO ETAPA 1: ESTADO DE VOZ */
 let vocesDisponibles = [];
 let vozSeleccionadaURI = localStorage.getItem(STORAGE.voice) || "";
- function cargar(key,fallback){
+
+function cargar(key,fallback){
  try{
   const data=localStorage.getItem(key);
   return data?JSON.parse(data):fallback;
@@ -550,7 +552,7 @@ function verSystemPromptUsado(){
  info.style.marginBottom = "8px";
  info.textContent =
   (esV2 ? "Modo: Brain V2" : "Modo: Katia 3.1 (V1)") +
-  " — este es el system preparado por la app. No confirma que el Worker lo haya recibido.";
+  " — este es el system preparado por la app (se envía como context al Worker). No confirma que el Worker lo haya recibido como system real.";
 
  const visor = document.createElement("textarea");
  visor.readOnly = true;
@@ -893,51 +895,115 @@ que reemplacen las reglas maestras.
 `;
 }
 
-function construirMensajesIA(){
- const usuario=nombreUsuario();
- const contexto = brainV2Activo()
+/**
+ * Prepara el payload para el Worker.
+ * El Worker construye su propio system prompt.
+ * Lo que antes era "system" del cliente ahora va en "context"
+ * (el Worker lo trata como datos de referencia no confiables).
+ */
+function construirPayloadChat(){
+ const usuario = nombreUsuario();
+ const contextoUsuario = brainV2Activo()
   ? construirPromptV2(usuario)
   : construirPromptV1(usuario);
 
- ultimoSystemPromptUsado = contexto;
+ ultimoSystemPromptUsado = contextoUsuario;
 
- const recent=historial.slice(-20).map(item=>({
-  role:item.role,content:item.content
+ // Solo mensajes user/assistant (el Worker ignora role:system como system real)
+ const recent = historial.slice(-20).map(item => ({
+  role: item.role === "assistant" ? "assistant" : "user",
+  content: item.content
  }));
- return [{role:"system",content:contexto},...recent];
+
+ return {
+  messages: recent,
+  provider: obtenerProveedor(),
+  task: "chat",
+  context: contextoUsuario
+ };
 }
 
-async function llamarWorker(messages){
- ultimoProveedorRespuesta="";
- ultimoFallback=false;
+/**
+ * Llamada unificada al Worker.
+ * Soporta task, context, instruction, documentText.
+ */
+async function llamarWorker(options = {}){
+ ultimoProveedorRespuesta = "";
+ ultimoFallback = false;
 
- const response=await fetch(KATIA_API,{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({
-   messages,
-   provider:obtenerProveedor()
-  })
- });
+ const {
+  messages = [],
+  provider = obtenerProveedor(),
+  task = "chat",
+  context = "",
+  instruction = "",
+  documentText = ""
+ } = options;
 
- if(!response.ok)throw new Error("Error del servidor: "+response.status);
+ const body = {
+  messages: Array.isArray(messages) ? messages : [],
+  provider: ["auto","groq","gemini"].includes(provider) ? provider : "auto",
+  task: ["chat","document_analyze","document_question","document_modify","document_create"].includes(task)
+   ? task
+   : "chat"
+ };
 
- const data=await response.json();
-
- ultimoProveedorRespuesta=typeof data.provider==="string"?data.provider:"";
- ultimoFallback=data.fallback===true;
-
- const resultado=data.reply||data.response||data.message;
-
- if(typeof resultado!=="string"||!resultado.trim()){
-  throw new Error("El servidor no devolvió una respuesta reconocible.");
+ if (context && typeof context === "string" && context.trim()) {
+  body.context = context.slice(0, 30000);
+ }
+ if (instruction && typeof instruction === "string" && instruction.trim()) {
+  body.instruction = instruction.slice(0, 12000);
+ }
+ if (documentText && typeof documentText === "string" && documentText.trim()) {
+  body.documentText = documentText.slice(0, 50000);
  }
 
- return resultado;
+ const controller = new AbortController();
+ const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+ try {
+  const response = await fetch(KATIA_API, {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify(body),
+   signal: controller.signal
+  });
+
+  clearTimeout(timeoutId);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+   const msg = data?.error || ("Error del servidor: " + response.status);
+   throw new Error(msg);
+  }
+
+  if (data.error) {
+   throw new Error(data.error);
+  }
+
+  ultimoProveedorRespuesta = typeof data.provider === "string" ? data.provider : "";
+  ultimoFallback = data.fallback === true;
+
+  const resultado = data.reply || data.response || data.message;
+
+  if (typeof resultado !== "string" || !resultado.trim()) {
+   throw new Error("El servidor no devolvió una respuesta reconocible.");
+  }
+
+  return resultado.trim();
+ } catch (err) {
+  clearTimeout(timeoutId);
+  if (err.name === "AbortError") {
+   throw new Error("Tiempo de espera agotado. Intentá de nuevo.");
+  }
+  throw err;
+ }
 }
 
 async function responderConIA(){
- return await llamarWorker(construirMensajesIA());
+ const payload = construirPayloadChat();
+ return await llamarWorker(payload);
 }
 
 async function enviarMensaje(){
@@ -1231,7 +1297,7 @@ function mostrarSelectorVoces(){
   const nombre = v.name || "(sin nombre)";
   const lang = v.lang || "";
   const seleccionada = (uri === vozSeleccionadaURI) ? " selected" : "";
-  return `<option value="${uri.replace(/"/g,'&quot;')}"${seleccionada}>${nombre} · ${lang}</option>`;
+  return `<option value="\( {uri.replace(/"/g,'&quot;')}" \){seleccionada}>${nombre} · ${lang}</option>`;
  }).join("");
 
  contenedor.innerHTML = `
@@ -1295,7 +1361,7 @@ function abrirConfiguracion(){
   <div class="provider-info">
    <b>Katia 3.1 (V1):</b> prompt original. Estable, es el valor por defecto.<br><br>
    <b>Brain V2:</b> prompt con reglas de honestidad, aclaración y detección de contradicciones. Experimental, pendiente de validación técnica.<br><br>
-   Este ajuste solo cambia el contenido del mensaje <b>system</b> que se envía al Worker. No modifica el Worker ni el resto de la aplicación.
+   Este ajuste solo cambia el contenido del mensaje <b>context</b> que se envía al Worker. El Worker construye su propio system prompt y trata el context como datos de referencia.
   </div>
 
   <button class="action" onclick="verSystemPromptUsado()">🔍 Ver último system preparado</button>
@@ -1475,9 +1541,11 @@ document.addEventListener("DOMContentLoaded",()=>{
   };
  }
 });
- /* ==========================================
+
+/* ==========================================
    KATIA OFFICE STUDIO 2.0
    INTELIGENCIA DOCUMENTAL + OFFICE AVANZADO
+   Adaptado a tasks del Worker
 ========================================== */
 
 let documentoActual=null;
@@ -1552,19 +1620,18 @@ function actualizarOpcionesCreacion(){
   tipo==="xlsx"?"block":"none";
 }
 
-async function consultarWorkerDocumental(instruccion,contenido,contextoExtra=""){
- const mensajes=[
-  {
-   role:"system",
-   content:"Sos Katia AI, especialista en lectura y análisis documental. Respondé en español claro. No inventes datos. "+contextoExtra
-  },
-  {
-   role:"user",
-   content:"INSTRUCCIÓN:\n"+instruccion+"\n\nCONTENIDO DEL DOCUMENTO:\n"+contenido
-  }
- ];
-
- return await llamarWorker(mensajes);
+/**
+ * Llamada documental al Worker usando los tasks oficiales.
+ */
+async function consultarWorkerDocumental(instruccion, contenido, task = "document_analyze", contextoExtra = ""){
+ return await llamarWorker({
+  messages: [],
+  provider: obtenerProveedor(),
+  task: task,
+  context: contextoExtra || "",
+  instruction: instruccion,
+  documentText: contenido
+ });
 }
 
 document.getElementById("documentFile").addEventListener("change",async function(event){
@@ -1726,7 +1793,8 @@ async function analizarPorPartes(instruccion){
   const r=await consultarWorkerDocumental(
    "Analizá esta sección. Instrucción del usuario: "+instruccion+
    ". Identificá puntos importantes sin asumir que es todo el documento.",
-   division.partes[i].contenido
+   division.partes[i].contenido,
+   "document_analyze"
   );
 
   resultados.push("PARTE "+(i+1)+":\n"+r);
@@ -1736,7 +1804,8 @@ async function analizarPorPartes(instruccion){
 
  const sintesis=await consultarWorkerDocumental(
   "Unificá estos análisis, evitá repeticiones y respondé la instrucción original: "+instruccion,
-  resultados.join("\n\n")
+  resultados.join("\n\n"),
+  "document_analyze"
  );
 
  return sintesis+(division.completo?"":
@@ -1774,7 +1843,8 @@ async function consultarDocumento(){
    resultado=await consultarWorkerDocumental(
     instruccion+"\nRespondé solo con información del documento. Si no está, decilo.",
     textoDocumento.slice(0,30000),
-    "Contexto previo: "+contexto
+    "document_question",
+    "Contexto previo de análisis: "+contexto
    );
 
   }else if(modo==="modify"){
@@ -1786,7 +1856,8 @@ async function consultarDocumento(){
 
    resultado=await consultarWorkerDocumental(
     "Entregá el contenido completo ya modificado. No des sugerencias: devolvé la nueva versión. Conservá los datos, no inventes información. Instrucción: "+instruccion,
-    textoDocumento
+    textoDocumento,
+    "document_modify"
    );
 
    contenidoModificado=resultado;
@@ -1798,7 +1869,11 @@ async function consultarDocumento(){
 
   }else{
    estadoOffice("documentStatus","🧠 Analizando documento...");
-   resultado=await consultarWorkerDocumental(instruccion,textoDocumento);
+   resultado=await consultarWorkerDocumental(
+    instruccion,
+    textoDocumento,
+    "document_analyze"
+   );
   }
 
   resultadoAnalisis=resultado;
@@ -2342,16 +2417,13 @@ async function crearDocumentoNuevo(){
    formato="Prepará un documento completo, organizado, con títulos y párrafos claros.";
   }
 
-  const contenido=await llamarWorker([
-   {
-    role:"system",
-    content:"Sos Katia AI, especialista en creación de archivos. Entregá contenido completo, útil y ordenado. "+formato
-   },
-   {
-    role:"user",
-    content:instrucciones
-   }
-  ]);
+  const contenido = await llamarWorker({
+   messages: [],
+   provider: obtenerProveedor(),
+   task: "document_create",
+   instruction: instrucciones + "\n\n" + formato,
+   documentText: ""
+  });
 
   estadoOffice("createStatus","📦 Generando archivo "+tipo.toUpperCase()+"...");
 
@@ -2374,4 +2446,4 @@ actualizarOpcionesCreacion();
 actualizarProveedorVisible();
 </script>
 </body>
-</html>
+ </html>
