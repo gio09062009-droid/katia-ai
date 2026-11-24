@@ -6,9 +6,15 @@ workers_dev = true
 [vars]
 ALLOWED_ORIGINS = ""
 
+[[d1_databases]]
+binding = "DB"
+database_name = "katia-skills-registry"
+database_id = "28cfefc5-71b1-471f-b77e-219fae6a9eb4"
+migrations_dir = "migrations"
+
 # Configure secrets before deployment:
 # npx wrangler secret put SKILLS_API_TOKEN
 # Optional, for higher GitHub API rate limits:
 # npx wrangler secret put GITHUB_TOKEN
 
-# D1 and R2 bindings will be added after the resources are created.
+# R2 binding will be added after R2 is enabled and the bucket is created.
