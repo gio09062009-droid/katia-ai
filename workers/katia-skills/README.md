@@ -9,6 +9,12 @@ This is an isolated Cloudflare Worker. It does not replace `katia-braine` and is
 
 The analyze endpoint returns a report only. It resolves the branch/tag to an immutable Git commit, computes a SHA-256 digest for the bounded package contents, validates the manifest and reports warnings. It does not install, activate, or execute a Skill.
 
+## D1 registry adapter (not connected to a live database yet)
+
+`src/registry.js` contains persistence functions for immutable Skill version metadata and user-approved installation records. Installation records are created disabled by default, permission grants must be a subset of requested permissions, and installation plus its audit event are written in one D1 batch.
+
+The adapter deliberately requires an `authenticatedUserId` supplied by the trusted server-side authentication layer. It does not accept a browser-provided user ID. These functions are not exposed as HTTP endpoints and are not active until D1 is provisioned and the authenticated Brain-to-Skills integration is implemented.
+
 ## Local checks
 
 Requires Node.js 20 or newer:
@@ -45,5 +51,5 @@ Then test locally and deploy only after reviewing the code and setting up authen
 - Executable, binary, archive and unsupported file types are rejected by the analyzer.
 - Repository content is treated as untrusted data.
 - No package code is evaluated or executed.
-- No install, update, activation, D1 or R2 operations exist yet.
+- No live D1/R2 bindings or install HTTP endpoints exist yet.
 - The report includes the resolved commit SHA and package SHA-256 so later approval can bind to the exact analyzed revision.
