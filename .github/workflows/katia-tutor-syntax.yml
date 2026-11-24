@@ -83,6 +83,7 @@ jobs:
               body: JSON.stringify({ provider: "auto", session, ...payload })
             });
             const data = await response.json().catch(() => ({}));
+            console.log("Tutor operation:", payload.operation, "HTTP:", response.status, "URL:", response.url, "Body:", JSON.stringify(data).slice(0, 1000));
             if (!response.ok || !data.ok || !data.data) {
               throw new Error(payload.operation + " failed: HTTP " + response.status + " " + JSON.stringify(data));
             }
