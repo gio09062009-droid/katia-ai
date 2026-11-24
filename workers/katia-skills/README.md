@@ -1,6 +1,6 @@
 # Katia Skills Worker
 
-This is an isolated Cloudflare Worker. It does not replace `katia-braine`. Version 1 is deployed with D1; version 2 contains the latest tested code and is staged but not deployed.
+This is an isolated Cloudflare Worker. It does not replace `katia-braine`. Version 1 is deployed with D1; version 3 contains the latest tested code and is staged but not deployed.
 
 ## Internal API
 
