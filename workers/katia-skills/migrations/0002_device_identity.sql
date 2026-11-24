@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS device_challenges (
   challenge_id TEXT NOT NULL PRIMARY KEY,
   nonce TEXT NOT NULL,
   public_key_sha256 TEXT NOT NULL,
+  context_hash TEXT NOT NULL,
   expires_at INTEGER NOT NULL,
   consumed_at INTEGER,
   created_at INTEGER NOT NULL DEFAULT (unixepoch()),
