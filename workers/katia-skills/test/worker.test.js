@@ -208,6 +208,16 @@ test("installed Skills endpoint requires the trusted Brain user identity", async
   assert.equal(response.status, 401);
 });
 
+test("browser-supplied user ID is never accepted as identity", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/installed", {
+    headers: {
+      Authorization: "Bearer test-secret",
+      "X-Katia-User-Id": "victim-user-01"
+    }
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 401);
+});
+
 test("installed Skills endpoint returns only the user-scoped registry", async () => {
   const response = await worker.fetch(new Request("https://skills.example/v1/skills/installed", {
     headers: {
