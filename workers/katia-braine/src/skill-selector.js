@@ -20,7 +20,7 @@ export function inferRequiredCapabilities(input = {}) {
   if (task === "document_create") return ["documents.create"];
 
   const message = lastUserMessage(input.messages).toLowerCase();
-  if (/\b(resum[ií]|resumen|sintetiz|summary|summari[sz]e)\b/.test(message)) {
+  if (/\b(resum\w*|sintetiz\w*|summary|summari[sz]e)\b/.test(message)) {
     return ["conversation.summarize"];
   }
   if (/\b(explic[aá]|expl[ií]came|qu[eé] es|c[oó]mo funciona|how does|explain)\b/.test(message)) {
