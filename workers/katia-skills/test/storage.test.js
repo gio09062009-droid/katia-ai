@@ -75,7 +75,7 @@ test("reads and verifies stored package contents", async () => {
   await storeSkillPackage(bucket, input);
   const loaded = await readSkillPackage(bucket, input);
   assert.equal(loaded.packageSha256, input.packageSha256);
-  assert.deepEqual(loaded.files, files);
+  assert.deepEqual(loaded.files, [...files].sort((a, b) => a.path.localeCompare(b.path)));
 });
 
 test("rejects tampered R2 package contents", async () => {
