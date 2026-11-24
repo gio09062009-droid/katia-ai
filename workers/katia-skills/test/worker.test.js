@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index.js";
 
-const env = { SKILLS_API_TOKEN: "test-secret", ALLOWED_ORIGINS: "" };
+const env = { SKILLS_API_TOKEN: "test-secret", ALLOWED_ORIGINS: "", DB: registryDb() };
 
 test("health endpoint reports the isolated service", async () => {
   const response = await worker.fetch(new Request("https://skills.example/health"), env);
