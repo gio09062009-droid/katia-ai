@@ -139,6 +139,36 @@ function apiUrl(apiBase, path) {
   return new URL(path.replace(/^\/+/, ""), apiBase.endsWith("/") ? apiBase : apiBase + "/").toString();
 }
 
+function mayUseSkill(input = {}) {
+  const task = typeof input.task === "string" ? input.task : "chat";
+  if (["document_analyze", "document_question", "document_modify", "document_create"].includes(task)) return true;
+  const messages = Array.isArray(input.messages) ? input.messages : [];
+  const last = [...messages].reverse().find(item => item && item.role === "user" && typeof item.content === "string");
+  const message = (last?.content || "").toLowerCase();
+  return /\\b(resum\\w*|sintetiz\\w*|summary|summari[sz]e|explic\\w*|qu[eé] es|c[oó]mo funciona|how does|explain)\\b/.test(message);
+}
+
+/**
+ * Creates a one-use proof for the read-only installed-Skills lookup used by
+ * Katia Brain. The proof itself is sent only with the next chat request.
+ */
+export async function createChatIdentityProof(apiBase, input = {}) {
+  if (!mayUseSkill(input)) return null;
+  const identity = await getOrCreateDeviceIdentity();
+  const response = await fetch(apiUrl(apiBase, "/identity/challenge"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      publicKeySpki: identity.publicKeySpki,
+      targetPath: "/skills/installed",
+      payload: {}
+    }),
+    cache: "no-store"
+  });
+  const challenge = await readJsonResponse(response);
+  return identity.signChallenge(challenge);
+}
+
 /**
  * Makes one action-bound, one-use authorization request through Katia Brain.
  * The Skills API token and Brain HMAC assertion never enter the browser.
