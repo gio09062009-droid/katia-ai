@@ -837,6 +837,22 @@ async function skillsDeviceKeyPair(){
   return pair;
  }finally{db.close();}
 }
+async function skillsDeviceProofForChat(){
+ const base=KATIA_API.replace(/\/+$/,"");
+ const pair=await skillsDeviceKeyPair();
+ const spki=await crypto.subtle.exportKey("spki",pair.publicKey);
+ const publicKeySpki=skillsBase64Url(new Uint8Array(spki));
+ const response=await fetch(base+"/identity/challenge",{
+  method:"POST",cache:"no-store",
+  headers:{"Content-Type":"application/json","Accept":"application/json"},
+  body:JSON.stringify({publicKeySpki,targetPath:"/skills/installed",payload:{}})
+ });
+ let challenge={};
+ try{challenge=await response.json();}catch{}
+ if(!response.ok||challenge.ok!==true||typeof challenge.message!=="string")throw new Error(challenge.error||"No se pudo validar la identidad del dispositivo.");
+ const signature=await crypto.subtle.sign({name:"ECDSA",hash:"SHA-256"},pair.privateKey,new TextEncoder().encode(challenge.message));
+ return {challengeId:challenge.challengeId,publicKeySpki,signature:skillsBase64Url(new Uint8Array(signature))};
+}
 async function skillsFetch(path,method="GET",payload=null,protect=false){
  const base=KATIA_API.replace(/\/+$/,"");
  const send=async(body)=>{
@@ -1384,6 +1400,10 @@ async function llamarWorker(options = {}){
  if (context && typeof context === "string" && context.trim()) body.context = context.slice(0, 30000);
  if (instruction && typeof instruction === "string" && instruction.trim()) body.instruction = instruction.slice(0, 12000);
  if (documentText && typeof documentText === "string" && documentText.trim()) body.documentText = documentText.slice(0, 50000);
+ if (task === "chat") {
+  try { body.deviceProof = await skillsDeviceProofForChat(); }
+  catch (error) { console.warn("Skills no disponibles en este mensaje; el chat continúa normalmente.", error); }
+ }
 
  const controller = new AbortController();
  const timeoutId = setTimeout(() => controller.abort(), 45000);
