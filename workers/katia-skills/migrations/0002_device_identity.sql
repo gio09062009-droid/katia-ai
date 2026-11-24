@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS device_identities (
   last_seen_at INTEGER NOT NULL DEFAULT (unixepoch()),
   revoked_at INTEGER,
   CHECK (length(subject) BETWEEN 10 AND 160),
-  CHECK (length(public_key_sha256) BETWEEN 40 AND 64)
+  CHECK (length(public_key_sha256) BETWEEN 40 AND 64),
+  CHECK (length(context_hash) = 64)
 );
 
 CREATE TABLE IF NOT EXISTS device_challenges (
