@@ -42,19 +42,20 @@ test("identity challenge is proxied server-to-server without exposing the API to
     received = { url: String(url), options };
     return new Response(JSON.stringify({
       ok: true, challengeId: "challenge-1234567890123456",
-      nonce: "nonce", message: "katia-skills-device-v1:challenge:nonce",
+      nonce: "nonce", message: "katia-skills-device-v1:challenge:nonce:" + "a".repeat(64),
       expiresAt: 2_000_000_300
     }), { status: 201 });
   };
   try {
     const response = await handleSkillsRoute(
-      request("/identity/challenge", "POST", { publicKeySpki: "public-key-data" }),
+      request("/identity/challenge", "POST", { publicKeySpki: "public-key-data", targetPath: "/skills/installed", payload: {} }),
       env(), "/identity/challenge", respond
     );
     assert.equal(response.status, 201);
     assert.equal(received.url, base + "/v1/identity/challenge");
     assert.equal(received.options.headers.Authorization, "Bearer " + token);
     assert.equal(JSON.parse(received.options.body).publicKeySpki, "public-key-data");
+    assert.match(JSON.parse(received.options.body).contextHash, /^[a-f0-9]{64}$/);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -63,14 +64,32 @@ test("identity challenge is proxied server-to-server without exposing the API to
 test("installed Skills request verifies device proof and forwards only a Brain assertion", async () => {
   const originalFetch = globalThis.fetch;
   const calls = [];
+  let challengeContextHash = null;
   globalThis.fetch = async (url, options) => {
     calls.push({ url: String(url), options });
+    if (String(url).endsWith("/v1/identity/challenge")) {
+      challengeContextHash = JSON.parse(options.body).contextHash;
+      return new Response(JSON.stringify({
+        ok: true, challengeId: "challenge-1234567890123456",
+        nonce: "nonce", message: "device challenge", expiresAt: 2_000_000_300
+      }), { status: 201 });
+    }
     if (String(url).endsWith("/v1/identity/verify")) {
+      assert.equal(JSON.parse(options.body).contextHash, challengeContextHash);
       return new Response(JSON.stringify({ ok: true, subject: "device:" + "A".repeat(43) }), { status: 200 });
     }
     return new Response(JSON.stringify({ ok: true, skills: [] }), { status: 200 });
   };
   try {
+    const challengeResponse = await handleSkillsRoute(
+      request("/identity/challenge", "POST", {
+        publicKeySpki: "public-key-data",
+        targetPath: "/skills/installed",
+        payload: {}
+      }),
+      env(), "/identity/challenge", respond
+    );
+    assert.equal(challengeResponse.status, 201);
     const response = await handleSkillsRoute(
       request("/skills/installed", "POST", {
         deviceProof: {
@@ -84,12 +103,13 @@ test("installed Skills request verifies device proof and forwards only a Brain a
     assert.equal(response.status, 200);
     const responseBody = await response.json();
     assert.equal(responseBody.ok, true);
-    assert.equal(calls.length, 2);
-    assert.ok(calls[0].url.endsWith("/v1/identity/verify"));
-    assert.ok(calls[1].url.endsWith("/v1/skills/installed"));
-    assert.equal(calls[1].options.method, "GET");
-    assert.equal(calls[1].options.headers.Authorization, "Bearer " + token);
-    const assertion = calls[1].options.headers["X-Katia-Identity"];
+    assert.equal(calls.length, 3);
+    assert.ok(calls[0].url.endsWith("/v1/identity/challenge"));
+    assert.ok(calls[1].url.endsWith("/v1/identity/verify"));
+    assert.ok(calls[2].url.endsWith("/v1/skills/installed"));
+    assert.equal(calls[2].options.method, "GET");
+    assert.equal(calls[2].options.headers.Authorization, "Bearer " + token);
+    const assertion = calls[2].options.headers["X-Katia-Identity"];
     assert.equal(typeof assertion, "string");
     assert.equal(
       await verifyKatiaIdentity(new Request("https://skills.example", {
