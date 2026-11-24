@@ -139,13 +139,13 @@ function apiUrl(apiBase, path) {
   return new URL(path.replace(/^\/+/, ""), apiBase.endsWith("/") ? apiBase : apiBase + "/").toString();
 }
 
-function mayUseSkill(input = {}) {
+export function mayUseSkill(input = {}) {
   const task = typeof input.task === "string" ? input.task : "chat";
   if (["document_analyze", "document_question", "document_modify", "document_create"].includes(task)) return true;
   const messages = Array.isArray(input.messages) ? input.messages : [];
   const last = [...messages].reverse().find(item => item && item.role === "user" && typeof item.content === "string");
   const message = (last?.content || "").toLowerCase();
-  return /(resum\\w*|sintetiz\\w*|summary|summari[sz]e|explic\\w*|qu[eé] es|c[oó]mo funciona|how does|explain)/.test(message);
+  return /(resum\w*|sintetiz\w*|summary|summari[sz]e|explic\w*|qu[eé] es|c[oó]mo funciona|how does|explain)/.test(message);
 }
 
 /**
