@@ -22,14 +22,14 @@ function fakeDb() {
           if (sql.startsWith("INSERT INTO device_challenges")) {
             challenges.set(values[0], {
               nonce: values[1], public_key_sha256: values[2],
-              expires_at: values[3], consumed_at: null
+              context_hash: values[3], expires_at: values[4], consumed_at: null
             });
             return { success: true, meta: { changes: 1 } };
           }
           if (sql.startsWith("UPDATE device_challenges")) {
             const row = challenges.get(values[1]);
             if (row && row.public_key_sha256 === values[2] &&
-                row.expires_at > values[3] && row.consumed_at === null) {
+                row.context_hash === values[3] && row.expires_at > values[4] && row.consumed_at === null) {
               row.consumed_at = values[0];
               return { success: true, meta: { changes: 1 } };
             }
@@ -70,7 +70,8 @@ async function createKeyPair() {
 test("creates a challenge bound to a valid P-256 public key", async () => {
   const db = fakeDb();
   const { publicKeySpki } = await createKeyPair();
-  const challenge = await createDeviceChallenge(db, publicKeySpki, 2_000_000_000);
+  const contextHash = "a".repeat(64);
+  const challenge = await createDeviceChallenge(db, publicKeySpki, contextHash, 2_000_000_000);
   assert.match(challenge.challengeId, /^[A-Za-z0-9_-]{20,40}$/);
   assert.equal(challenge.expiresAt, 2_000_000_300);
   assert.ok(db.challenges.has(challenge.challengeId));
@@ -79,7 +80,8 @@ test("creates a challenge bound to a valid P-256 public key", async () => {
 test("verifies device proof, derives subject and rejects replay", async () => {
   const db = fakeDb();
   const { pair, publicKeySpki } = await createKeyPair();
-  const challenge = await createDeviceChallenge(db, publicKeySpki, 2_000_000_000);
+  const contextHash = "a".repeat(64);
+  const challenge = await createDeviceChallenge(db, publicKeySpki, contextHash, 2_000_000_000);
   const signature = await crypto.subtle.sign(
     { name: "ECDSA", hash: "SHA-256" }, pair.privateKey,
     new TextEncoder().encode(challenge.message)
@@ -87,6 +89,7 @@ test("verifies device proof, derives subject and rejects replay", async () => {
   const proof = {
     challengeId: challenge.challengeId,
     publicKeySpki,
+    contextHash,
     signature: b64url(new Uint8Array(signature))
   };
   const result = await verifyDeviceProof(db, proof, 2_000_000_010);
@@ -106,6 +109,7 @@ test("rejects a proof signed by a different key", async () => {
   await assert.rejects(() => verifyDeviceProof(db, {
     challengeId: challenge.challengeId,
     publicKeySpki: first.publicKeySpki,
+    contextHash,
     signature: b64url(new Uint8Array(signature))
   }, 2_000_000_010), /firma/i);
 });
@@ -121,6 +125,7 @@ test("rejects expired challenges", async () => {
   await assert.rejects(() => verifyDeviceProof(db, {
     challengeId: challenge.challengeId,
     publicKeySpki,
+    contextHash,
     signature: b64url(new Uint8Array(signature))
   }, 2_000_000_301), /no existe|venció|corresponde/i);
 });
