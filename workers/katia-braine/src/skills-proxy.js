@@ -55,8 +55,12 @@ async function rateLimit(request, env, bucket) {
   const limiter = env.CHAT_RATE_LIMITER;
   if (!limiter || typeof limiter.limit !== "function") return false;
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  const result = await limiter.limit({ key: bucket + ":" + ip });
-  return result?.success === true;
+  try {
+    const result = await limiter.limit({ key: bucket + ":" + ip });
+    return result?.success === true;
+  } catch {
+    return false;
+  }
 }
 
 function skillsConfig(env) {
@@ -78,17 +82,24 @@ async function callSkills(config, path, method = "GET", body = undefined, identi
   };
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (identity) headers["X-Katia-Identity"] = identity;
-  const upstream = await fetch(config.base + path, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(12000)
-  });
-  const text = await upstream.text();
-  let data;
-  try { data = JSON.parse(text); }
-  catch { data = { ok: false, error: "El servicio de Skills devolvió una respuesta inválida." }; }
-  return { status: upstream.status, data };
+  try {
+    const upstream = await fetch(config.base + path, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(12000)
+    });
+    const text = await upstream.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { data = { ok: false, error: "El servicio de Skills devolvió una respuesta inválida." }; }
+    return { status: upstream.status, data };
+  } catch {
+    return {
+      status: 502,
+      data: { ok: false, error: "No se pudo conectar de forma segura con Katia Skills." }
+    };
+  }
 }
 
 function canonicalize(value) {
@@ -126,8 +137,12 @@ async function authorizeDevice(config, proof, contextHash) {
       typeof subject !== "string" || !/^device:[A-Za-z0-9_-]{43}$/.test(subject)) {
     return { error: "No se pudo verificar la identidad de este navegador.", status: 401 };
   }
-  const assertion = await createKatiaIdentityAssertion(subject, config.identitySecret);
-  return { assertion, subject };
+  try {
+    const assertion = await createKatiaIdentityAssertion(subject, config.identitySecret);
+    return { assertion, subject };
+  } catch {
+    return { error: "No se pudo emitir una autorización interna segura.", status: 503 };
+  }
 }
 
 /**
