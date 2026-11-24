@@ -26,6 +26,10 @@ function requireDatabase(db) {
   }
 }
 
+function sameSet(left, right) {
+  return left.length === right.length && left.every(value => right.includes(value));
+}
+
 /**
  * Persists metadata for an analyzed immutable Skill version.
  * Re-registering the same version is idempotent only when commit and digest match.
@@ -51,8 +55,9 @@ export async function registerSkillVersion(db, input) {
   if (!SHA_PATTERN.test(sourceCommitSha) || !DIGEST_PATTERN.test(packageSha256)) {
     throw new TypeError("La huella del paquete o el commit no es válida.");
   }
-  if (!input.manifest || typeof input.manifest !== "object" || Array.isArray(input.manifest)) {
-    throw new TypeError("Manifiesto inválido.");
+  if (!input.manifest || typeof input.manifest !== "object" || Array.isArray(input.manifest) ||
+      input.manifest.id !== skillId || input.manifest.version !== version) {
+    throw new TypeError("El manifiesto no coincide con el ID y la versión registrados.");
   }
   const manifestJson = JSON.stringify(input.manifest);
   if (new TextEncoder().encode(manifestJson).byteLength > 16 * 1024) {
@@ -83,7 +88,8 @@ export async function registerSkillVersion(db, input) {
 /**
  * Records a user-approved installation. The caller MUST supply the subject
  * established by katia-braine authentication, never a browser-provided user ID.
- * A new install is disabled by default and does not execute package content.
+ * The requested permissions are checked against the stored manifest, grants
+ * must be a subset, and the install starts disabled.
  */
 export async function recordApprovedInstall(db, input) {
   requireDatabase(db);
@@ -92,25 +98,98 @@ export async function recordApprovedInstall(db, input) {
   const authenticatedUserId = requireString(input.authenticatedUserId, "Identidad autenticada", 160);
   const skillId = requireString(input.skillId, "ID de Skill", 64);
   const version = requireString(input.version, "Versión", 64);
-  const eventId = requireString(input.eventId, "ID de auditoría", 100);
+  const approvalEventId = requireString(input.approvalEventId, "ID de aprobación", 100);
+  const installedEventId = requireString(input.installedEventId, "ID de auditoría", 100);
   if (!ID_PATTERN.test(skillId) || !VERSION_PATTERN.test(version)) throw new TypeError("Skill o versión inválidos.");
+  if (approvalEventId === installedEventId) throw new TypeError("Los IDs de auditoría deben ser diferentes.");
+  if (input.approved !== true) throw new Error("La instalación requiere aprobación explícita del usuario.");
 
   const requested = requirePermissions(input.requestedPermissions, "Permisos solicitados");
   const granted = requirePermissions(input.grantedPermissions, "Permisos concedidos");
+  const versionRow = await db.prepare(
+    "SELECT manifest_json FROM skill_versions WHERE skill_id = ? AND version = ?"
+  ).bind(skillId, version).first();
+  if (!versionRow) throw new Error("La versión de Skill no está registrada.");
+
+  let manifest;
+  try {
+    manifest = JSON.parse(versionRow.manifest_json);
+  } catch {
+    throw new Error("El manifiesto almacenado no es válido.");
+  }
+  const manifestPermissions = requirePermissions(manifest.permissions, "Permisos del manifiesto");
+  if (manifest.id !== skillId || manifest.version !== version || !sameSet(requested, manifestPermissions)) {
+    throw new Error("Los permisos o la versión no coinciden con el manifiesto registrado.");
+  }
+
   const requestedSet = new Set(requested);
   if (granted.some(permission => !requestedSet.has(permission))) {
     throw new TypeError("No se pueden conceder permisos que la Skill no solicitó.");
   }
 
+  const details = JSON.stringify({
+    version,
+    requestedPermissions: requested,
+    grantedPermissions: granted,
+    initialStatus: "disabled"
+  });
   const statements = [
     db.prepare(
       "INSERT INTO user_skill_installs (user_id, skill_id, version, status, requested_permissions_json, granted_permissions_json) VALUES (?, ?, ?, 'disabled', ?, ?) ON CONFLICT(user_id, skill_id) DO UPDATE SET version = excluded.version, status = 'disabled', requested_permissions_json = excluded.requested_permissions_json, granted_permissions_json = excluded.granted_permissions_json, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
     ).bind(authenticatedUserId, skillId, version, JSON.stringify(requested), JSON.stringify(granted)),
     db.prepare(
+      "INSERT INTO skill_audit_events (event_id, user_id, action, skill_id, details_json) VALUES (?, ?, 'install_approved', ?, ?)"
+    ).bind(approvalEventId, authenticatedUserId, skillId, details),
+    db.prepare(
       "INSERT INTO skill_audit_events (event_id, user_id, action, skill_id, details_json) VALUES (?, ?, 'installed', ?, ?)"
-    ).bind(eventId, authenticatedUserId, skillId, JSON.stringify({ version, requestedPermissions: requested, grantedPermissions: granted, initialStatus: "disabled" }))
+    ).bind(installedEventId, authenticatedUserId, skillId, details)
   ];
 
   await db.batch(statements);
   return { installed: true, enabled: false, skillId, version };
+}
+
+/** Lists only the authenticated user's installed Skills. */
+export async function listUserSkills(db, authenticatedUserId) {
+  requireDatabase(db);
+  const userId = requireString(authenticatedUserId, "Identidad autenticada", 160);
+  const result = await db.prepare(
+    "SELECT i.skill_id, i.version, i.status, i.requested_permissions_json, i.granted_permissions_json, i.installed_at, i.updated_at, v.manifest_json, v.package_sha256 FROM user_skill_installs i INNER JOIN skill_versions v ON v.skill_id = i.skill_id AND v.version = i.version WHERE i.user_id = ? ORDER BY i.installed_at DESC"
+  ).bind(userId).all();
+  return (result.results || []).map(row => ({
+    skillId: row.skill_id,
+    version: row.version,
+    status: row.status,
+    requestedPermissions: JSON.parse(row.requested_permissions_json),
+    grantedPermissions: JSON.parse(row.granted_permissions_json),
+    installedAt: row.installed_at,
+    updatedAt: row.updated_at,
+    manifest: JSON.parse(row.manifest_json),
+    packageSha256: row.package_sha256
+  }));
+}
+
+/** Enables or disables an installed Skill; it never grants additional permissions. */
+export async function setUserSkillStatus(db, input) {
+  requireDatabase(db);
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new TypeError("Solicitud de estado inválida.");
+  const userId = requireString(input.authenticatedUserId, "Identidad autenticada", 160);
+  const skillId = requireString(input.skillId, "ID de Skill", 64);
+  const status = input.status;
+  const eventId = requireString(input.eventId, "ID de auditoría", 100);
+  if (!ID_PATTERN.test(skillId) || !["enabled", "disabled"].includes(status)) {
+    throw new TypeError("Skill o estado inválidos.");
+  }
+
+  const update = await db.prepare(
+    "UPDATE user_skill_installs SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE user_id = ? AND skill_id = ?"
+  ).bind(status, userId, skillId).run();
+  if (!update.meta || update.meta.changes !== 1) throw new Error("La Skill no está instalada para este usuario.");
+
+  const action = status === "enabled" ? "enabled" : "disabled";
+  await db.prepare(
+    "INSERT INTO skill_audit_events (event_id, user_id, action, skill_id, details_json) VALUES (?, ?, ?, ?, ?)"
+  ).bind(eventId, userId, action, skillId, JSON.stringify({ status })).run();
+
+  return { skillId, status };
 }
