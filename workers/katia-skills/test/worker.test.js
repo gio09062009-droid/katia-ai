@@ -142,6 +142,7 @@ function registryDb() {
           if (this.sql.includes("SELECT manifest_json")) {
             return { manifest_json: JSON.stringify(manifest) };
           }
+          if (this.sql.includes("SELECT 1 AS installed")) return { installed: 1 };
           return null;
         },
         async all() {
