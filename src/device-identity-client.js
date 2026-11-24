@@ -145,7 +145,7 @@ function mayUseSkill(input = {}) {
   const messages = Array.isArray(input.messages) ? input.messages : [];
   const last = [...messages].reverse().find(item => item && item.role === "user" && typeof item.content === "string");
   const message = (last?.content || "").toLowerCase();
-  return /\\b(resum\\w*|sintetiz\\w*|summary|summari[sz]e|explic\\w*|qu[eé] es|c[oó]mo funciona|how does|explain)\\b/.test(message);
+  return /(resum\\w*|sintetiz\\w*|summary|summari[sz]e|explic\\w*|qu[eé] es|c[oó]mo funciona|how does|explain)/.test(message);
 }
 
 /**
