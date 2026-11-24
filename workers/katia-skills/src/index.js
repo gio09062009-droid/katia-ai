@@ -2,6 +2,7 @@ import { analyzeSkillPackage } from "./analyzer.js";
 import { readSkillRepository } from "./github.js";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
+const MAX_REQUEST_BYTES = 8 * 1024;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -11,7 +12,7 @@ function json(data, status = 200, extraHeaders = {}) {
 }
 
 async function constantTimeEqual(a, b) {
-  if (typeof a !== "string" || typeof b !== "string") return false;
+  if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
   const encoder = new TextEncoder();
   const [left, right] = await Promise.all([
     crypto.subtle.digest("SHA-256", encoder.encode(a)),
@@ -62,12 +63,24 @@ export default {
       return json({ ok: false, error: "No autorizado." }, 401, cors || {});
     }
 
-    const contentLength = Number(request.headers.get("Content-Length") || 0);
-    if (contentLength > 8 * 1024) return json({ ok: false, error: "Solicitud demasiado grande." }, 413, cors || {});
+    const declaredLength = Number(request.headers.get("Content-Length") || 0);
+    if (declaredLength > MAX_REQUEST_BYTES) {
+      return json({ ok: false, error: "Solicitud demasiado grande." }, 413, cors || {});
+    }
+
+    let rawBody;
+    try {
+      rawBody = await request.text();
+    } catch {
+      return json({ ok: false, error: "No se pudo leer la solicitud." }, 400, cors || {});
+    }
+    if (new TextEncoder().encode(rawBody).byteLength > MAX_REQUEST_BYTES) {
+      return json({ ok: false, error: "Solicitud demasiado grande." }, 413, cors || {});
+    }
 
     let input;
     try {
-      input = await request.json();
+      input = JSON.parse(rawBody);
     } catch {
       return json({ ok: false, error: "JSON inválido." }, 400, cors || {});
     }
@@ -78,6 +91,11 @@ export default {
       return json({
         ok: analysis.ok,
         repository: repository.repository,
+        package: {
+          sha256: repository.packageSha256,
+          fileCount: repository.fileCount,
+          totalBytes: repository.totalBytes
+        },
         analysis
       }, analysis.ok ? 200 : 422, cors || {});
     } catch (error) {
