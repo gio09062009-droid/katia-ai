@@ -136,7 +136,7 @@ async function readJsonResponse(response) {
 }
 
 function apiUrl(apiBase, path) {
-  return new URL(path.replace(/^\\/+/, ""), apiBase.endsWith("/") ? apiBase : apiBase + "/").toString();
+  return new URL(path.replace(/^\/+/, ""), apiBase.endsWith("/") ? apiBase : apiBase + "/").toString();
 }
 
 /**
@@ -197,7 +197,7 @@ export async function analyzeSkillRepository(apiBase, repository) {
 
 export async function getSkillPackage(apiBase, skillId, version) {
   if (!/^[a-z0-9][a-z0-9._-]{2,63}$/.test(skillId) ||
-      !/^(0|[1-9]\d*)\\.(0|[1-9]\d*)\\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
+      !/^(0|[1-9]\d*)\.\(0|[1-9]\d*)\.\(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
     throw new TypeError("Skill o versión inválidos.");
   }
   const response = await fetch(apiUrl(apiBase, "/skills/package/" + skillId + "/" + version), {
