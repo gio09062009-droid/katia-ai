@@ -36,3 +36,31 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+
+      - name: Smoke test Tutor Worker version 31
+        env:
+          TUTOR_VERSION_URL: https://be99b9a0-katia-braine.gio09062009.workers.dev/tutor
+        run: |
+          node --input-type=module <<'NODE'
+          const origin = "https://gio09062009-droid.github.io";
+          const response = await fetch(process.env.TUTOR_VERSION_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Origin": origin,
+              "User-Agent": "KatiaTutor-CI/1.0 (+https://github.com/gio09062009-droid/katia-ai)"
+            },
+            body: JSON.stringify({ operation: "__smoke_invalid_operation__" })
+          });
+          const body = await response.json().catch(() => ({}));
+          if (response.status !== 400) {
+            throw new Error("Expected HTTP 400 for invalid operation; received " + response.status + ": " + JSON.stringify(body));
+          }
+          if (body.code !== "INVALID_OPERATION") {
+            throw new Error("Tutor route did not return INVALID_OPERATION: " + JSON.stringify(body));
+          }
+          if (response.headers.get("access-control-allow-origin") !== origin) {
+            throw new Error("Tutor Worker CORS did not allow the GitHub Pages origin.");
+          }
+          console.log("Tutor Worker v31 route, validation and CORS are responding correctly.");
+          NODE
