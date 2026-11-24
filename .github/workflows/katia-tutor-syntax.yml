@@ -1,0 +1,38 @@
+name: Katia Tutor syntax check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/katia-tutor-1.0]
+
+jobs:
+  inline-javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check inline JavaScript syntax
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script\\b(?![^>]*\\bsrc=)[^>]*>(.*?)</script\\s*>", html, re.I | re.S)
+          if not scripts:
+              raise SystemExit("No inline scripts found")
+          out = Path("/tmp/katia-inline-scripts")
+          out.mkdir(exist_ok=True)
+          for i, source in enumerate(scripts, 1):
+              (out / f"script-{i}.js").write_text(source, encoding="utf-8")
+          print(f"Found {len(scripts)} inline script blocks")
+          PY
+          for file in /tmp/katia-inline-scripts/*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
