@@ -52,6 +52,27 @@ test("unknown routes return 404", async () => {
   assert.equal(response.status, 404);
 });
 
+test("device identity endpoints require the server-side API token", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/identity/challenge", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ publicKeySpki: "not-a-key" })
+  }), env);
+  assert.equal(response.status, 401);
+});
+
+test("device identity challenge rejects malformed public keys", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/identity/challenge", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ publicKeySpki: "not-a-key" })
+  }), env);
+  assert.equal(response.status, 400);
+});
+
 test("analyze endpoint rejects missing credentials", async () => {
   const response = await worker.fetch(new Request("https://skills.example/v1/skills/analyze", {
     method: "POST",
