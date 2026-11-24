@@ -6,7 +6,7 @@ This is an isolated Cloudflare Worker. It does not replace `katia-braine` and ha
 
 All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origins are denied unless explicitly allowlisted; the default configuration allows none. User-scoped routes additionally require a short-lived HMAC identity assertion signed by Katia Brain using a separate shared secret.
 
-- `GET /health` — reports whether the D1 binding is present.
+- `GET /health` — reports whether the D1 binding is present.\n- `POST /v1/identity/challenge` — internal Brain-only endpoint that creates a five-minute one-use challenge bound to a supplied P-256 public key.\n- `POST /v1/identity/verify` — internal Brain-only endpoint that verifies an ECDSA proof, atomically consumes the challenge, and returns a digest-derived anonymous device subject. The browser must never call these routes directly or receive the internal API token.
 - `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package. Returns an immutable commit SHA and package digest; does not install or execute the package.
 - `POST /v1/skills/register` — requires `approved: true`, the previously analyzed commit SHA and package digest. Re-fetches that exact commit, revalidates it, then registers immutable metadata in D1. If R2 is configured, it also stores a content-addressed package snapshot there; without R2, the exact GitHub commit and SHA-256 digest remain the package source. Packages with warnings or validation errors are not automatically registered.
 - `GET /v1/skills/catalog` — lists registered immutable Skill versions and their manifests for authenticated server-to-server callers.
@@ -20,7 +20,7 @@ User-scoped routes accept only `X-Katia-Identity`: a short-lived HMAC-SHA256 ass
 ## Storage
 
 - D1 database: `katia-skills-registry`, bound as `DB` in `wrangler.toml`.
-- D1 tables: `skill_versions`, `user_skill_installs`, and `skill_audit_events`.
+- D1 tables: `skill_versions`, `user_skill_installs`, `skill_audit_events`, `device_identities`, and `device_challenges` (the latter two are added by migration 0002).
 - `src/storage.js` implements optional content-addressed immutable R2 storage and verifies SHA-256 on reads.
 - No-billing development mode: D1 stores the immutable GitHub owner/repository/commit and package digest. R2 is optional and can be enabled later; registration does not require a payment method or R2 subscription.
 
@@ -68,4 +68,4 @@ The secure Skill selection and runtime flow is documented in [`docs/SKILL_RUNTIM
 
 ## Device identity proposal
 
-A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). This is an RFC only: no device keys are generated, no device identifiers are collected, and no identity endpoint is enabled. Implementation is gated on agreeing to the per-browser persistence and recovery tradeoff, followed by security tests.
+A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). The Skills Worker now contains the isolated challenge/proof endpoints and migration 0002 on the feature branch. They are not deployed or enabled. The Brain proxy routes, browser IndexedDB key persistence, signed Brain assertions, rate limiting, and end-to-end tests remain required before activation.
