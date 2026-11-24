@@ -7,7 +7,7 @@ This is an isolated Cloudflare Worker. It does not replace `katia-braine` and is
 - `GET /health` — basic service health response.
 - `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package.
 
-The analyze endpoint returns a report only. It does not install, activate, or execute a Skill.
+The analyze endpoint returns a report only. It resolves the branch/tag to an immutable Git commit, computes a SHA-256 digest for the bounded package contents, validates the manifest and reports warnings. It does not install, activate, or execute a Skill.
 
 ## Local checks
 
@@ -46,3 +46,4 @@ Then test locally and deploy only after reviewing the code and setting up authen
 - Repository content is treated as untrusted data.
 - No package code is evaluated or executed.
 - No install, update, activation, D1 or R2 operations exist yet.
+- The report includes the resolved commit SHA and package SHA-256 so later approval can bind to the exact analyzed revision.
