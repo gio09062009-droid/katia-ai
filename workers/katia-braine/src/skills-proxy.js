@@ -91,6 +91,26 @@ async function callSkills(config, path, method = "GET", body = undefined, identi
   return { status: upstream.status, data };
 }
 
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === "object") {
+    const result = {};
+    for (const key of Object.keys(value).sort()) result[key] = canonicalize(value[key]);
+    return result;
+  }
+  return value;
+}
+
+async function actionContextHash(path, payload) {
+  const canonical = JSON.stringify({
+    method: "POST",
+    path,
+    payload: canonicalize(payload)
+  });
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical)));
+  return Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
 function validDeviceProof(proof) {
   return proof && typeof proof === "object" && !Array.isArray(proof) &&
     typeof proof.challengeId === "string" &&
@@ -98,9 +118,9 @@ function validDeviceProof(proof) {
     typeof proof.signature === "string" && proof.signature.length <= 256;
 }
 
-async function authorizeDevice(config, proof) {
+async function authorizeDevice(config, proof, contextHash) {
   if (!validDeviceProof(proof)) return { error: "Falta una prueba de dispositivo válida.", status: 401 };
-  const verified = await callSkills(config, "/v1/identity/verify", "POST", proof);
+  const verified = await callSkills(config, "/v1/identity/verify", "POST", { ...proof, contextHash });
   const subject = verified.data?.subject;
   if (verified.status !== 200 || verified.data?.ok !== true ||
       typeof subject !== "string" || !/^device:[A-Za-z0-9_-]{43}$/.test(subject)) {
@@ -145,11 +165,20 @@ export async function handleSkillsRoute(request, env, path, respond) {
   if (challengeRoute) {
     const parsed = await readJsonBounded(request);
     if (parsed.error) return response(respond, { ok: false, error: parsed.error }, parsed.status);
-    if (typeof parsed.value.publicKeySpki !== "string" || parsed.value.publicKeySpki.length > 1024) {
-      return response(respond, { ok: false, error: "La clave pública del dispositivo no es válida." }, 400);
+    const targetPath = parsed.value.targetPath;
+    const payload = parsed.value.payload;
+    const allowedTargets = ["/skills/installed", "/skills/install", "/skills/status", "/skills/register"];
+    if (typeof parsed.value.publicKeySpki !== "string" || parsed.value.publicKeySpki.length > 1024 ||
+        !allowedTargets.includes(targetPath) || !payload || typeof payload !== "object" || Array.isArray(payload)) {
+      return response(respond, { ok: false, error: "La clave o la acción solicitada no es válida." }, 400);
     }
+    if (targetPath === "/skills/register" && payload.approved !== true) {
+      return response(respond, { ok: false, error: "El registro requiere aprobación explícita." }, 400);
+    }
+    const contextHash = await actionContextHash(targetPath, payload);
     const upstream = await callSkills(config, "/v1/identity/challenge", "POST", {
-      publicKeySpki: parsed.value.publicKeySpki
+      publicKeySpki: parsed.value.publicKeySpki,
+      contextHash
     });
     return response(respond, upstream.data, upstream.status);
   }
@@ -180,7 +209,10 @@ export async function handleSkillsRoute(request, env, path, respond) {
     return response(respond, { ok: false, error: "El registro requiere aprobación explícita." }, 400);
   }
   if (registerRoute || installedRoute || installRoute || statusRoute) {
-    const auth = await authorizeDevice(config, input.deviceProof);
+    const forwarded = { ...input };
+    delete forwarded.deviceProof;
+    const contextHash = await actionContextHash(path, forwarded);
+    const auth = await authorizeDevice(config, input.deviceProof, contextHash);
     if (auth.error) return response(respond, { ok: false, error: auth.error }, auth.status);
 
     if (installedRoute) {
@@ -188,8 +220,6 @@ export async function handleSkillsRoute(request, env, path, respond) {
       return response(respond, upstream.data, upstream.status);
     }
 
-    const forwarded = { ...input };
-    delete forwarded.deviceProof;
     const target = registerRoute ? "/v1/skills/register" :
       installRoute ? "/v1/skills/install" : "/v1/skills/status";
     const upstream = await callSkills(config, target, "POST", forwarded, auth.assertion);
