@@ -126,3 +126,83 @@ export async function clearDeviceIdentity() {
     database.close();
   }
 }
+
+async function readJsonResponse(response) {
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.ok === false) {
+    throw new Error(data?.error || ("Katia respondió con estado " + response.status + "."));
+  }
+  return data;
+}
+
+function apiUrl(apiBase, path) {
+  return new URL(path.replace(/^\\/+/, ""), apiBase.endsWith("/") ? apiBase : apiBase + "/").toString();
+}
+
+/**
+ * Makes one action-bound, one-use authorization request through Katia Brain.
+ * The Skills API token and Brain HMAC assertion never enter the browser.
+ */
+export async function requestProtectedSkills(apiBase, path, payload = {}) {
+  const allowed = ["/skills/installed", "/skills/install", "/skills/status", "/skills/register"];
+  if (!allowed.includes(path)) throw new TypeError("La operación de Skills no está permitida.");
+  if (!payload || typeof payload !== "object" || Array.isArray(payload) ||
+      Object.prototype.hasOwnProperty.call(payload, "deviceProof")) {
+    throw new TypeError("Los datos de la operación no son válidos.");
+  }
+  if (path === "/skills/register" && payload.approved !== true) {
+    throw new Error("El registro requiere aprobación explícita.");
+  }
+
+  const identity = await getOrCreateDeviceIdentity();
+  const challengeResponse = await fetch(apiUrl(apiBase, "/identity/challenge"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      publicKeySpki: identity.publicKeySpki,
+      targetPath: path,
+      payload
+    }),
+    cache: "no-store"
+  });
+  const challenge = await readJsonResponse(challengeResponse);
+  const proof = await identity.signChallenge(challenge);
+
+  const actionResponse = await fetch(apiUrl(apiBase, path), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, deviceProof: proof }),
+    cache: "no-store"
+  });
+  return readJsonResponse(actionResponse);
+}
+
+export async function getSkillsCatalog(apiBase) {
+  const response = await fetch(apiUrl(apiBase, "/skills/catalog"), {
+    method: "GET",
+    cache: "no-store"
+  });
+  return readJsonResponse(response);
+}
+
+export async function analyzeSkillRepository(apiBase, repository) {
+  const response = await fetch(apiUrl(apiBase, "/skills/analyze"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(repository),
+    cache: "no-store"
+  });
+  return readJsonResponse(response);
+}
+
+export async function getSkillPackage(apiBase, skillId, version) {
+  if (!/^[a-z0-9][a-z0-9._-]{2,63}$/.test(skillId) ||
+      !/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
+    throw new TypeError("Skill o versión inválidos.");
+  }
+  const response = await fetch(apiUrl(apiBase, "/skills/package/" + skillId + "/" + version), {
+    method: "GET",
+    cache: "no-store"
+  });
+  return readJsonResponse(response);
+}
