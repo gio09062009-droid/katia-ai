@@ -64,3 +64,74 @@ jobs:
           }
           console.log("Tutor Worker v31 route, validation and CORS are responding correctly.");
           NODE
+
+      - name: End-to-end test of a short Tutor lesson
+        env:
+          TUTOR_VERSION_URL: https://be99b9a0-katia-braine.workers.dev/tutor
+        run: |
+          node --input-type=module <<'NODE'
+          const endpoint = process.env.TUTOR_VERSION_URL;
+          const session = { id: "github-actions-tutor-" + Date.now(), startedAt: Date.now() };
+          async function call(payload) {
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Origin": "https://gio09062009-droid.github.io",
+                "User-Agent": "KatiaTutor-CI/1.0 (+https://github.com/gio09062009-droid/katia-ai)"
+              },
+              body: JSON.stringify({ provider: "auto", session, ...payload })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.ok || !data.data) {
+              throw new Error(payload.operation + " failed: HTTP " + response.status + " " + JSON.stringify(data));
+            }
+            return data;
+          }
+          const lesson = await call({
+            operation: "start_lesson",
+            topic: "El ciclo del agua",
+            level: "principiante",
+            goal: "Comprender sus etapas principales"
+          });
+          const sections = lesson.data.lesson;
+          if (!Array.isArray(sections) || sections.length < 3) {
+            throw new Error("La mini clase no devolvió al menos tres secciones estructuradas.");
+          }
+          const generated = await call({
+            operation: "generate_question",
+            topic: "El ciclo del agua",
+            level: "principiante",
+            difficulty: 2,
+            previousQuestions: []
+          });
+          const q = generated.data;
+          if (!Array.isArray(q.options) || q.options.length !== 4 || !q.answerToken) {
+            throw new Error("La pregunta no contiene cuatro opciones y un token de respuesta protegido.");
+          }
+          const checked = await call({
+            operation: "check_answer",
+            question: { statement: q.statement, options: q.options },
+            answerToken: q.answerToken,
+            studentAnswer: "A",
+            level: "principiante"
+          });
+          if (!/^[ABCD]$/.test(checked.data.correctLetter || "")) {
+            throw new Error("La corrección no devolvió una respuesta válida.");
+          }
+          const report = await call({
+            operation: "finish_lesson",
+            topic: "El ciclo del agua",
+            level: "principiante",
+            history: [{
+              question: { statement: q.statement, options: q.options },
+              answerToken: q.answerToken,
+              studentAnswer: "A"
+            }]
+          });
+          if (report.data.totalQuestions !== 1 || typeof report.data.percentage !== "number") {
+            throw new Error("El informe final no calculó correctamente el resultado.");
+          }
+          console.log("Tutor E2E OK: mini clase, pregunta, corrección protegida e informe final.");
+          console.log("Proveedor:", lesson.provider, generated.provider, checked.provider, report.provider);
+          NODE
