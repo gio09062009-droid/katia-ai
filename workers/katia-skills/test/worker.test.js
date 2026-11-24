@@ -344,7 +344,8 @@ test("register endpoint refuses to persist a package without approval", async ()
   assert.equal(response.status, 400);
 });
 
-test("register endpoint stays disabled until D1 and R2 are both bound", async () => {
+test("register endpoint does not require R2 in no-billing mode", async () => {
+  // Missing request fields are rejected after the D1-only readiness check.
   const response = await worker.fetch(new Request("https://skills.example/v1/skills/register", {
     method: "POST",
     headers: {
@@ -353,5 +354,7 @@ test("register endpoint stays disabled until D1 and R2 are both bound", async ()
     },
     body: JSON.stringify({ approved: true })
   }), env);
-  assert.equal(response.status, 503);
+  assert.equal(response.status, 400);
+  const body = await response.json();
+  assert.match(body.error, /Commit o huella/);
 });
