@@ -88,6 +88,23 @@ test("declared oversized request is rejected before JSON parsing", async () => {
   assert.equal(response.status, 413);
 });
 
+test("chunked oversized request is stopped while streaming without Content-Length", async () => {
+  const body = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(5000));
+      controller.enqueue(new Uint8Array(4000));
+      controller.close();
+    }
+  });
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/analyze", {
+    method: "POST",
+    headers: { "Authorization": "Bearer test-secret" },
+    body,
+    duplex: "half"
+  }), env);
+  assert.equal(response.status, 413);
+});
+
 test("analyze endpoint returns a validated report pinned to a commit and digest", async () => {
   const originalFetch = globalThis.fetch;
   const manifest = {
