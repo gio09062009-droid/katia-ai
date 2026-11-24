@@ -3,6 +3,7 @@ import { readSkillRepository } from "./github.js";
 import { registerSkillVersion } from "./registry.js";
 import { storeSkillPackage } from "./storage.js";
 import { verifyKatiaIdentity } from "./identity.js";
+import { createDeviceChallenge, verifyDeviceProof } from "./device-identity.js";
 import {
   listUserSkills,
   recordApprovedInstall,
@@ -119,7 +120,9 @@ export default {
         "/v1/skills/analyze",
         "/v1/skills/register",
         "/v1/skills/install",
-        "/v1/skills/status"
+        "/v1/skills/status",
+        "/v1/identity/challenge",
+        "/v1/identity/verify"
       ].includes(url.pathname)) ||
       (request.method === "GET" && ["/v1/skills/installed", "/v1/skills/catalog"].includes(url.pathname)) ||
       (request.method === "GET" && /^\/v1\/skills\/package\/[a-z0-9][a-z0-9._-]{2,63}\/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(url.pathname));
@@ -134,6 +137,25 @@ export default {
     const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
     if (!(await constantTimeEqual(token, env.SKILLS_API_TOKEN))) {
       return json({ ok: false, error: "No autorizado." }, 401, cors || {});
+    }
+
+    if (request.method === "POST" &&
+        ["/v1/identity/challenge", "/v1/identity/verify"].includes(url.pathname)) {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      const parsed = await readJsonBody(request);
+      if (parsed.error) return parsed.error;
+      try {
+        if (url.pathname === "/v1/identity/challenge") {
+          const challenge = await createDeviceChallenge(env.DB, parsed.value?.publicKeySpki);
+          return json({ ok: true, ...challenge }, 201, cors || {});
+        }
+        const identity = await verifyDeviceProof(env.DB, parsed.value);
+        return json({ ok: true, subject: identity.subject }, 200, cors || {});
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "No se pudo verificar el dispositivo.";
+        const status = /inválid|inválida|tamaño/i.test(message) ? 400 : 401;
+        return json({ ok: false, error: message }, status, cors || {});
+      }
     }
 
     if (request.method === "POST" && url.pathname === "/v1/skills/register") {
