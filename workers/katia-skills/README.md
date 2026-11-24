@@ -36,7 +36,10 @@ Before deployment, configure a strong random `SKILLS_API_TOKEN` and a separate r
 
 ```sh
 npx wrangler secret put SKILLS_API_TOKEN
+npx wrangler secret put KATIA_IDENTITY_SECRET
 ```
+
+`KATIA_IDENTITY_SECRET` must be a separate random secret of at least 32 bytes. The same value may be configured on Katia Brain only after Brain has a trustworthy authenticated subject to assert. Do not configure or issue identity assertions before that prerequisite is met.
 
 Optionally configure a GitHub token to improve API rate limits:
 
