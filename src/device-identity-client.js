@@ -192,7 +192,11 @@ export async function analyzeSkillRepository(apiBase, repository) {
     body: JSON.stringify(repository),
     cache: "no-store"
   });
-  return readJsonResponse(response);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok && response.status !== 422) {
+    throw new Error(data?.error || ("Katia respondió con estado " + response.status + "."));
+  }
+  return data;
 }
 
 export async function getSkillPackage(apiBase, skillId, version) {
