@@ -3,7 +3,41 @@ import assert from "node:assert/strict";
 import worker from "../src/index.js";
 import { hashSkillFiles } from "../src/github.js";
 
-const env = { SKILLS_API_TOKEN: "test-secret", ALLOWED_ORIGINS: "", DB: registryDb() };
+const env = {
+  SKILLS_API_TOKEN: "test-secret",
+  KATIA_IDENTITY_SECRET: "test-identity-secret-with-at-least-32-bytes",
+  ALLOWED_ORIGINS: "",
+  DB: registryDb()
+};
+
+function base64url(bytes) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/=/g, "").replace(/\\+/g, "-").replace(/\\//g, "_");
+}
+
+async function signedIdentity(subject) {
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: "katia-braine",
+    aud: "katia-skills",
+    sub: subject,
+    scope: ["skills:user"],
+    iat: now,
+    exp: now + 120,
+    jti: "test-jti-unique-123456"
+  };
+  const payloadPart = base64url(new TextEncoder().encode(JSON.stringify(payload)));
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(env.KATIA_IDENTITY_SECRET),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payloadPart));
+  return payloadPart + "." + base64url(new Uint8Array(signature));
+}
 
 test("health endpoint reports the isolated service", async () => {
   const response = await worker.fetch(new Request("https://skills.example/health"), env);
@@ -178,7 +212,7 @@ test("installed Skills endpoint returns only the user-scoped registry", async ()
   const response = await worker.fetch(new Request("https://skills.example/v1/skills/installed", {
     headers: {
       Authorization: "Bearer test-secret",
-      "X-Katia-User-Id": "authenticated-user-01"
+      "X-Katia-Identity": await signedIdentity("authenticated-user-01")
     }
   }), { ...env, DB: registryDb() });
   assert.equal(response.status, 200);
