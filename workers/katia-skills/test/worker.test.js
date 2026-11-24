@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index.js";
+import { hashSkillFiles } from "../src/github.js";
 
 const env = { SKILLS_API_TOKEN: "test-secret", ALLOWED_ORIGINS: "", DB: registryDb() };
 
@@ -235,4 +236,122 @@ test("status endpoint enables an installed Skill for the authenticated user", as
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.status, "enabled");
+});
+
+
+test("register endpoint stores only an approved, revalidated immutable GitHub package", async () => {
+  const originalFetch = globalThis.fetch;
+  const manifest = {
+    manifest_version: "1.0",
+    id: "sample-skill",
+    name: "Sample Skill",
+    version: "1.0.0",
+    description: "A safe sample package used for the Worker registration test.",
+    publisher: { name: "Katia Test" },
+    capabilities: ["conversation.explain"],
+    permissions: ["files.read"],
+    entrypoint: { type: "declarative", path: "instructions/skill.md" }
+  };
+  const contents = {
+    "katia.skill.json": JSON.stringify(manifest),
+    "instructions/skill.md": "# Sample Skill\nExplain the topic in plain language."
+  };
+  const blobIds = {
+    "katia.skill.json": "blobmanifest",
+    "instructions/skill.md": "blobinstructions"
+  };
+  const files = Object.entries(contents).map(([path, content]) => ({ path, content }));
+  const packageSha256 = await hashSkillFiles(files);
+  const bucket = {
+    objects: new Map(),
+    async head(key) {
+      const item = this.objects.get(key);
+      return item ? { size: new TextEncoder().encode(item.body).byteLength, customMetadata: item.customMetadata } : null;
+    },
+    async put(key, body, options) {
+      this.objects.set(key, { body: String(body), customMetadata: options.customMetadata });
+      return { size: new TextEncoder().encode(String(body)).byteLength };
+    }
+  };
+  globalThis.fetch = async url => {
+    const value = String(url);
+    if (value.endsWith("/commits/" + "a".repeat(40))) {
+      return new Response(JSON.stringify({
+        sha: "a".repeat(40),
+        commit: { tree: { sha: "b".repeat(40) } }
+      }), { status: 200 });
+    }
+    if (value.includes("/git/trees/") && value.includes("?recursive=1")) {
+      return new Response(JSON.stringify({
+        truncated: false,
+        tree: Object.entries(contents).map(([path, content]) => ({
+          path, type: "blob", size: new TextEncoder().encode(content).length,
+          sha: blobIds[path]
+        }))
+      }), { status: 200 });
+    }
+    for (const [path, content] of Object.entries(contents)) {
+      if (value.endsWith("/git/blobs/" + blobIds[path])) {
+        return new Response(JSON.stringify({ encoding: "base64", content: btoa(content) }), { status: 200 });
+      }
+    }
+    return new Response("not found", { status: 404 });
+  };
+
+  try {
+    const response = await worker.fetch(new Request("https://skills.example/v1/skills/register", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer test-secret",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        owner: "katia-test",
+        repo: "sample-skill",
+        sourceRef: "main",
+        commitSha: "a".repeat(40),
+        packageSha256,
+        approved: true
+      })
+    }), { ...env, DB: registryDb(), SKILLS_BUCKET: bucket });
+
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.registered, true);
+    assert.equal(body.skillId, "sample-skill");
+    assert.equal(body.version, "1.0.0");
+    assert.equal(bucket.objects.size, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("register endpoint refuses to persist a package without approval", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/register", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      owner: "katia-test",
+      repo: "sample-skill",
+      commitSha: "a".repeat(40),
+      packageSha256: "b".repeat(64),
+      approved: false
+    })
+  }), { ...env, DB: registryDb(), SKILLS_BUCKET: { put() {}, head() {} } });
+  assert.equal(response.status, 400);
+});
+
+test("register endpoint stays disabled until D1 and R2 are both bound", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/register", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ approved: true })
+  }), env);
+  assert.equal(response.status, 503);
 });
