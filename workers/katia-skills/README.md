@@ -1,19 +1,26 @@
-# Katia Skills Worker (foundation)
+# Katia Skills Worker
 
-This is an isolated Cloudflare Worker. It does not replace `katia-braine` and is not deployed yet.
+This is an isolated Cloudflare Worker. It does not replace `katia-braine` and has not been deployed.
 
-## Current endpoint
+## Internal API
 
-- `GET /health` — basic service health response.
-- `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package.
+All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origins are denied unless explicitly allowlisted; the default configuration allows none.
 
-The analyze endpoint returns a report only. It resolves the branch/tag to an immutable Git commit, computes a SHA-256 digest for the bounded package contents, validates the manifest and reports warnings. It does not install, activate, or execute a Skill.
+- `GET /health` — reports whether the D1 binding is present.
+- `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package. Returns an immutable commit SHA and package digest; does not install or execute the package.
+- `POST /v1/skills/register` — requires `approved: true`, the previously analyzed commit SHA and package digest. Re-fetches that exact commit, revalidates it, stores its package in R2, then registers immutable metadata in D1. Packages with warnings or validation errors are not automatically registered.
+- `GET /v1/skills/installed` — lists installs for the authenticated subject supplied by Katia Brain in `X-Katia-User-Id`.
+- `POST /v1/skills/install` — records an explicitly approved install. Requested permissions must exactly match the stored manifest; granted permissions must be a subset. New installs start disabled.
+- `POST /v1/skills/status` — enables or disables an installed Skill for the authenticated subject and records the change in the audit log.
 
-## D1 registry adapter (not connected to a live database yet)
+The `X-Katia-User-Id` header is trusted only when set by the authenticated server-side Katia Brain after validating its own user identity. Never forward a browser-supplied identity as trusted. The existing Brain integration has not been implemented yet.
 
-`src/registry.js` contains persistence functions for immutable Skill version metadata and user-approved installation records. Installation records are created disabled by default, permission grants must be a subset of requested permissions, and installation plus its audit event are written in one D1 batch.
+## Storage
 
-The adapter deliberately requires an `authenticatedUserId` supplied by the trusted server-side authentication layer. It does not accept a browser-provided user ID. These functions are not exposed as HTTP endpoints and are not active until D1 is provisioned and the authenticated Brain-to-Skills integration is implemented.
+- D1 database: `katia-skills-registry`, bound as `DB` in `wrangler.toml`.
+- D1 tables: `skill_versions`, `user_skill_installs`, and `skill_audit_events`.
+- `src/storage.js` implements content-addressed immutable R2 storage and verifies SHA-256 on reads.
+- R2 is not yet enabled/bound in the Cloudflare account. The Worker registration route returns 503 until both D1 and `SKILLS_BUCKET` are available.
 
 ## Local checks
 
@@ -23,7 +30,7 @@ Requires Node.js 20 or newer:
 npm test
 ```
 
-## Worker configuration
+## Worker secrets
 
 Before deployment, configure a strong random secret:
 
@@ -37,19 +44,14 @@ Optionally configure a GitHub token to improve API rate limits:
 npx wrangler secret put GITHUB_TOKEN
 ```
 
-Then test locally and deploy only after reviewing the code and setting up authentication between the existing Brain Worker and this service.
+Do not place either secret in `index.html`, browser JavaScript, local storage, or the public repository. The future frontend must call Katia Brain; Brain will call this Worker server-to-server.
 
-## Critical integration rule
-
-**Never put `SKILLS_API_TOKEN` or `GITHUB_TOKEN` in `index.html`, browser JavaScript, local storage, or a public repository.** The future frontend should call the existing authenticated Katia Brain, which can call this Worker server-to-server using a Worker secret.
-
-## Limits and behavior
+## Safety and limits
 
 - Public GitHub repositories only in this first version.
 - At most 50 files, 64 KiB per file and 256 KiB total.
 - Only UTF-8 Markdown, JSON and text files are read.
-- Executable, binary, archive and unsupported file types are rejected by the analyzer.
-- Repository content is treated as untrusted data.
-- No package code is evaluated or executed.
-- No live D1/R2 bindings or install HTTP endpoints exist yet.
-- The report includes the resolved commit SHA and package SHA-256 so later approval can bind to the exact analyzed revision.
+- Executable, binary, archive and unsupported file types are rejected.
+- Repository content is untrusted data; no package code is evaluated or executed.
+- Registration pins the exact Git commit and SHA-256 package digest.
+- No production Worker deployment or frontend activation has occurred.
