@@ -68,4 +68,4 @@ The secure Skill selection and runtime flow is documented in [`docs/SKILL_RUNTIM
 
 ## Device identity proposal
 
-A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). The Skills Worker now contains the isolated challenge/proof endpoints and migration 0002 on the feature branch. They are not deployed or enabled. The Brain proxy routes, browser IndexedDB key persistence, signed Brain assertions, rate limiting, and end-to-end tests remain required before activation.
+A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). The Skills Worker now contains isolated challenge/proof endpoints. Each one-use challenge stores a SHA-256 context hash for the exact requested action and payload; the proof cannot be reused for a different operation. Migration 0002 creates the anonymous device identity and challenge tables. The Brain proxy and browser IndexedDB client are being developed on the same feature branch. None of these changes are deployed or enabled.
