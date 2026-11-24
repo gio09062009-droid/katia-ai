@@ -4,16 +4,16 @@ This is an isolated Cloudflare Worker. It does not replace `katia-braine` and ha
 
 ## Internal API
 
-All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origins are denied unless explicitly allowlisted; the default configuration allows none.
+All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origins are denied unless explicitly allowlisted; the default configuration allows none. User-scoped routes additionally require a short-lived HMAC identity assertion signed by Katia Brain using a separate shared secret.
 
 - `GET /health` — reports whether the D1 binding is present.
 - `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package. Returns an immutable commit SHA and package digest; does not install or execute the package.
 - `POST /v1/skills/register` — requires `approved: true`, the previously analyzed commit SHA and package digest. Re-fetches that exact commit, revalidates it, then registers immutable metadata in D1. If R2 is configured, it also stores a content-addressed package snapshot there; without R2, the exact GitHub commit and SHA-256 digest remain the package source. Packages with warnings or validation errors are not automatically registered.
-- `GET /v1/skills/installed` — lists installs for the authenticated subject supplied by Katia Brain in `X-Katia-User-Id`.
+- `GET /v1/skills/installed` — lists installs for the authenticated subject inside the signed `X-Katia-Identity` assertion.
 - `POST /v1/skills/install` — records an explicitly approved install. Requested permissions must exactly match the stored manifest; granted permissions must be a subset. New installs start disabled.
 - `POST /v1/skills/status` — enables or disables an installed Skill for the authenticated subject and records the change in the audit log.
 
-The `X-Katia-User-Id` header is trusted only when set by the authenticated server-side Katia Brain after validating its own user identity. Never forward a browser-supplied identity as trusted. The existing Brain integration has not been implemented yet.
+User-scoped routes accept only `X-Katia-Identity`: a short-lived HMAC-SHA256 assertion with issuer `katia-braine`, audience `katia-skills`, subject, `skills:user` scope, issue/expiry timestamps (maximum five-minute lifetime), and a unique token ID. The separate `KATIA_IDENTITY_SECRET` must be shared only between the two Workers. `X-Katia-User-Id` is ignored and never trusted. The existing Brain has no general authenticated user session yet, so token issuance and Brain integration remain intentionally disabled until a trustworthy user identity exists.
 
 ## Storage
 
@@ -32,7 +32,7 @@ npm test
 
 ## Worker secrets
 
-Before deployment, configure a strong random secret:
+Before deployment, configure a strong random `SKILLS_API_TOKEN` and a separate random `KATIA_IDENTITY_SECRET` (at least 32 bytes) on this Worker. Katia Brain must receive the same identity secret as a Worker secret only after a verified user identity mechanism is implemented. Never expose either secret in browser code. Configure the API token as follows:
 
 ```sh
 npx wrangler secret put SKILLS_API_TOKEN
