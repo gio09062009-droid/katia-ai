@@ -6,7 +6,9 @@ import { verifyKatiaIdentity } from "./identity.js";
 import {
   listUserSkills,
   recordApprovedInstall,
-  setUserSkillStatus
+  setUserSkillStatus,
+  listSkillVersions,
+  getSkillVersion
 } from "./registry.js";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
@@ -87,7 +89,8 @@ export default {
         "/v1/skills/install",
         "/v1/skills/status"
       ].includes(url.pathname)) ||
-      (request.method === "GET" && url.pathname === "/v1/skills/installed");
+      (request.method === "GET" && ["/v1/skills/installed", "/v1/skills/catalog"].includes(url.pathname)) ||
+      (request.method === "GET" && /^\\/v1\\/skills\\/package\\/[a-z0-9][a-z0-9._-]{2,63}\\/(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(url.pathname));
     if (!allowedRoute) {
       return json({ ok: false, error: "Ruta no encontrada." }, 404, cors || {});
     }
@@ -170,6 +173,49 @@ export default {
         }, 201, cors || {});
       } catch (error) {
         return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo registrar la Skill." }, 400, cors || {});
+      }
+    }
+
+    if (request.method === "GET" && url.pathname === "/v1/skills/catalog") {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      try {
+        const skills = await listSkillVersions(env.DB);
+        return json({ ok: true, count: skills.length, skills }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo leer el catálogo." }, 500, cors || {});
+      }
+    }
+
+    const packageMatch = url.pathname.match(/^\\/v1\\/skills\\/package\\/([a-z0-9][a-z0-9._-]{2,63})\\/((?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?)$/);
+    if (request.method === "GET" && packageMatch) {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      try {
+        const record = await getSkillVersion(env.DB, packageMatch[1], packageMatch[2]);
+        if (!record) return json({ ok: false, error: "La versión solicitada no está registrada." }, 404, cors || {});
+        const repository = await readSkillRepository({
+          owner: record.source.owner,
+          repo: record.source.repo,
+          ref: record.source.commitSha
+        }, env);
+        if (repository.repository.commitSha.toLowerCase() !== record.source.commitSha.toLowerCase() ||
+            repository.packageSha256.toLowerCase() !== record.packageSha256.toLowerCase()) {
+          return json({ ok: false, error: "La huella del paquete no coincide con el registro inmutable." }, 409, cors || {});
+        }
+        const analysis = analyzeSkillPackage(repository.files);
+        if (!analysis.ok || analysis.status !== "valid" ||
+            analysis.summary.id !== record.skillId || analysis.summary.version !== record.version) {
+          return json({ ok: false, error: "El paquete no supera la validación al recuperarse." }, 422, cors || {});
+        }
+        return json({
+          ok: true,
+          skillId: record.skillId,
+          version: record.version,
+          packageSha256: repository.packageSha256,
+          sourceCommitSha: repository.repository.commitSha,
+          files: repository.files
+        }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo recuperar el paquete." }, 502, cors || {});
       }
     }
 
