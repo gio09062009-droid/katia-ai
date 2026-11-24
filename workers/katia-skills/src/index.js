@@ -146,7 +146,7 @@ export default {
       if (parsed.error) return parsed.error;
       try {
         if (url.pathname === "/v1/identity/challenge") {
-          const challenge = await createDeviceChallenge(env.DB, parsed.value?.publicKeySpki);
+          const challenge = await createDeviceChallenge(env.DB, parsed.value?.publicKeySpki, parsed.value?.contextHash);
           return json({ ok: true, ...challenge }, 201, cors || {});
         }
         const identity = await verifyDeviceProof(env.DB, parsed.value);
