@@ -82,7 +82,8 @@ test("installed Skills request verifies device proof and forwards only a Brain a
       env(), "/skills/installed", respond
     );
     assert.equal(response.status, 200);
-    assert.equal((await response.json()).ok, true);
+    const responseBody = await response.json();
+    assert.equal(responseBody.ok, true);
     assert.equal(calls.length, 2);
     assert.ok(calls[0].url.endsWith("/v1/identity/verify"));
     assert.ok(calls[1].url.endsWith("/v1/skills/installed"));
@@ -96,7 +97,7 @@ test("installed Skills request verifies device proof and forwards only a Brain a
       }), { KATIA_IDENTITY_SECRET: secret }),
       "device:" + "A".repeat(43)
     );
-    assert.equal(JSON.stringify(await response.clone().json()).includes(assertion), false);
+    assert.equal(JSON.stringify(responseBody).includes(assertion), false);
   } finally {
     globalThis.fetch = originalFetch;
   }
