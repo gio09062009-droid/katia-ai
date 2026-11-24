@@ -1,5 +1,7 @@
 import { analyzeSkillPackage } from "./analyzer.js";
 import { readSkillRepository } from "./github.js";
+import { registerSkillVersion } from "./registry.js";
+import { storeSkillPackage } from "./storage.js";
 import {
   listUserSkills,
   recordApprovedInstall,
@@ -86,6 +88,7 @@ export default {
     const allowedRoute =
       (request.method === "POST" && [
         "/v1/skills/analyze",
+        "/v1/skills/register",
         "/v1/skills/install",
         "/v1/skills/status"
       ].includes(url.pathname)) ||
@@ -101,6 +104,73 @@ export default {
     const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
     if (!(await constantTimeEqual(token, env.SKILLS_API_TOKEN))) {
       return json({ ok: false, error: "No autorizado." }, 401, cors || {});
+    }
+
+    if (request.method === "POST" && url.pathname === "/v1/skills/register") {
+      if (!env.DB || !env.SKILLS_BUCKET) {
+        return json({ ok: false, error: "El registro requiere D1 y R2 configurados." }, 503, cors || {});
+      }
+      const parsed = await readJsonBody(request);
+      if (parsed.error) return parsed.error;
+      const input = parsed.value;
+      if (!input || typeof input !== "object" || Array.isArray(input) || input.approved !== true) {
+        return json({ ok: false, error: "El registro requiere aprobación explícita." }, 400, cors || {});
+      }
+      if (typeof input.commitSha !== "string" || !/^[a-f0-9]{40}$/i.test(input.commitSha) ||
+          typeof input.packageSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(input.packageSha256)) {
+        return json({ ok: false, error: "Commit o huella del paquete inválidos." }, 400, cors || {});
+      }
+      try {
+        const repository = await readSkillRepository({
+          owner: input.owner,
+          repo: input.repo,
+          ref: input.commitSha
+        }, env);
+        if (repository.repository.commitSha.toLowerCase() !== input.commitSha.toLowerCase() ||
+            repository.packageSha256.toLowerCase() !== input.packageSha256.toLowerCase()) {
+          return json({ ok: false, error: "El paquete ya no coincide con el análisis aprobado." }, 409, cors || {});
+        }
+
+        const analysis = analyzeSkillPackage(repository.files);
+        if (!analysis.ok || analysis.status !== "valid") {
+          return json({
+            ok: false,
+            error: "El paquete requiere revisión adicional o no supera la validación.",
+            analysis
+          }, 422, cors || {});
+        }
+
+        const manifestFile = repository.files.find(file => file.path === "katia.skill.json");
+        const manifest = JSON.parse(manifestFile.content);
+        const stored = await storeSkillPackage(env.SKILLS_BUCKET, {
+          skillId: analysis.summary.id,
+          version: analysis.summary.version,
+          packageSha256: repository.packageSha256,
+          files: repository.files
+        });
+        const registration = await registerSkillVersion(env.DB, {
+          skillId: analysis.summary.id,
+          version: analysis.summary.version,
+          sourceOwner: repository.repository.owner,
+          sourceRepo: repository.repository.repo,
+          sourceRef: typeof input.sourceRef === "string" ? input.sourceRef.slice(0, 120) : input.commitSha,
+          sourceCommitSha: repository.repository.commitSha,
+          packageSha256: repository.packageSha256,
+          packageR2Key: stored.key,
+          manifest
+        });
+        return json({
+          ok: true,
+          registered: true,
+          created: registration.created,
+          skillId: registration.skillId,
+          version: registration.version,
+          packageR2Key: stored.key,
+          packageSha256: repository.packageSha256
+        }, 201, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo registrar la Skill." }, 400, cors || {});
+      }
     }
 
     if (url.pathname === "/v1/skills/installed" ||
