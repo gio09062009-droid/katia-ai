@@ -54,10 +54,27 @@ function decodeBase64Utf8(value) {
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
 
+export async function hashSkillFiles(files) {
+  const ordered = [...files].sort((a, b) => a.path.localeCompare(b.path));
+  const canonical = ordered.map(file => file.path + "\\0" + file.content).join("\\0");
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical));
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export async function readSkillRepository(input, env) {
   const { owner, repo, ref } = validateRepositoryInput(input);
   const base = "https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo);
-  const tree = await githubJson(base + "/git/trees/" + encodeURIComponent(ref) + "?recursive=1", env);
+
+  // Resolve the requested branch/tag to an immutable commit before reading its tree.
+  const commit = await githubJson(base + "/commits/" + encodeURIComponent(ref), env);
+  const commitSha = commit.sha;
+  const treeSha = commit.commit && commit.commit.tree && commit.commit.tree.sha;
+  if (typeof commitSha !== "string" || !/^[a-f0-9]{40}$/i.test(commitSha) ||
+      typeof treeSha !== "string" || !/^[a-f0-9]{40}$/i.test(treeSha)) {
+    throw new Error("GitHub devolvió una referencia de commit inválida.");
+  }
+
+  const tree = await githubJson(base + "/git/trees/" + treeSha + "?recursive=1", env);
   if (tree.truncated) throw new Error("El repositorio es demasiado grande para analizarlo de forma segura.");
   const entries = (tree.tree || []).filter(entry => entry.type === "blob");
   if (entries.length === 0) throw new Error("El repositorio no contiene archivos.");
@@ -65,7 +82,9 @@ export async function readSkillRepository(input, env) {
 
   let totalBytes = 0;
   for (const entry of entries) {
-    if (!Number.isInteger(entry.size) || entry.size < 0) throw new Error("GitHub devolvió metadatos de archivo inválidos.");
+    if (!Number.isInteger(entry.size) || entry.size < 0 || typeof entry.path !== "string") {
+      throw new Error("GitHub devolvió metadatos de archivo inválidos.");
+    }
     if (entry.size > MAX_FILE_BYTES) throw new Error("Archivo demasiado grande: " + entry.path);
     totalBytes += entry.size;
   }
@@ -91,9 +110,10 @@ export async function readSkillRepository(input, env) {
   }));
 
   return {
-    repository: { owner, repo, ref },
+    repository: { owner, repo, ref, commitSha },
     files,
     fileCount: files.length,
-    totalBytes
+    totalBytes,
+    packageSha256: await hashSkillFiles(files)
   };
 }
