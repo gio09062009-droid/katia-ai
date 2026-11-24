@@ -117,7 +117,7 @@ export default {
         }
 
         const parsed = await readJsonBody(request);
-        if (parsed.error) return new Response(parsed.error.body, parsed.error);
+        if (parsed.error) return parsed.error;
         const input = parsed.value;
         if (!input || typeof input !== "object" || Array.isArray(input)) {
           return json({ ok: false, error: "El cuerpo debe ser un objeto JSON." }, 400, cors || {});
@@ -150,7 +150,7 @@ export default {
     }
 
     const parsed = await readJsonBody(request);
-    if (parsed.error) return new Response(parsed.error.body, parsed.error);
+    if (parsed.error) return parsed.error;
     try {
       const repository = await readSkillRepository(parsed.value, env);
       const analysis = analyzeSkillPackage(repository.files);
