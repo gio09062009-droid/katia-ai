@@ -53,6 +53,10 @@ export async function createDeviceChallenge(db, publicKeySpki, contextHash, nowS
   const expiresAt = nowSeconds + CHALLENGE_TTL_SECONDS;
 
   await db.prepare(
+    "DELETE FROM device_challenges WHERE expires_at <= ? OR (consumed_at IS NOT NULL AND consumed_at <= ?)"
+  ).bind(nowSeconds, nowSeconds - 86_400).run();
+
+  await db.prepare(
     "INSERT INTO device_challenges (challenge_id, nonce, public_key_sha256, context_hash, expires_at) VALUES (?, ?, ?, ?, ?)"
   ).bind(challengeId, nonce, details.digest, contextHash, expiresAt).run();
 
