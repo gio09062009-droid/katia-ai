@@ -146,6 +146,42 @@ async function authorizeDevice(config, proof, contextHash) {
 }
 
 /**
+ * Verifies the one-use proof for the read-only installed-Skills lookup.
+ * The resulting Brain assertion stays inside this Worker.
+ */
+export async function getInstalledSkillsForChat(env, proof) {
+  if (!proof || typeof proof !== "object") return null;
+  const config = skillsConfig(env);
+  if (!config) return null;
+  try {
+    const contextHash = await actionContextHash("/skills/installed", {});
+    const auth = await authorizeDevice(config, proof, contextHash);
+    if (auth.error) return null;
+    const upstream = await callSkills(config, "/v1/skills/installed", "GET", undefined, auth.assertion);
+    if (upstream.status !== 200 || upstream.data?.ok !== true ||
+        !Array.isArray(upstream.data.skills)) return null;
+    return upstream.data.skills;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetches one immutable, digest-verified package from the Skills Worker. */
+export async function getSkillPackageForChat(env, skillId, version) {
+  if (typeof skillId !== "string" || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(skillId) ||
+      typeof version !== "string" ||
+      !/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
+    return null;
+  }
+  const config = skillsConfig(env);
+  if (!config) return null;
+  const upstream = await callSkills(config, "/v1/skills/package/" + skillId + "/" + version);
+  if (upstream.status !== 200 || upstream.data?.ok !== true ||
+      !Array.isArray(upstream.data.files)) return null;
+  return upstream.data;
+}
+
+/**
  * Brain-side server-to-server proxy for the isolated Skills Worker.
  * Returns null for routes this module does not own.
  */
