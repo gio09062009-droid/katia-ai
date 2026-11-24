@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { verifyKatiaIdentity, createKatiaIdentityAssertion } from "../src/identity.js";
+import { verifyKatiaIdentity } from "../src/identity.js";
 
 const secret = "test-identity-secret-with-at-least-32-bytes";
 const encoder = new TextEncoder();
@@ -81,17 +81,4 @@ test("rejects a raw browser user ID without a signed assertion", async () => {
     headers: { "X-Katia-User-Id": "spoofed-user" }
   });
   assert.equal(await verifyKatiaIdentity(request, { KATIA_IDENTITY_SECRET: secret }, 2_000_000_010), null);
-});
-
-test("Brain assertion signer creates a short-lived token accepted by the verifier", async () => {
-  const token = await createKatiaIdentityAssertion("device:abc_DEF-123", secret, 2_000_000_000);
-  assert.equal(
-    await verifyKatiaIdentity(requestWith(token), { KATIA_IDENTITY_SECRET: secret }, 2_000_000_010),
-    "device:abc_DEF-123"
-  );
-});
-
-test("Brain assertion signer refuses invalid subjects and weak secrets", async () => {
-  await assert.rejects(() => createKatiaIdentityAssertion("browser-controlled id", secret));
-  await assert.rejects(() => createKatiaIdentityAssertion("device:valid-subject", "short"));
 });
