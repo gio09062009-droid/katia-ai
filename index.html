@@ -499,7 +499,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 
  <div class="profile-card">
   <h3 id="profileName">Usuario</h3>
-  <p class="small-note" id="profileStatus">Modo local · Sin cuenta conectada al backend de Skills</p>
+  <p class="small-note" id="profileStatus">Identidad anónima de este navegador · Sin cuenta</p>
   <div class="stats-row">
    <div class="stat"><strong id="statSkills">0</strong><span>Skills instaladas</span></div>
    <div class="stat"><strong id="statMemories">0</strong><span>Recuerdos</span></div>
@@ -508,7 +508,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  </div>
 
  <div class="notice">
-  Para publicar Skills, calificar y sincronizar instalaciones entre dispositivos se necesita autenticación + backend. Por ahora todo se guarda solo en este navegador.
+  La identidad de Skills se guarda mediante una clave privada no exportable en este navegador. No hay cuenta ni sincronización entre dispositivos. Si borrás los datos del navegador, perdés esta identidad y sus instalaciones.
  </div>
 
  <button class="tool-btn" style="width:100%;margin-bottom:10px" onclick="abrirPanel('settings')">⚙️ Abrir Configuración</button>
@@ -779,19 +779,12 @@ let ultimoSystemPromptUsado = "";
 let vocesDisponibles = [];
 let vozSeleccionadaURI = localStorage.getItem(STORAGE.voice) || "";
 
-/* SKILLS (solo metadata local) */
+/* SKILLS: identidad y catálogo remoto */
 let installedSkills = cargar(STORAGE.installedSkills, []);
 let currentStoreSort = "viral";
 
-/* Datos de demostración del Store (no instalables de verdad) */
-const DEMO_STORE = [
- {id:"demo-1",name:"Resumen Inteligente",icon:"📝",category:"productivity",desc:"Resume textos largos manteniendo los puntos clave.",author:"Katia Team",installs:1240,rating:4.8,recent:true},
- {id:"demo-2",name:"Traductor Contextual",icon:"🌐",category:"utility",desc:"Traduce manteniendo el tono y el contexto de la conversación.",author:"Comunidad",installs:890,rating:4.6,recent:false},
- {id:"demo-3",name:"Generador de Ideas",icon:"💡",category:"creative",desc:"Propone ideas creativas a partir de un tema o problema.",author:"Comunidad",installs:2100,rating:4.9,recent:true},
- {id:"demo-4",name:"Quiz Rápido",icon:"🎯",category:"education",desc:"Crea cuestionarios cortos para estudiar cualquier tema.",author:"Katia Team",installs:670,rating:4.5,recent:false},
- {id:"demo-5",name:"Modo Diversión",icon:"🎉",category:"fun",desc:"Respuestas más juguetonas y con más emojis.",author:"Comunidad",installs:3400,rating:4.7,recent:true},
- {id:"demo-6",name:"Organizador de Tareas",icon:"✅",category:"productivity",desc:"Convierte una lista de ideas en tareas priorizadas.",author:"Comunidad",installs:980,rating:4.4,recent:false}
-];
+/* El catálogo se carga desde Katia Skills; no se muestran datos ficticios. */
+
 
 function cargar(key,fallback){
  try{
