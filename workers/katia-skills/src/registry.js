@@ -1,11 +1,11 @@
 const ID_PATTERN = /^[a-z0-9][a-z0-9._-]{2,63}$/;
-const VERSION_PATTERN = /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/;
+const VERSION_PATTERN = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/;
 const SHA_PATTERN = /^[a-f0-9]{40}$/i;
 const DIGEST_PATTERN = /^[a-f0-9]{64}$/i;
-const PERMISSION_PATTERN = /^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_-]*)+$/;
+const PERMISSION_PATTERN = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9_-]*)+$/;
 
 function requireString(value, label, max = 200) {
-  if (typeof value !== "string" || !value.trim() || value.length > max || /[\\u0000-\\u001f\\u007f]/.test(value)) {
+  if (typeof value !== "string" || !value.trim() || value.length > max || /[\u0000-\u001f\u007f]/.test(value)) {
     throw new TypeError(label + " inválido.");
   }
   return value.trim();
