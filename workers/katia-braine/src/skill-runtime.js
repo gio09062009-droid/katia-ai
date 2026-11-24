@@ -33,33 +33,32 @@ export async function buildSkillsRuntimeContext(env, deviceProof, input = {}) {
     const selected = selectEnabledSkills(installed, required);
     if (!selected.length) return "";
 
-    const contexts = [];
-    for (const selectedSkill of selected) {
+    const contexts = await Promise.all(selected.map(async selectedSkill => {
       const record = installed.find(item =>
         item.skillId === selectedSkill.skillId &&
         item.version === selectedSkill.version
       );
       const entrypoint = record?.manifest?.entrypoint?.path;
-      if (!record || !safeEntrypointPath(entrypoint)) continue;
+      if (!record || !safeEntrypointPath(entrypoint)) return null;
 
       const pack = await getSkillPackageForChat(env, selectedSkill.skillId, selectedSkill.version);
       if (!pack || pack.packageSha256 !== selectedSkill.packageSha256 ||
-          !Array.isArray(pack.files)) continue;
+          !Array.isArray(pack.files)) return null;
 
       const file = pack.files.find(item =>
         item && item.path === entrypoint && typeof item.content === "string"
       );
-      if (!file) continue;
+      if (!file) return null;
 
-      contexts.push({
+      return {
         skillId: selectedSkill.skillId,
         version: selectedSkill.version,
         capabilities: selectedSkill.capabilities,
         instructions: file.content.slice(0, 6000)
-      });
-    }
+      };
+    }));
 
-    return formatUntrustedSkillContext(contexts);
+    return formatUntrustedSkillContext(contexts.filter(Boolean));
   } catch {
     // Skill runtime failures never interrupt normal chat.
     return "";
