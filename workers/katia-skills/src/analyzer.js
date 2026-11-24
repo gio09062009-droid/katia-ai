@@ -48,6 +48,15 @@ function validateManifest(manifest, filePaths) {
   const errors = [];
   if (!isPlainObject(manifest)) return ["El manifiesto debe ser un objeto JSON."];
 
+  const allowedKeys = new Set([
+    "manifest_version", "id", "name", "version", "description", "publisher",
+    "minimum_katia_version", "categories", "capabilities", "permissions",
+    "dependencies", "entrypoint", "integrity", "homepage", "license"
+  ]);
+  for (const key of Object.keys(manifest)) {
+    if (!allowedKeys.has(key)) errors.push("Campo no reconocido: " + key);
+  }
+
   const required = ["manifest_version", "id", "name", "version", "description", "publisher", "capabilities", "permissions", "entrypoint"];
   for (const key of required) if (!(key in manifest)) errors.push("Falta el campo obligatorio: " + key);
 
@@ -56,10 +65,40 @@ function validateManifest(manifest, filePaths) {
   if (typeof manifest.name !== "string" || manifest.name.length < 2 || manifest.name.length > 80) errors.push("Nombre de Skill inválido.");
   if (!validSemver(manifest.version)) errors.push("Versión semántica inválida.");
   if (typeof manifest.description !== "string" || manifest.description.length < 10 || manifest.description.length > 500) errors.push("Descripción inválida.");
-  if (!isPlainObject(manifest.publisher) || typeof manifest.publisher.name !== "string" || !manifest.publisher.name.trim()) errors.push("Editor/publicador inválido.");
+
+  if (!isPlainObject(manifest.publisher) || typeof manifest.publisher.name !== "string" ||
+      !manifest.publisher.name.trim() || manifest.publisher.name.length > 100) {
+    errors.push("Editor/publicador inválido.");
+  } else {
+    for (const key of Object.keys(manifest.publisher)) {
+      if (!["name", "url", "repository"].includes(key)) errors.push("Campo de publicador no reconocido: " + key);
+    }
+    if (manifest.publisher.url !== undefined &&
+        (typeof manifest.publisher.url !== "string" || !/^https:\/\//i.test(manifest.publisher.url))) {
+      errors.push("La URL del publicador debe usar HTTPS.");
+    }
+    if (manifest.publisher.repository !== undefined &&
+        (typeof manifest.publisher.repository !== "string" ||
+         !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(manifest.publisher.repository))) {
+      errors.push("Repositorio del publicador inválido.");
+    }
+  }
+
+  if (manifest.minimum_katia_version !== undefined &&
+      (typeof manifest.minimum_katia_version !== "string" || manifest.minimum_katia_version.length > 32)) {
+    errors.push("Versión mínima de Katia inválida.");
+  }
+
+  if (manifest.categories !== undefined &&
+      (!Array.isArray(manifest.categories) || manifest.categories.length > 12 ||
+       manifest.categories.some(x => typeof x !== "string" || !/^[a-z0-9-]{2,32}$/.test(x)) ||
+       new Set(manifest.categories).size !== manifest.categories.length)) {
+    errors.push("Categorías inválidas.");
+  }
 
   if (!Array.isArray(manifest.capabilities) || manifest.capabilities.length < 1 || manifest.capabilities.length > 30 ||
-      manifest.capabilities.some(x => typeof x !== "string" || !/^[a-z][a-z0-9]*(\.[a-z][a-z0-9_-]*)+$/.test(x))) {
+      manifest.capabilities.some(x => typeof x !== "string" || !/^[a-z][a-z0-9]*(\.[a-z][a-z0-9_-]*)+$/.test(x)) ||
+      new Set(manifest.capabilities).size !== manifest.capabilities.length) {
     errors.push("Lista de capacidades inválida.");
   }
 
@@ -73,8 +112,9 @@ function validateManifest(manifest, filePaths) {
   }
 
   if (!isPlainObject(manifest.entrypoint) || manifest.entrypoint.type !== "declarative" ||
-      typeof manifest.entrypoint.path !== "string") {
-    errors.push("El punto de entrada debe ser declarativo.");
+      typeof manifest.entrypoint.path !== "string" ||
+      Object.keys(manifest.entrypoint).some(key => !["type", "path"].includes(key))) {
+    errors.push("El punto de entrada debe ser declarativo y no contener campos adicionales.");
   } else {
     const entry = manifest.entrypoint.path;
     if (!validatePath(entry) || !/\.(md|json)$/i.test(entry)) errors.push("Ruta de punto de entrada no permitida.");
@@ -83,15 +123,36 @@ function validateManifest(manifest, filePaths) {
 
   if (manifest.dependencies !== undefined) {
     if (!Array.isArray(manifest.dependencies) || manifest.dependencies.length > 20) errors.push("Dependencias inválidas.");
-    else for (const dep of manifest.dependencies) {
-      if (!isPlainObject(dep) || typeof dep.id !== "string" || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(dep.id) ||
-          typeof dep.version !== "string" || dep.version.length > 64) errors.push("Dependencia mal formada.");
+    else {
+      const ids = new Set();
+      for (const dep of manifest.dependencies) {
+        if (!isPlainObject(dep) || Object.keys(dep).some(key => !["id", "version"].includes(key)) ||
+            typeof dep.id !== "string" || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(dep.id) ||
+            typeof dep.version !== "string" || dep.version.length > 64 || ids.has(dep.id)) {
+          errors.push("Dependencia mal formada o duplicada.");
+        } else ids.add(dep.id);
+      }
     }
+  }
+
+  if (manifest.integrity !== undefined &&
+      (!isPlainObject(manifest.integrity) ||
+       Object.keys(manifest.integrity).some(key => key !== "sha256") ||
+       (manifest.integrity.sha256 !== undefined && !/^[a-fA-F0-9]{64}$/.test(manifest.integrity.sha256)))) {
+    errors.push("Metadatos de integridad inválidos.");
+  }
+
+  if (manifest.homepage !== undefined &&
+      (typeof manifest.homepage !== "string" || !/^https:\/\//i.test(manifest.homepage))) {
+    errors.push("La página del Skill debe usar HTTPS.");
+  }
+  if (manifest.license !== undefined &&
+      (typeof manifest.license !== "string" || manifest.license.length > 64)) {
+    errors.push("Licencia inválida.");
   }
 
   return errors;
 }
-
 function inspectText(path, content) {
   const warnings = [];
   const lower = content.toLowerCase();
