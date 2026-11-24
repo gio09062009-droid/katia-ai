@@ -129,7 +129,7 @@ export async function clearDeviceIdentity() {
 
 async function readJsonResponse(response) {
   const data = await response.json().catch(() => ({}));
-  if (!response.ok || data?.ok === false) {
+  if (!response.ok) {
     throw new Error(data?.error || ("Katia respondió con estado " + response.status + "."));
   }
   return data;
