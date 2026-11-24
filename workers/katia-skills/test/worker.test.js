@@ -236,7 +236,7 @@ test("install endpoint requires explicit approval and records disabled install",
     method: "POST",
     headers: {
       Authorization: "Bearer test-secret",
-      "X-Katia-User-Id": "authenticated-user-01",
+      "X-Katia-Identity": await signedIdentity("authenticated-user-01"),
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -272,7 +272,7 @@ test("status endpoint enables an installed Skill for the authenticated user", as
     method: "POST",
     headers: {
       Authorization: "Bearer test-secret",
-      "X-Katia-User-Id": "authenticated-user-01",
+      "X-Katia-Identity": await signedIdentity("authenticated-user-01"),
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ skillId: "sample-skill", status: "enabled", eventId: "status-event-02" })
