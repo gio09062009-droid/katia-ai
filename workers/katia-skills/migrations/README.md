@@ -10,8 +10,8 @@ The first migration creates:
 Important:
 - `user_id` must come from the authenticated Katia Brain server-to-server request. Never trust a browser-provided user ID.
 - Requested permissions and granted permissions are stored separately.
-- No install endpoint is implemented yet; the schema is groundwork only.
-- Package bytes belong in R2; D1 stores the immutable R2 object key and SHA-256 digest.
+- Install and status endpoints are implemented in the isolated Worker; new installs start disabled and require explicit approval.
+- R2 is optional. D1 stores the immutable GitHub commit and package SHA-256 digest; an R2 object key is stored only when R2 is configured.
 - Do not store API keys, access tokens, passwords, or other secrets in these tables.
 
 After configuring the D1 binding, use Wrangler's local migration command first, inspect the local database, then apply remotely only after reviewing the migration.
