@@ -101,7 +101,8 @@ test("rejects a proof signed by a different key", async () => {
   const db = fakeDb();
   const first = await createKeyPair();
   const other = await createKeyPair();
-  const challenge = await createDeviceChallenge(db, first.publicKeySpki, 2_000_000_000);
+  const contextHash = "b".repeat(64);
+  const challenge = await createDeviceChallenge(db, first.publicKeySpki, contextHash, 2_000_000_000);
   const signature = await crypto.subtle.sign(
     { name: "ECDSA", hash: "SHA-256" }, other.pair.privateKey,
     new TextEncoder().encode(challenge.message)
@@ -117,7 +118,8 @@ test("rejects a proof signed by a different key", async () => {
 test("rejects expired challenges", async () => {
   const db = fakeDb();
   const { pair, publicKeySpki } = await createKeyPair();
-  const challenge = await createDeviceChallenge(db, publicKeySpki, 2_000_000_000);
+  const contextHash = "c".repeat(64);
+  const challenge = await createDeviceChallenge(db, publicKeySpki, contextHash, 2_000_000_000);
   const signature = await crypto.subtle.sign(
     { name: "ECDSA", hash: "SHA-256" }, pair.privateKey,
     new TextEncoder().encode(challenge.message)
