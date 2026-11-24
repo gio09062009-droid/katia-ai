@@ -170,7 +170,7 @@ export async function getInstalledSkillsForChat(env, proof) {
 export async function getSkillPackageForChat(env, skillId, version) {
   if (typeof skillId !== "string" || !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(skillId) ||
       typeof version !== "string" ||
-      !/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
+      !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(version)) {
     return null;
   }
   const config = skillsConfig(env);
