@@ -1,0 +1,14 @@
+name = "katia-skills"
+main = "src/index.js"
+compatibility_date = "2026-11-24"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://gio09062009-droid.github.io"
+
+# Configure secrets before deployment:
+# npx wrangler secret put SKILLS_API_TOKEN
+# Optional, for higher GitHub API rate limits:
+# npx wrangler secret put GITHUB_TOKEN
+
+# D1 and R2 bindings will be added after the resources are created.
