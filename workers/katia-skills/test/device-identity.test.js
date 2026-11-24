@@ -19,6 +19,15 @@ function fakeDb() {
       return {
         bind(...args) { values = args; return this; },
         async run() {
+          if (sql.startsWith("DELETE FROM device_challenges")) {
+            for (const [id, row] of challenges) {
+              if (row.expires_at <= values[0] ||
+                  row.consumed_at !== null && row.consumed_at <= values[1]) {
+                challenges.delete(id);
+              }
+            }
+            return { success: true, meta: { changes: 1 } };
+          }
           if (sql.startsWith("INSERT INTO device_challenges")) {
             challenges.set(values[0], {
               nonce: values[1], public_key_sha256: values[2],
@@ -148,4 +157,15 @@ test("rejects a proof when the requested action context changes", async () => {
     contextHash: alteredContext,
     signature: b64url(new Uint8Array(signature))
   }, 2_000_000_010), /no existe|venció|corresponde/i);
+});
+
+test("cleans expired and old consumed challenges before creating a new one", async () => {
+  const db = fakeDb();
+  const { publicKeySpki } = await createKeyPair();
+  const contextHash = "d".repeat(64);
+  const expired = await createDeviceChallenge(db, publicKeySpki, contextHash, 1_999_999_000);
+  assert.equal(db.challenges.has(expired.challengeId), true);
+  const fresh = await createDeviceChallenge(db, publicKeySpki, contextHash, 2_000_000_000);
+  assert.equal(db.challenges.has(expired.challengeId), false);
+  assert.equal(db.challenges.has(fresh.challengeId), true);
 });
