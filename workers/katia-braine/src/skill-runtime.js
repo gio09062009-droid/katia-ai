@@ -14,7 +14,7 @@ function safeEntrypointPath(value) {
     !value.startsWith("/") &&
     !value.includes("\\") &&
     !value.split("/").some(part => !part || part === "." || part === "..") &&
-    /\\.(md|json)$/i.test(value);
+    /\.(md|json)$/i.test(value);
 }
 
 /**
