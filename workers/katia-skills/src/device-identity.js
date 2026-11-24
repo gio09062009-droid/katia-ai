@@ -42,21 +42,24 @@ function requireDb(db) {
 }
 
 /** Creates a five-minute, one-use challenge bound to one P-256 public key. */
-export async function createDeviceChallenge(db, publicKeySpki, nowSeconds = Math.floor(Date.now() / 1000)) {
+export async function createDeviceChallenge(db, publicKeySpki, contextHash, nowSeconds = Math.floor(Date.now() / 1000)) {
   requireDb(db);
+  if (typeof contextHash !== "string" || !/^[a-f0-9]{64}$/.test(contextHash)) {
+    throw new TypeError("El contexto de autorización no es válido.");
+  }
   const details = await publicKeyDetails(publicKeySpki);
   const challengeId = encodeBase64Url(crypto.getRandomValues(new Uint8Array(18)));
   const nonce = encodeBase64Url(crypto.getRandomValues(new Uint8Array(32)));
   const expiresAt = nowSeconds + CHALLENGE_TTL_SECONDS;
 
   await db.prepare(
-    "INSERT INTO device_challenges (challenge_id, nonce, public_key_sha256, expires_at) VALUES (?, ?, ?, ?)"
-  ).bind(challengeId, nonce, details.digest, expiresAt).run();
+    "INSERT INTO device_challenges (challenge_id, nonce, public_key_sha256, context_hash, expires_at) VALUES (?, ?, ?, ?, ?)"
+  ).bind(challengeId, nonce, details.digest, contextHash, expiresAt).run();
 
   return {
     challengeId,
     nonce,
-    message: "katia-skills-device-v1:" + challengeId + ":" + nonce,
+    message: "katia-skills-device-v1:" + challengeId + ":" + nonce + ":" + contextHash,
     expiresAt
   };
 }
@@ -78,17 +81,21 @@ export async function verifyDeviceProof(db, input, nowSeconds = Math.floor(Date.
   const signature = decodeBase64Url(input.signature, 256);
   if (signature.byteLength !== 64) throw new TypeError("La firma ECDSA tiene un formato inválido.");
 
+  if (typeof input.contextHash !== "string" || !/^[a-f0-9]{64}$/.test(input.contextHash)) {
+    throw new TypeError("El contexto de autorización no es válido.");
+  }
+
   const challenge = await db.prepare(
-    "SELECT nonce, public_key_sha256, expires_at, consumed_at FROM device_challenges WHERE challenge_id = ?"
+    "SELECT nonce, public_key_sha256, context_hash, expires_at, consumed_at FROM device_challenges WHERE challenge_id = ?"
   ).bind(input.challengeId).first();
 
   if (!challenge || challenge.consumed_at !== null && challenge.consumed_at !== undefined ||
       challenge.expires_at <= nowSeconds ||
-      challenge.public_key_sha256 !== details.digest) {
+      challenge.public_key_sha256 !== details.digest || challenge.context_hash !== input.contextHash) {
     throw new Error("El desafío no existe, venció o no corresponde a esta clave.");
   }
 
-  const message = "katia-skills-device-v1:" + input.challengeId + ":" + challenge.nonce;
+  const message = "katia-skills-device-v1:" + input.challengeId + ":" + challenge.nonce + ":" + challenge.context_hash;
   const valid = await crypto.subtle.verify(
     { name: "ECDSA", hash: "SHA-256" },
     details.key,
@@ -98,8 +105,8 @@ export async function verifyDeviceProof(db, input, nowSeconds = Math.floor(Date.
   if (!valid) throw new Error("La firma del dispositivo no es válida.");
 
   const consumed = await db.prepare(
-    "UPDATE device_challenges SET consumed_at = ? WHERE challenge_id = ? AND public_key_sha256 = ? AND expires_at > ? AND consumed_at IS NULL"
-  ).bind(nowSeconds, input.challengeId, details.digest, nowSeconds).run();
+    "UPDATE device_challenges SET consumed_at = ? WHERE challenge_id = ? AND public_key_sha256 = ? AND context_hash = ? AND expires_at > ? AND consumed_at IS NULL"
+  ).bind(nowSeconds, input.challengeId, details.digest, input.contextHash, nowSeconds).run();
   if ((consumed?.meta?.changes ?? 0) !== 1) {
     throw new Error("El desafío ya fue utilizado o venció.");
   }
