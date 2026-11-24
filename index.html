@@ -757,10 +757,12 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 ========================================== */
 
 const KATIA_API = "https://katia-braine.gio09062009.workers.dev/";
+const KATIA_MEMORY_API = "https://katia-memory.gio09062009.workers.dev";
 
 const STORAGE = {
  history:"katia_history_4",
  memories:"katia_memories_4",
+ memoryToken:"katia_memory_token_v1",
  diary:"katia_diary_4",
  likes:"katia_likes_4",
  username:"katia_user_name_4",
@@ -772,6 +774,8 @@ const STORAGE = {
 
 let historial = cargar(STORAGE.history,[]);
 let memorias = cargar(STORAGE.memories,[]);
+let remoteMemoryRecords = [];
+let memorySyncPromise = Promise.resolve();
 let diario = cargar(STORAGE.diary,[]);
 let gustos = cargar(STORAGE.likes,[]);
 let ultimoMensaje = "";
@@ -813,6 +817,65 @@ function guardar(key,value){
  catch(e){console.warn("No se pudo guardar",key,e)}
 }
 function nombreUsuario(){return localStorage.getItem(STORAGE.username)||""}
+
+async function memoryApi(path,options={}){
+ const token=localStorage.getItem(STORAGE.memoryToken)||"";
+ const headers={...(options.headers||{})};
+ if(token)headers.Authorization="Bearer "+token;
+ if(options.body)headers["Content-Type"]="application/json";
+ const response=await fetch(KATIA_MEMORY_API+path,{...options,headers});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(data.error||("Memory API: "+response.status));
+ return data;
+}
+async function crearSesionMemoria(){
+ const data=await memoryApi("/v1/session",{method:"POST"});
+ if(!data.token)throw new Error("No se recibió la sesión de memoria.");
+ localStorage.setItem(STORAGE.memoryToken,data.token);
+ return data;
+}
+async function sincronizarMemoriasRemotas(){
+ try{
+  if(!localStorage.getItem(STORAGE.memoryToken))await crearSesionMemoria();
+  let data;
+  try{data=await memoryApi("/v1/memories",{method:"GET"});}
+  catch(error){
+   if(String(error.message).includes("UNAUTHORIZED")){
+    localStorage.removeItem(STORAGE.memoryToken);
+    await crearSesionMemoria();
+    data=await memoryApi("/v1/memories",{method:"GET"});
+   }else throw error;
+  }
+  let records=Array.isArray(data.memories)?data.memories:[];
+  if(records.length===0&&memorias.length){
+   for(const content of memorias){
+    const saved=await memoryApi("/v1/memories",{method:"POST",body:JSON.stringify({content,category:"legacy_import"})});
+    if(saved.memory)records.push(saved.memory);
+   }
+  }else if(records.length){
+   memorias=records.map(item=>item.content);
+   guardar(STORAGE.memories,memorias);
+  }
+  remoteMemoryRecords=records;
+  guardar(STORAGE.memories,memorias);
+  actualizarPerfil();
+  mostrarMemorias();
+ }catch(error){
+  console.warn("La memoria en la nube no está disponible; se conserva la memoria local.",error);
+ }
+}
+async function eliminarMemoria(index){
+ const record=remoteMemoryRecords[index];
+ if(record&&record.memory_id){
+  try{await memoryApi("/v1/memories/"+encodeURIComponent(record.memory_id),{method:"DELETE"});}
+  catch(error){alert("No pude eliminar el recuerdo de la nube. No se borró.");return;}
+ }
+ memorias.splice(index,1);
+ remoteMemoryRecords.splice(index,1);
+ guardar(STORAGE.memories,memorias);
+ mostrarMemorias();
+ actualizarPerfil();
+}
 
 /* ========== NAVEGACIÓN ========== */
 function cambiarSeccion(nombre){
@@ -1237,6 +1300,7 @@ async function enviarMensaje(){
  mostrarTyping();
  estadoOrb("thinking","🧠 Katia está pensando...");
  try{
+  await memorySyncPromise;
   const respuesta=await responderConIA();
   quitarTyping();
   agregarMensaje("katia",respuesta,true,{provider:ultimoProveedorRespuesta,fallback:ultimoFallback});
@@ -1281,15 +1345,24 @@ function abrirMemoria(){
  <div id="memoryList"></div>`;
  mostrarMemorias();
 }
-function guardarMemoria(){
+async function guardarMemoria(){
  const input=document.getElementById("memoryInput");
  const texto=input.value.trim();
  if(!texto)return;
+ await memorySyncPromise;
  memorias.push(texto);
+ remoteMemoryRecords.push(null);
  guardar(STORAGE.memories,memorias);
  input.value="";
  mostrarMemorias();
  actualizarPerfil();
+ try{
+  if(!localStorage.getItem(STORAGE.memoryToken))await crearSesionMemoria();
+  const saved=await memoryApi("/v1/memories",{method:"POST",body:JSON.stringify({content:texto,category:"general"})});
+  remoteMemoryRecords[remoteMemoryRecords.length-1]=saved.memory||null;
+ }catch(error){
+  console.warn("El recuerdo quedó guardado localmente; no se pudo sincronizar.",error);
+ }
 }
 function mostrarMemorias(){
  const list=document.getElementById("memoryList");
@@ -1304,7 +1377,7 @@ function mostrarMemorias(){
   btn.textContent="Eliminar";
   btn.className="tool-btn";
   btn.style.marginTop="7px";
-  btn.onclick=()=>{memorias.splice(index,1);guardar(STORAGE.memories,memorias);mostrarMemorias();actualizarPerfil();};
+  btn.onclick=()=>eliminarMemoria(index);
   div.append(document.createElement("br"),btn);
   list.appendChild(div);
  });
@@ -1830,6 +1903,7 @@ function tutorReset(){tutorState=null;document.getElementById("tutorTopic").valu
 /* INICIALIZACIÓN */
 document.addEventListener("DOMContentLoaded",()=>{
  restaurarHistorial();
+ memorySyncPromise=sincronizarMemoriasRemotas();
  tutorRenderHistory();
  actualizarProveedorVisible();
  actualizarBrainV2Visible();
