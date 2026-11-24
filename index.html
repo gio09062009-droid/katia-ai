@@ -437,28 +437,21 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 <section id="section-skills" class="section">
  <div class="page-header">
   <div>
-   <h2>🧩 Skills</h2>
-   <p>Administrá las habilidades instaladas y explorá nuevas</p>
+   <h2>🧩 Skills instaladas</h2>
+   <p>Administrá las habilidades conectadas a tu identidad de este navegador.</p>
   </div>
-  <button class="tool-btn" onclick="mostrarAvisoBackend('import')">📦 Importar ZIP / GitHub</button>
+  <button class="tool-btn" onclick="refrescarSkills()">↻ Actualizar</button>
  </div>
-
- <div class="notice">
-  ⚠️ <strong>Estado actual:</strong> La interfaz está lista. Las instalaciones reales, validación de paquetes y permisos requieren el backend de Skills (D1 + R2 + endpoints). No se simulan instalaciones que no funcionan.
- </div>
-
+ <div class="notice" id="skillsStatus">Conectando con Katia Skills...</div>
  <div class="search-bar">
   <input id="skillsSearch" placeholder="Buscar en mis Skills..." oninput="filtrarSkillsLocales()">
   <select id="skillsFilter" onchange="filtrarSkillsLocales()">
    <option value="all">Todas</option>
-   <option value="active">Activas</option>
-   <option value="inactive">Inactivas</option>
+   <option value="enabled">Activas</option>
+   <option value="disabled">Desactivadas</option>
   </select>
  </div>
-
- <div id="skillsList" class="skills-grid">
-  <!-- Se rellena por JS -->
- </div>
+ <div id="skillsList" class="skills-grid"></div>
 </section>
 
 <!-- ==================== SECCIÓN STORE ==================== -->
@@ -466,14 +459,11 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  <div class="page-header">
   <div>
    <h2>🏪 Katia Store</h2>
-   <p>Tienda gratuita de Skills creadas por la comunidad</p>
+   <p>Catálogo real de Skills declarativas. No se ejecuta código remoto.</p>
   </div>
+  <button class="tool-btn" onclick="refrescarStore()">↻ Actualizar</button>
  </div>
-
- <div class="notice">
-  ⚠️ <strong>Backend pendiente:</strong> El catálogo, las instalaciones, calificaciones y publicaciones funcionarán cuando estén listos los endpoints + D1 + R2. Por ahora se muestra la interfaz y datos de demostración (no instalables).
- </div>
-
+ <div class="notice" id="storeStatus">Cargando catálogo...</div>
  <div class="search-bar">
   <input id="storeSearch" placeholder="Buscar Skills..." oninput="filtrarStore()">
   <select id="storeCategory" onchange="filtrarStore()">
@@ -481,20 +471,21 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
    <option value="productivity">Productividad</option>
    <option value="creative">Creatividad</option>
    <option value="education">Educación</option>
-   <option value="fun">Diversión</option>
    <option value="utility">Utilidades</option>
+   <option value="examples">Ejemplos</option>
   </select>
  </div>
-
- <div class="search-bar" style="margin-top:-8px">
-  <button class="filter-btn active" data-sort="viral" onclick="setStoreSort(this)">🔥 Más virales</button>
-  <button class="filter-btn" data-sort="recent" onclick="setStoreSort(this)">🆕 Más recientes</button>
-  <button class="filter-btn" data-sort="rating" onclick="setStoreSort(this)">⭐ Mejores reseñas</button>
+ <div class="tutor-card">
+  <h3>📦 Analizar una Skill desde GitHub</h3>
+  <p class="small-note">Katia revisará el manifiesto, los archivos y los permisos antes de permitir el registro.</p>
+  <div class="tutor-field"><label for="skillRepoOwner">Propietario de GitHub</label><input id="skillRepoOwner" maxlength="39" placeholder="usuario u organización"></div>
+  <div class="tutor-field"><label for="skillRepoName">Nombre del repositorio</label><input id="skillRepoName" maxlength="100" placeholder="nombre-del-repositorio"></div>
+  <div class="tutor-field"><label for="skillRepoRef">Rama o referencia</label><input id="skillRepoRef" maxlength="120" value="main"></div>
+  <button class="tool-btn" onclick="analizarSkillGitHub()">🔍 Analizar repositorio</button>
+  <div class="notice" id="skillAnalysis" hidden style="margin-top:12px"></div>
+  <button class="tool-btn" id="registerSkillBtn" onclick="registrarSkillAnalizada()" disabled style="margin-top:10px">Registrar versión aprobada</button>
  </div>
-
- <div id="storeGrid" class="skills-grid">
-  <!-- Se rellena por JS con datos demo -->
- </div>
+ <div id="storeGrid" class="skills-grid"></div>
 </section>
 
 <!-- ==================== SECCIÓN PERFIL ==================== -->
@@ -508,7 +499,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
 
  <div class="profile-card">
   <h3 id="profileName">Usuario</h3>
-  <p class="small-note" id="profileStatus">Modo local · Sin cuenta conectada al backend de Skills</p>
+  <p class="small-note" id="profileStatus">Identidad anónima de este navegador · Sin cuenta</p>
   <div class="stats-row">
    <div class="stat"><strong id="statSkills">0</strong><span>Skills instaladas</span></div>
    <div class="stat"><strong id="statMemories">0</strong><span>Recuerdos</span></div>
@@ -517,7 +508,7 @@ footer{text-align:center;color:#766784;font-size:10px;padding:12px}
  </div>
 
  <div class="notice">
-  Para publicar Skills, calificar y sincronizar instalaciones entre dispositivos se necesita autenticación + backend. Por ahora todo se guarda solo en este navegador.
+  La identidad de Skills se guarda mediante una clave privada no exportable en este navegador. No hay cuenta ni sincronización entre dispositivos. Si borrás los datos del navegador, perdés esta identidad y sus instalaciones.
  </div>
 
  <button class="tool-btn" style="width:100%;margin-bottom:10px" onclick="abrirPanel('settings')">⚙️ Abrir Configuración</button>
@@ -788,19 +779,12 @@ let ultimoSystemPromptUsado = "";
 let vocesDisponibles = [];
 let vozSeleccionadaURI = localStorage.getItem(STORAGE.voice) || "";
 
-/* SKILLS (solo metadata local) */
+/* SKILLS: identidad y catálogo remoto */
 let installedSkills = cargar(STORAGE.installedSkills, []);
 let currentStoreSort = "viral";
 
-/* Datos de demostración del Store (no instalables de verdad) */
-const DEMO_STORE = [
- {id:"demo-1",name:"Resumen Inteligente",icon:"📝",category:"productivity",desc:"Resume textos largos manteniendo los puntos clave.",author:"Katia Team",installs:1240,rating:4.8,recent:true},
- {id:"demo-2",name:"Traductor Contextual",icon:"🌐",category:"utility",desc:"Traduce manteniendo el tono y el contexto de la conversación.",author:"Comunidad",installs:890,rating:4.6,recent:false},
- {id:"demo-3",name:"Generador de Ideas",icon:"💡",category:"creative",desc:"Propone ideas creativas a partir de un tema o problema.",author:"Comunidad",installs:2100,rating:4.9,recent:true},
- {id:"demo-4",name:"Quiz Rápido",icon:"🎯",category:"education",desc:"Crea cuestionarios cortos para estudiar cualquier tema.",author:"Katia Team",installs:670,rating:4.5,recent:false},
- {id:"demo-5",name:"Modo Diversión",icon:"🎉",category:"fun",desc:"Respuestas más juguetonas y con más emojis.",author:"Comunidad",installs:3400,rating:4.7,recent:true},
- {id:"demo-6",name:"Organizador de Tareas",icon:"✅",category:"productivity",desc:"Convierte una lista de ideas en tareas priorizadas.",author:"Comunidad",installs:980,rating:4.4,recent:false}
-];
+/* El catálogo se carga desde Katia Skills; no se muestran datos ficticios. */
+
 
 function cargar(key,fallback){
  try{
@@ -832,115 +816,34 @@ function cambiarSeccion(nombre){
 
 /* ========== SKILLS & STORE UI ========== */
 function renderSkills(){
- const cont = document.getElementById("skillsList");
- if(!cont) return;
-
- if(!installedSkills.length){
-  cont.innerHTML = `
-   <div class="empty-state" style="grid-column:1/-1">
-    <strong>No tenés Skills instaladas</strong>
-    Las Skills reales se instalarán cuando el backend esté disponible.<br>
-    Por ahora podés explorar el Store (datos de demostración).
-   </div>`;
-  return;
- }
-
- cont.innerHTML = installedSkills.map(s => `
-  <div class="skill-card">
-   <div class="icon">${s.icon||"🧩"}</div>
-   <h3>${s.name}</h3>
-   <div class="meta">
-    <span class="badge \( {s.active?"ok":"warn"}"> \){s.active?"Activa":"Inactiva"}</span>
-    v${s.version||"1.0"}
-   </div>
-   <div class="desc">${s.desc||"Sin descripción"}</div>
-   <div class="actions">
-    <button onclick="toggleSkillLocal('\( {s.id}')"> \){s.active?"Desactivar":"Activar"}</button>
-    <button onclick="uninstallSkillLocal('${s.id}')">Desinstalar</button>
-   </div>
-  </div>
- `).join("");
+ if(window.katiaSkillsUI) return window.katiaSkillsUI.renderSkills();
 }
-
 function filtrarSkillsLocales(){
- // Solo filtra la vista local (cuando haya datos reales)
- renderSkills();
+ if(window.katiaSkillsUI) return window.katiaSkillsUI.paintSkills();
 }
-
 function toggleSkillLocal(id){
- const s = installedSkills.find(x=>x.id===id);
- if(!s) return;
- s.active = !s.active;
- guardar(STORAGE.installedSkills, installedSkills);
- renderSkills();
- actualizarPerfil();
+ if(window.cambiarEstadoSkill) return window.cambiarEstadoSkill(id,"disabled");
 }
-
 function uninstallSkillLocal(id){
- if(!confirm("¿Desinstalar esta Skill de este navegador?")) return;
- installedSkills = installedSkills.filter(x=>x.id!==id);
- guardar(STORAGE.installedSkills, installedSkills);
- renderSkills();
- actualizarPerfil();
+ alert("La desinstalación se habilitará cuando el backend incorpore ese flujo seguro.");
 }
-
 function renderStore(){
- const cont = document.getElementById("storeGrid");
- if(!cont) return;
-
- let lista = [...DEMO_STORE];
-
- const q = (document.getElementById("storeSearch")?.value || "").toLowerCase();
- const cat = document.getElementById("storeCategory")?.value || "all";
-
- if(q) lista = lista.filter(s => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q));
- if(cat !== "all") lista = lista.filter(s => s.category === cat);
-
- if(currentStoreSort === "viral") lista.sort((a,b)=>b.installs-a.installs);
- else if(currentStoreSort === "recent") lista.sort((a,b)=> (b.recent?1:0)-(a.recent?1:0));
- else if(currentStoreSort === "rating") lista.sort((a,b)=>b.rating-a.rating);
-
- cont.innerHTML = lista.map(s => `
-  <div class="skill-card">
-   <div class="icon">${s.icon}</div>
-   <h3>${s.name}</h3>
-   <div class="meta">
-    <span class="badge">${s.category}</span>
-    ⭐ ${s.rating} · ${s.installs.toLocaleString()} installs
-   </div>
-   <div class="desc">${s.desc}</div>
-   <div class="meta">por ${s.author}</div>
-   <div class="actions">
-    <button class="primary" onclick="mostrarAvisoBackend('install')">Instalar</button>
-    <button onclick="mostrarAvisoBackend('detail')">Ver ficha</button>
-   </div>
-  </div>
- `).join("");
+ if(window.katiaSkillsUI) return window.katiaSkillsUI.renderStore();
 }
-
-function filtrarStore(){ renderStore(); }
-
-function setStoreSort(btn){
- document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- currentStoreSort = btn.dataset.sort;
- renderStore();
+function filtrarStore(){
+ if(window.katiaSkillsUI) return window.katiaSkillsUI.paintStore();
 }
-
-function mostrarAvisoBackend(accion){
- const mensajes = {
-  install: "La instalación real de Skills requiere el backend (D1 + R2 + endpoints de validación y permisos).\n\nPor seguridad no se simulan instalaciones que no funcionan.",
-  detail: "Las fichas completas (calificaciones, comentarios, historial de versiones) estarán disponibles cuando el catálogo esté conectado al backend.",
-  import: "Importar ZIP o desde GitHub requiere validación de manifiesto, permisos y almacenamiento en R2. Todavía no está implementado en el servidor.",
-  publish: "Publicar Skills requiere autenticación de usuario y endpoints de publicación."
- };
- alert(mensajes[accion] || "Esta función requiere el backend de Skills.");
+function setStoreSort(){
+ if(window.katiaSkillsUI) return window.katiaSkillsUI.paintStore();
+}
+function mostrarAvisoBackend(){
+ alert("Esta operación se gestiona desde el catálogo real de Katia Skills.");
 }
 
 function actualizarPerfil(){
  const nombre = nombreUsuario() || "Usuario";
  document.getElementById("profileName").textContent = nombre;
- document.getElementById("statSkills").textContent = installedSkills.length;
+ document.getElementById("statSkills").textContent = window.katiaInstalledSkillsCount ?? installedSkills.length;
  document.getElementById("statMemories").textContent = memorias.length;
  document.getElementById("statDiary").textContent = diario.length;
 }
@@ -1190,6 +1093,18 @@ async function llamarWorker(options = {}){
  if (context && typeof context === "string" && context.trim()) body.context = context.slice(0, 30000);
  if (instruction && typeof instruction === "string" && instruction.trim()) body.instruction = instruction.slice(0, 12000);
  if (documentText && typeof documentText === "string" && documentText.trim()) body.documentText = documentText.slice(0, 50000);
+
+ if (typeof window.katiaCreateChatIdentityProof === "function") {
+  try {
+   const deviceProof = await window.katiaCreateChatIdentityProof({
+    messages: body.messages,
+    task: body.task
+   });
+   if (deviceProof) body.deviceProof = deviceProof;
+  } catch (error) {
+   console.warn("Katia Skills no está disponible para este mensaje; el chat continuará sin Skills.", error?.message || error);
+  }
+ }
 
  const controller = new AbortController();
  const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -1845,6 +1760,247 @@ document.addEventListener("DOMContentLoaded",()=>{
  actualizarDescripcionModo();
  actualizarOpcionesCreacion();
 });
+</script>
+
+<script type="module">
+import {
+  getSkillsCatalog,
+  requestProtectedSkills,
+  analyzeSkillRepository,
+  createChatIdentityProof
+} from "./src/device-identity-client.js";
+
+const KATIA_SKILLS_API = "https://katia-braine.gio09062009.workers.dev/";
+let remoteCatalog = [];
+let remoteInstalled = [];
+let pendingSkill = null;
+let catalogLoaded = false;
+
+const byId = id => document.getElementById(id);
+const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+})[ch]);
+const eventId = () => crypto.randomUUID();
+
+function showStatus(id, message) {
+  const node = byId(id);
+  if (node) node.textContent = message;
+}
+
+function paintSkills() {
+  const cont = byId("skillsList");
+  if (!cont) return;
+  const query = (byId("skillsSearch")?.value || "").trim().toLowerCase();
+  const filter = byId("skillsFilter")?.value || "all";
+  const rows = remoteInstalled.filter(skill => {
+    const name = skill.manifest?.name || skill.skillId;
+    const matches = (skill.skillId + " " + name + " " + (skill.manifest?.description || "")).toLowerCase().includes(query);
+    return matches && (filter === "all" || skill.status === filter);
+  });
+  if (!rows.length) {
+    cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><strong>No hay Skills instaladas</strong>Explorá el catálogo y aprobá una instalación para comenzar.</div>';
+  } else {
+    cont.innerHTML = rows.map(skill => {
+      const name = esc(skill.manifest?.name || skill.skillId);
+      const description = esc(skill.manifest?.description || "Sin descripción.");
+      const active = skill.status === "enabled";
+      const permissions = Array.isArray(skill.grantedPermissions) ? skill.grantedPermissions : [];
+      return '<div class="skill-card"><div class="icon">🧩</div><h3>' + name + '</h3>' +
+        '<div class="meta"><span class="badge ' + (active ? "ok" : "warn") + '">' + (active ? "Activa" : "Desactivada") + '</span> v' + esc(skill.version) + '</div>' +
+        '<div class="desc">' + description + '</div><div class="meta">Permisos concedidos: ' + esc(permissions.length ? permissions.join(", ") : "ninguno") + '</div>' +
+        '<div class="actions"><button onclick="cambiarEstadoSkill(\'' + esc(skill.skillId) + '\',\'' + (active ? "disabled" : "enabled") + '\')">' + (active ? "Desactivar" : "Activar") + '</button></div></div>';
+    }).join("");
+  }
+  window.katiaInstalledSkillsCount = remoteInstalled.length;
+  if (typeof window.actualizarPerfil === "function") window.actualizarPerfil();
+}
+
+async function renderSkills() {
+  const cont = byId("skillsList");
+  if (cont) cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cargando tus Skills...</div>';
+  try {
+    const result = await requestProtectedSkills(KATIA_SKILLS_API, "/skills/installed", {});
+    remoteInstalled = Array.isArray(result.skills) ? result.skills : [];
+    showStatus("skillsStatus", "Identidad de este navegador verificada. " + remoteInstalled.length + " Skill(s) instalada(s).");
+    paintSkills();
+  } catch (error) {
+    showStatus("skillsStatus", "No se pudo consultar Katia Skills: " + error.message);
+    if (cont) cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><strong>Servicio no disponible</strong>La conversación con Katia sigue funcionando. La gestión de Skills se reintentará cuando el backend esté conectado.</div>';
+  }
+}
+
+function paintStore() {
+  const cont = byId("storeGrid");
+  if (!cont) return;
+  const query = (byId("storeSearch")?.value || "").trim().toLowerCase();
+  const category = byId("storeCategory")?.value || "all";
+  const installedSet = new Set(remoteInstalled.map(skill => skill.skillId));
+  const rows = remoteCatalog.filter(item => {
+    const manifest = item.manifest || {};
+    const text = [item.skillId, manifest.name, manifest.description, manifest.publisher?.name].join(" ").toLowerCase();
+    const cats = Array.isArray(manifest.categories) ? manifest.categories : [];
+    return text.includes(query) && (category === "all" || cats.includes(category));
+  });
+  if (!rows.length) {
+    cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><strong>El catálogo todavía está vacío</strong>Podés analizar una Skill declarativa de GitHub usando el formulario de arriba.</div>';
+    return;
+  }
+  cont.innerHTML = rows.map(item => {
+    const manifest = item.manifest || {};
+    const id = esc(item.skillId);
+    const version = esc(item.version);
+    const permissions = Array.isArray(manifest.permissions) ? manifest.permissions : [];
+    const capabilities = Array.isArray(manifest.capabilities) ? manifest.capabilities : [];
+    const installed = installedSet.has(item.skillId);
+    return '<div class="skill-card"><div class="icon">🧩</div><h3>' + esc(manifest.name || item.skillId) + '</h3>' +
+      '<div class="meta">v' + version + ' · ' + esc(manifest.publisher?.name || "Publicador desconocido") + '</div>' +
+      '<div class="desc">' + esc(manifest.description || "Sin descripción.") + '</div>' +
+      '<div class="meta">Capacidades: ' + esc(capabilities.join(", ") || "No declaradas") + '</div>' +
+      '<div class="meta">Permisos solicitados: ' + esc(permissions.join(", ") || "ninguno") + '</div>' +
+      '<div class="actions"><button ' + (installed ? "disabled" : "") + ' onclick="instalarSkill(\'' + id + '\',\'' + version + '\')">' + (installed ? "Ya instalada" : "Instalar") + '</button></div></div>';
+  }).join("");
+}
+
+async function renderStore() {
+  const cont = byId("storeGrid");
+  if (cont) cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cargando catálogo...</div>';
+  try {
+    const result = await getSkillsCatalog(KATIA_SKILLS_API);
+    remoteCatalog = Array.isArray(result.skills) ? result.skills : [];
+    catalogLoaded = true;
+    showStatus("storeStatus", "Catálogo conectado · " + remoteCatalog.length + " versión(es) registradas.");
+    paintStore();
+  } catch (error) {
+    showStatus("storeStatus", "No se pudo cargar el catálogo: " + error.message);
+    if (cont) cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><strong>Catálogo no disponible</strong>La tienda no muestra datos inventados. Intentá actualizar cuando el servicio esté conectado.</div>';
+  }
+}
+
+async function refrescarSkills() { await renderSkills(); }
+async function refrescarStore() { catalogLoaded = false; await renderStore(); }
+
+async function cambiarEstadoSkill(skillId, status) {
+  const skill = remoteInstalled.find(item => item.skillId === skillId);
+  if (!skill || !["enabled", "disabled"].includes(status)) return;
+  const action = status === "enabled" ? "activar" : "desactivar";
+  if (!confirm("¿Querés " + action + " " + (skill.manifest?.name || skillId) + "?")) return;
+  try {
+    await requestProtectedSkills(KATIA_SKILLS_API, "/skills/status", {
+      skillId, status, eventId: eventId()
+    });
+    await renderSkills();
+  } catch (error) {
+    alert("No se pudo cambiar el estado: " + error.message);
+  }
+}
+
+async function instalarSkill(skillId, version) {
+  const skill = remoteCatalog.find(item => item.skillId === skillId && item.version === version);
+  if (!skill) return;
+  const permissions = Array.isArray(skill.manifest?.permissions) ? skill.manifest.permissions : [];
+  const permissionText = permissions.length ? permissions.join(", ") : "ninguno";
+  const accepted = confirm(
+    "Vas a instalar " + (skill.manifest?.name || skillId) + " v" + version + ".\n\n" +
+    "Permisos solicitados: " + permissionText + ".\n" +
+    "La instalación comenzará desactivada y no concederá permisos automáticamente. ¿Continuar?"
+  );
+  if (!accepted) return;
+  try {
+    await requestProtectedSkills(KATIA_SKILLS_API, "/skills/install", {
+      skillId,
+      version,
+      approvalEventId: eventId(),
+      installedEventId: eventId(),
+      approved: true,
+      requestedPermissions: permissions,
+      grantedPermissions: []
+    });
+    alert("Skill instalada y desactivada. Podés revisarla en «Skills instaladas».");
+    await renderSkills();
+    paintStore();
+  } catch (error) {
+    alert("No se pudo instalar la Skill: " + error.message);
+  }
+}
+
+async function analizarSkillGitHub() {
+  const owner = (byId("skillRepoOwner")?.value || "").trim();
+  const repo = (byId("skillRepoName")?.value || "").trim();
+  const ref = (byId("skillRepoRef")?.value || "main").trim();
+  const resultNode = byId("skillAnalysis");
+  const button = byId("registerSkillBtn");
+  pendingSkill = null;
+  if (button) button.disabled = true;
+  if (!owner || !repo || !ref) {
+    showStatus("storeStatus", "Completá propietario, repositorio y referencia.");
+    return;
+  }
+  if (resultNode) { resultNode.hidden = false; resultNode.textContent = "Analizando archivos y permisos..."; }
+  try {
+    const data = await analyzeSkillRepository(KATIA_SKILLS_API, { owner, repo, ref });
+    const analysis = data.analysis || {};
+    const summary = analysis.summary || {};
+    const valid = data.ok === true && analysis.status === "valid" &&
+      data.repository?.commitSha && data.package?.sha256;
+    const errors = Array.isArray(analysis.errors) ? analysis.errors : [];
+    const warnings = Array.isArray(analysis.warnings) ? analysis.warnings : [];
+    pendingSkill = valid ? {
+      owner, repo, sourceRef: ref,
+      commitSha: data.repository.commitSha,
+      packageSha256: data.package.sha256,
+      summary
+    } : null;
+    if (resultNode) {
+      resultNode.hidden = false;
+      resultNode.innerHTML =
+        '<strong>' + (valid ? "✓ Paquete válido" : "⚠ Revisión necesaria") + '</strong><br>' +
+        esc(summary.name || summary.id || "Skill sin identificar") + ' · v' + esc(summary.version || "—") +
+        (errors.length ? '<p>Errores:<br>' + errors.map(esc).join("<br>") + '</p>' : "") +
+        (warnings.length ? '<p>Advertencias:<br>' + warnings.map(esc).join("<br>") + '</p>' : "") +
+        '<p>Commit fijado: ' + esc(data.repository?.commitSha || "—") + '</p>';
+    }
+    if (button) button.disabled = !valid;
+    showStatus("storeStatus", valid ? "Análisis superado. Revisá el resumen antes de registrar." : "La Skill no está lista para registrarse.");
+  } catch (error) {
+    if (resultNode) { resultNode.hidden = false; resultNode.textContent = "No se pudo analizar: " + error.message; }
+    showStatus("storeStatus", "Falló el análisis del repositorio.");
+  }
+}
+
+async function registrarSkillAnalizada() {
+  if (!pendingSkill) return;
+  const item = pendingSkill;
+  const approved = confirm(
+    "¿Aprobás registrar " + (item.summary.name || item.summary.id) + " v" + item.summary.version +
+    " en el catálogo de Katia?\n\nSe fijará al commit " + item.commitSha + "."
+  );
+  if (!approved) return;
+  try {
+    await requestProtectedSkills(KATIA_SKILLS_API, "/skills/register", {
+      owner: item.owner,
+      repo: item.repo,
+      sourceRef: item.sourceRef,
+      commitSha: item.commitSha,
+      packageSha256: item.packageSha256,
+      approved: true
+    });
+    pendingSkill = null;
+    byId("registerSkillBtn").disabled = true;
+    showStatus("storeStatus", "Versión registrada en el catálogo.");
+    await renderStore();
+  } catch (error) {
+    alert("No se pudo registrar: " + error.message);
+  }
+}
+
+window.katiaCreateChatIdentityProof = input => createChatIdentityProof(KATIA_SKILLS_API, input);
+window.katiaSkillsUI = { renderSkills, renderStore, paintSkills, paintStore };
+window.refrescarSkills = refrescarSkills;
+window.refrescarStore = refrescarStore;
+window.cambiarEstadoSkill = cambiarEstadoSkill;
+window.instalarSkill = instalarSkill;
+window.analizarSkillGitHub = analizarSkillGitHub;
+window.registrarSkillAnalizada = registrarSkillAnalizada;
 </script>
 </body>
  </html>

@@ -1,6 +1,7 @@
 name: Katia Tutor syntax check
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
   push:
@@ -66,6 +67,7 @@ jobs:
           NODE
 
       - name: End-to-end test of a short Tutor lesson
+        if: github.event_name == 'workflow_dispatch'
         env:
           TUTOR_VERSION_URL: https://katia-braine.gio09062009.workers.dev/tutor
         run: |

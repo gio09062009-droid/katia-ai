@@ -1,0 +1,24 @@
+{
+  "manifest_version": "1.0",
+  "id": "hello-world",
+  "name": "Hello World",
+  "version": "1.0.0",
+  "description": "A tiny example Skill that demonstrates the declarative Katia Skill manifest format.",
+  "publisher": {
+    "name": "Katia Examples",
+    "repository": "gio09062009-droid/katia-ai"
+  },
+  "categories": [
+    "examples",
+    "education"
+  ],
+  "capabilities": [
+    "conversation.explain"
+  ],
+  "permissions": [],
+  "entrypoint": {
+    "type": "declarative",
+    "path": "instructions/skill.md"
+  },
+  "license": "MIT"
+}

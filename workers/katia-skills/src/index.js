@@ -1,0 +1,343 @@
+import { analyzeSkillPackage } from "./analyzer.js";
+import { readSkillRepository } from "./github.js";
+import { registerSkillVersion } from "./registry.js";
+import { storeSkillPackage } from "./storage.js";
+import { verifyKatiaIdentity } from "./identity.js";
+import { createDeviceChallenge, verifyDeviceProof } from "./device-identity.js";
+import {
+  listUserSkills,
+  recordApprovedInstall,
+  setUserSkillStatus,
+  listSkillVersions,
+  getSkillVersion
+} from "./registry.js";
+
+const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
+const MAX_REQUEST_BYTES = 8 * 1024;
+
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...JSON_HEADERS, ...extraHeaders }
+  });
+}
+
+async function constantTimeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
+  const encoder = new TextEncoder();
+  const [left, right] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(a)),
+    crypto.subtle.digest("SHA-256", encoder.encode(b))
+  ]);
+  const x = new Uint8Array(left);
+  const y = new Uint8Array(right);
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
+
+function corsHeaders(request, env) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return {};
+  const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean);
+  if (!allowed.includes(origin)) return null;
+  return {
+    "access-control-allow-origin": origin,
+    "access-control-allow-methods": "GET, POST, OPTIONS",
+    "access-control-allow-headers": "Authorization, Content-Type, X-Katia-Identity",
+    "vary": "Origin"
+  };
+}
+
+async function readJsonBody(request) {
+  const contentLength = request.headers.get("Content-Length");
+  if (contentLength !== null) {
+    if (!/^\d+$/.test(contentLength)) {
+      return { error: json({ ok: false, error: "Longitud de solicitud inválida." }, 400) };
+    }
+    if (Number(contentLength) > MAX_REQUEST_BYTES) {
+      return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+    }
+  }
+
+  const reader = request.body?.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > MAX_REQUEST_BYTES) {
+          await reader.cancel();
+          return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+        }
+        chunks.push(value);
+      }
+    }
+  } catch {
+    return { error: json({ ok: false, error: "No se pudo leer la solicitud." }, 400) };
+  } finally {
+    reader?.releaseLock();
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  let rawBody;
+  try {
+    rawBody = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return { error: json({ ok: false, error: "El cuerpo no contiene UTF-8 válido." }, 400) };
+  }
+  try {
+    return { value: JSON.parse(rawBody) };
+  } catch {
+    return { error: json({ ok: false, error: "JSON inválido." }, 400) };
+  }
+}
+
+export default {
+  async fetch(request, env) {
+    const cors = corsHeaders(request, env);
+    if (cors === null) return json({ ok: false, error: "Origen no autorizado." }, 403);
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: cors || {} });
+    }
+
+    const url = new URL(request.url);
+    if (request.method === "GET" && url.pathname === "/health") {
+      return json({ ok: true, service: "katia-skills", version: "0.2.0", status: env.DB ? "d1-connected" : "d1-missing" }, 200, cors || {});
+    }
+
+    const allowedRoute =
+      (request.method === "POST" && [
+        "/v1/skills/analyze",
+        "/v1/skills/register",
+        "/v1/skills/install",
+        "/v1/skills/status",
+        "/v1/identity/challenge",
+        "/v1/identity/verify"
+      ].includes(url.pathname)) ||
+      (request.method === "GET" && ["/v1/skills/installed", "/v1/skills/catalog"].includes(url.pathname)) ||
+      (request.method === "GET" && /^\/v1\/skills\/package\/[a-z0-9][a-z0-9._-]{2,63}\/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(url.pathname));
+    if (!allowedRoute) {
+      return json({ ok: false, error: "Ruta no encontrada." }, 404, cors || {});
+    }
+
+    if (!env.SKILLS_API_TOKEN) {
+      return json({ ok: false, error: "El servicio todavía no está configurado." }, 503, cors || {});
+    }
+    const authorization = request.headers.get("Authorization") || "";
+    const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+    if (!(await constantTimeEqual(token, env.SKILLS_API_TOKEN))) {
+      return json({ ok: false, error: "No autorizado." }, 401, cors || {});
+    }
+
+    if (request.method === "POST" &&
+        ["/v1/identity/challenge", "/v1/identity/verify"].includes(url.pathname)) {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      const parsed = await readJsonBody(request);
+      if (parsed.error) return parsed.error;
+      try {
+        if (url.pathname === "/v1/identity/challenge") {
+          const challenge = await createDeviceChallenge(env.DB, parsed.value?.publicKeySpki, parsed.value?.contextHash);
+          return json({ ok: true, ...challenge }, 201, cors || {});
+        }
+        const identity = await verifyDeviceProof(env.DB, parsed.value);
+        return json({ ok: true, subject: identity.subject }, 200, cors || {});
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "No se pudo verificar el dispositivo.";
+        const isChallenge = url.pathname === "/v1/identity/challenge";
+        const status = isChallenge || error instanceof TypeError ||
+          /inválid|inválida|tamaño|formato/i.test(message) ? 400 : 401;
+        return json({ ok: false, error: message }, status, cors || {});
+      }
+    }
+
+    if (request.method === "POST" && url.pathname === "/v1/skills/register") {
+      if (!env.DB) {
+        return json({ ok: false, error: "El registro requiere la base D1 configurada." }, 503, cors || {});
+      }
+      const parsed = await readJsonBody(request);
+      if (parsed.error) return parsed.error;
+      const input = parsed.value;
+      if (!input || typeof input !== "object" || Array.isArray(input) || input.approved !== true) {
+        return json({ ok: false, error: "El registro requiere aprobación explícita." }, 400, cors || {});
+      }
+      if (typeof input.commitSha !== "string" || !/^[a-f0-9]{40}$/i.test(input.commitSha) ||
+          typeof input.packageSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(input.packageSha256)) {
+        return json({ ok: false, error: "Commit o huella del paquete inválidos." }, 400, cors || {});
+      }
+      try {
+        const repository = await readSkillRepository({
+          owner: input.owner,
+          repo: input.repo,
+          ref: input.commitSha
+        }, env);
+        if (repository.repository.commitSha.toLowerCase() !== input.commitSha.toLowerCase() ||
+            repository.packageSha256.toLowerCase() !== input.packageSha256.toLowerCase()) {
+          return json({ ok: false, error: "El paquete ya no coincide con el análisis aprobado." }, 409, cors || {});
+        }
+
+        const analysis = analyzeSkillPackage(repository.files);
+        if (!analysis.ok || analysis.status !== "valid") {
+          return json({
+            ok: false,
+            error: "El paquete requiere revisión adicional o no supera la validación.",
+            analysis
+          }, 422, cors || {});
+        }
+
+        const manifestFile = repository.files.find(file => file.path === "katia.skill.json");
+        const manifest = JSON.parse(manifestFile.content);
+        // R2 is optional in the no-billing development track. The immutable
+        // Git commit + package digest in D1 remain the authoritative source.
+        const stored = env.SKILLS_BUCKET
+          ? await storeSkillPackage(env.SKILLS_BUCKET, {
+              skillId: analysis.summary.id,
+              version: analysis.summary.version,
+              packageSha256: repository.packageSha256,
+              files: repository.files
+            })
+          : null;
+        const registration = await registerSkillVersion(env.DB, {
+          skillId: analysis.summary.id,
+          version: analysis.summary.version,
+          sourceOwner: repository.repository.owner,
+          sourceRepo: repository.repository.repo,
+          sourceRef: typeof input.sourceRef === "string" ? input.sourceRef.slice(0, 120) : input.commitSha,
+          sourceCommitSha: repository.repository.commitSha,
+          packageSha256: repository.packageSha256,
+          packageR2Key: stored?.key ?? null,
+          manifest
+        });
+        return json({
+          ok: true,
+          registered: true,
+          created: registration.created,
+          skillId: registration.skillId,
+          version: registration.version,
+          packageR2Key: stored?.key ?? null,
+          packageStoredIn: stored ? "r2" : "github-pinned-commit",
+          packageSha256: repository.packageSha256
+        }, 201, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo registrar la Skill." }, 400, cors || {});
+      }
+    }
+
+    if (request.method === "GET" && url.pathname === "/v1/skills/catalog") {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      try {
+        const skills = await listSkillVersions(env.DB);
+        return json({ ok: true, count: skills.length, skills }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo leer el catálogo." }, 500, cors || {});
+      }
+    }
+
+    const packageMatch = url.pathname.match(/^\/v1\/skills\/package\/([a-z0-9][a-z0-9._-]{2,63})\/((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?)$/);
+    if (request.method === "GET" && packageMatch) {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      try {
+        const record = await getSkillVersion(env.DB, packageMatch[1], packageMatch[2]);
+        if (!record) return json({ ok: false, error: "La versión solicitada no está registrada." }, 404, cors || {});
+        const repository = await readSkillRepository({
+          owner: record.source.owner,
+          repo: record.source.repo,
+          ref: record.source.commitSha
+        }, env);
+        if (repository.repository.commitSha.toLowerCase() !== record.source.commitSha.toLowerCase() ||
+            repository.packageSha256.toLowerCase() !== record.packageSha256.toLowerCase()) {
+          return json({ ok: false, error: "La huella del paquete no coincide con el registro inmutable." }, 409, cors || {});
+        }
+        const analysis = analyzeSkillPackage(repository.files);
+        if (!analysis.ok || analysis.status !== "valid" ||
+            analysis.summary.id !== record.skillId || analysis.summary.version !== record.version) {
+          return json({ ok: false, error: "El paquete no supera la validación al recuperarse." }, 422, cors || {});
+        }
+        return json({
+          ok: true,
+          skillId: record.skillId,
+          version: record.version,
+          packageSha256: repository.packageSha256,
+          sourceCommitSha: repository.repository.commitSha,
+          files: repository.files
+        }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo recuperar el paquete." }, 502, cors || {});
+      }
+    }
+
+    if (url.pathname === "/v1/skills/installed" ||
+        url.pathname === "/v1/skills/install" ||
+        url.pathname === "/v1/skills/status") {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      const userId = await verifyKatiaIdentity(request, env);
+      if (!userId) return json({ ok: false, error: "Falta una identidad firmada y vigente de Katia Brain." }, 401, cors || {});
+
+      try {
+        if (request.method === "GET") {
+          const skills = await listUserSkills(env.DB, userId);
+          return json({ ok: true, skills }, 200, cors || {});
+        }
+
+        const parsed = await readJsonBody(request);
+        if (parsed.error) return parsed.error;
+        const input = parsed.value;
+        if (!input || typeof input !== "object" || Array.isArray(input)) {
+          return json({ ok: false, error: "El cuerpo debe ser un objeto JSON." }, 400, cors || {});
+        }
+
+        if (url.pathname === "/v1/skills/install") {
+          const result = await recordApprovedInstall(env.DB, {
+            authenticatedUserId: userId,
+            skillId: input.skillId,
+            version: input.version,
+            approvalEventId: input.approvalEventId,
+            installedEventId: input.installedEventId,
+            approved: input.approved,
+            requestedPermissions: input.requestedPermissions,
+            grantedPermissions: input.grantedPermissions
+          });
+          return json({ ok: true, ...result }, 201, cors || {});
+        }
+
+        const result = await setUserSkillStatus(env.DB, {
+          authenticatedUserId: userId,
+          skillId: input.skillId,
+          status: input.status,
+          eventId: input.eventId
+        });
+        return json({ ok: true, ...result }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo completar la operación." }, 400, cors || {});
+      }
+    }
+
+    const parsed = await readJsonBody(request);
+    if (parsed.error) return parsed.error;
+    try {
+      const repository = await readSkillRepository(parsed.value, env);
+      const analysis = analyzeSkillPackage(repository.files);
+      return json({
+        ok: analysis.ok,
+        repository: repository.repository,
+        package: {
+          sha256: repository.packageSha256,
+          fileCount: repository.fileCount,
+          totalBytes: repository.totalBytes
+        },
+        analysis
+      }, analysis.ok ? 200 : 422, cors || {});
+    } catch (error) {
+      return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo analizar el repositorio." }, 400, cors || {});
+    }
+  }
+};
