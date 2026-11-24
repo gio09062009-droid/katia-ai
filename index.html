@@ -847,15 +847,18 @@ async function sincronizarMemoriasRemotas(){
    }else throw error;
   }
   let records=Array.isArray(data.memories)?data.memories:[];
-  if(records.length===0&&memorias.length){
-   for(const content of memorias){
+  const localCopy=Array.isArray(memorias)?memorias.slice():[];
+  const migrated=localStorage.getItem("katia_memory_migration_v1")==="done";
+  if(!migrated&&localCopy.length){
+   const known=new Set(records.map(item=>item.content));
+   for(const content of localCopy){
+    if(known.has(content))continue;
     const saved=await memoryApi("/v1/memories",{method:"POST",body:JSON.stringify({content,category:"legacy_import"})});
-    if(saved.memory)records.push(saved.memory);
+    if(saved.memory){records.push(saved.memory);known.add(content);}
    }
-  }else if(records.length){
-   memorias=records.map(item=>item.content);
-   guardar(STORAGE.memories,memorias);
+   localStorage.setItem("katia_memory_migration_v1","done");
   }
+  memorias=records.map(item=>item.content);
   remoteMemoryRecords=records;
   guardar(STORAGE.memories,memorias);
   actualizarPerfil();
@@ -1352,6 +1355,7 @@ async function guardarMemoria(){
  await memorySyncPromise;
  memorias.push(texto);
  remoteMemoryRecords.push(null);
+ const newMemoryIndex=memorias.length-1;
  guardar(STORAGE.memories,memorias);
  input.value="";
  mostrarMemorias();
@@ -1359,7 +1363,7 @@ async function guardarMemoria(){
  try{
   if(!localStorage.getItem(STORAGE.memoryToken))await crearSesionMemoria();
   const saved=await memoryApi("/v1/memories",{method:"POST",body:JSON.stringify({content:texto,category:"general"})});
-  remoteMemoryRecords[remoteMemoryRecords.length-1]=saved.memory||null;
+  remoteMemoryRecords[newMemoryIndex]=saved.memory||null;
  }catch(error){
   console.warn("El recuerdo quedó guardado localmente; no se pudo sincronizar.",error);
  }
