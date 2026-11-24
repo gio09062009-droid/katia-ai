@@ -90,7 +90,7 @@ export default {
         "/v1/skills/status"
       ].includes(url.pathname)) ||
       (request.method === "GET" && ["/v1/skills/installed", "/v1/skills/catalog"].includes(url.pathname)) ||
-      (request.method === "GET" && /^\\/v1\\/skills\\/package\\/[a-z0-9][a-z0-9._-]{2,63}\\/(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(url.pathname));
+      (request.method === "GET" && /^\/v1\/skills\/package\/[a-z0-9][a-z0-9._-]{2,63}\/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(url.pathname));
     if (!allowedRoute) {
       return json({ ok: false, error: "Ruta no encontrada." }, 404, cors || {});
     }
@@ -186,7 +186,7 @@ export default {
       }
     }
 
-    const packageMatch = url.pathname.match(/^\\/v1\\/skills\\/package\\/([a-z0-9][a-z0-9._-]{2,63})\\/((?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?)$/);
+    const packageMatch = url.pathname.match(/^\/v1\/skills\/package\/([a-z0-9][a-z0-9._-]{2,63})\/((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?)$/);
     if (request.method === "GET" && packageMatch) {
       if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
       try {
