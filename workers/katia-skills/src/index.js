@@ -153,7 +153,9 @@ export default {
         return json({ ok: true, subject: identity.subject }, 200, cors || {});
       } catch (error) {
         const message = error instanceof Error ? error.message : "No se pudo verificar el dispositivo.";
-        const status = /inválid|inválida|tamaño/i.test(message) ? 400 : 401;
+        const isChallenge = url.pathname === "/v1/identity/challenge";
+        const status = isChallenge || error instanceof TypeError ||
+          /inválid|inválida|tamaño|formato/i.test(message) ? 400 : 401;
         return json({ ok: false, error: message }, status, cors || {});
       }
     }
