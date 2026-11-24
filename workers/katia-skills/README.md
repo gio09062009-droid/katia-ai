@@ -60,3 +60,8 @@ Do not place either secret in `index.html`, browser JavaScript, local storage, o
 - Repository content is untrusted data; no package code is evaluated or executed.
 - Registration pins the exact Git commit and SHA-256 package digest.
 - No production Worker deployment or frontend activation has occurred.
+
+
+## Device identity proposal
+
+A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). This is an RFC only: no device keys are generated, no device identifiers are collected, and no identity endpoint is enabled. Implementation is gated on agreeing to the per-browser persistence and recovery tradeoff, followed by security tests.
