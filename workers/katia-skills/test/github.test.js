@@ -25,3 +25,20 @@ test("rejects unsafe Git references", () => {
 test("rejects non-object input", () => {
   assert.throws(() => validateRepositoryInput("octocat/hello"));
 });
+
+import { hashSkillFiles } from "../src/github.js";
+
+test("package digest is independent of file ordering", async () => {
+  const a = [
+    { path: "z.md", content: "last" },
+    { path: "a.md", content: "first" }
+  ];
+  const b = [...a].reverse();
+  assert.equal(await hashSkillFiles(a), await hashSkillFiles(b));
+});
+
+test("package digest changes when file content changes", async () => {
+  const a = [{ path: "a.md", content: "first" }];
+  const b = [{ path: "a.md", content: "changed" }];
+  assert.notEqual(await hashSkillFiles(a), await hashSkillFiles(b));
+});
