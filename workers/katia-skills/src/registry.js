@@ -181,15 +181,20 @@ export async function setUserSkillStatus(db, input) {
     throw new TypeError("Skill o estado inválidos.");
   }
 
-  const update = await db.prepare(
-    "UPDATE user_skill_installs SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE user_id = ? AND skill_id = ?"
-  ).bind(status, userId, skillId).run();
-  if (!update.meta || update.meta.changes !== 1) throw new Error("La Skill no está instalada para este usuario.");
+  const installed = await db.prepare(
+    "SELECT 1 AS installed FROM user_skill_installs WHERE user_id = ? AND skill_id = ?"
+  ).bind(userId, skillId).first();
+  if (!installed) throw new Error("La Skill no está instalada para este usuario.");
 
   const action = status === "enabled" ? "enabled" : "disabled";
-  await db.prepare(
-    "INSERT INTO skill_audit_events (event_id, user_id, action, skill_id, details_json) VALUES (?, ?, ?, ?, ?)"
-  ).bind(eventId, userId, action, skillId, JSON.stringify({ status })).run();
+  await db.batch([
+    db.prepare(
+      "UPDATE user_skill_installs SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE user_id = ? AND skill_id = ?"
+    ).bind(status, userId, skillId),
+    db.prepare(
+      "INSERT INTO skill_audit_events (event_id, user_id, action, skill_id, details_json) VALUES (?, ?, ?, ?, ?)"
+    ).bind(eventId, userId, action, skillId, JSON.stringify({ status }))
+  ]);
 
   return { skillId, status };
 }
