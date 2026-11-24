@@ -33,6 +33,7 @@ function db() {
     created_at: "2026-11-24T00:00:00Z"
   };
   return {
+    async batch() { return []; },
     prepare(sql) {
       return {
         values: [],
@@ -137,6 +138,7 @@ test("package endpoint re-fetches the pinned commit and verifies its digest", as
 
 test("package endpoint rejects unregistered versions", async () => {
   const database = {
+    async batch() { return []; },
     prepare() {
       return { bind() { return this; }, async first() { return null; } };
     }
