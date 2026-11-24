@@ -96,7 +96,7 @@ function inspectText(path, content) {
   const warnings = [];
   const lower = content.toLowerCase();
   const patterns = [
-    ["Instrucción para ignorar reglas o políticas", /ignore (all |previous |prior )?(instructions|rules|policies)|ignora (todas las |las )?(instrucciones|reglas)/],
+    ["Instrucción para ignorar reglas o políticas", /ignore (all )?(previous |prior )?(instructions|rules|policies)|ignora (todas las |las )?(instrucciones|reglas)/],
     ["Solicitud de secretos o credenciales", /(api[_ -]?key|password|secret|token).{0,40}(send|share|reveal|exfiltrat|envia|compartir|revelar)/],
     ["Intento de descargar o ejecutar código", /(curl|wget|powershell|bash|npm install|pip install).{0,60}(https?:|exec|run|install)/],
     ["Solicitud de acciones externas automáticas", /(send messages automatically|delete files automatically|envía mensajes automáticamente|borra archivos automáticamente)/]
