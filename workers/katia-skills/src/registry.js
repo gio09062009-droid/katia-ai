@@ -85,6 +85,53 @@ export async function registerSkillVersion(db, input) {
   return { created: true, skillId, version };
 }
 
+
+/** Returns the registered, immutable catalog metadata for Katia Brain. */
+export async function listSkillVersions(db) {
+  requireDatabase(db);
+  const result = await db.prepare(
+    "SELECT skill_id, version, source_owner, source_repo, source_ref, source_commit_sha, manifest_json, package_sha256, created_at FROM skill_versions ORDER BY skill_id ASC, created_at DESC"
+  ).all();
+  return (result.results || []).map(row => ({
+    skillId: row.skill_id,
+    version: row.version,
+    source: {
+      owner: row.source_owner,
+      repo: row.source_repo,
+      ref: row.source_ref,
+      commitSha: row.source_commit_sha
+    },
+    manifest: JSON.parse(row.manifest_json),
+    packageSha256: row.package_sha256,
+    registeredAt: row.created_at
+  }));
+}
+
+/** Looks up one exact immutable catalog version. */
+export async function getSkillVersion(db, skillId, version) {
+  requireDatabase(db);
+  const id = requireString(skillId, "ID de Skill", 64);
+  const ver = requireString(version, "Versión", 64);
+  if (!ID_PATTERN.test(id) || !VERSION_PATTERN.test(ver)) throw new TypeError("Skill o versión inválidos.");
+  const row = await db.prepare(
+    "SELECT skill_id, version, source_owner, source_repo, source_ref, source_commit_sha, manifest_json, package_sha256, created_at FROM skill_versions WHERE skill_id = ? AND version = ?"
+  ).bind(id, ver).first();
+  if (!row) return null;
+  return {
+    skillId: row.skill_id,
+    version: row.version,
+    source: {
+      owner: row.source_owner,
+      repo: row.source_repo,
+      ref: row.source_ref,
+      commitSha: row.source_commit_sha
+    },
+    manifest: JSON.parse(row.manifest_json),
+    packageSha256: row.package_sha256,
+    registeredAt: row.created_at
+  };
+}
+
 /**
  * Records a user-approved installation. The caller MUST supply the subject
  * established by katia-braine authentication, never a browser-provided user ID.
