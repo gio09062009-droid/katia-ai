@@ -1,5 +1,10 @@
 import { analyzeSkillPackage } from "./analyzer.js";
 import { readSkillRepository } from "./github.js";
+import {
+  listUserSkills,
+  recordApprovedInstall,
+  setUserSkillStatus
+} from "./registry.js";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 const MAX_REQUEST_BYTES = 8 * 1024;
@@ -33,9 +38,36 @@ function corsHeaders(request, env) {
   return {
     "access-control-allow-origin": origin,
     "access-control-allow-methods": "GET, POST, OPTIONS",
-    "access-control-allow-headers": "Authorization, Content-Type",
+    "access-control-allow-headers": "Authorization, Content-Type, X-Katia-User-Id",
     "vary": "Origin"
   };
+}
+
+function trustedUserId(request) {
+  const value = request.headers.get("X-Katia-User-Id") || "";
+  if (!value || value.length > 160 || /[\u0000-\u001f\u007f]/.test(value)) return null;
+  return value;
+}
+
+async function readJsonBody(request) {
+  const declaredLength = Number(request.headers.get("Content-Length") || 0);
+  if (declaredLength > MAX_REQUEST_BYTES) {
+    return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+  }
+  let rawBody;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return { error: json({ ok: false, error: "No se pudo leer la solicitud." }, 400) };
+  }
+  if (new TextEncoder().encode(rawBody).byteLength > MAX_REQUEST_BYTES) {
+    return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+  }
+  try {
+    return { value: JSON.parse(rawBody) };
+  } catch {
+    return { error: json({ ok: false, error: "JSON inválido." }, 400) };
+  }
 }
 
 export default {
@@ -48,45 +80,79 @@ export default {
 
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/health") {
-      return json({ ok: true, service: "katia-skills", version: "0.1.0", status: "foundation" }, 200, cors || {});
+      return json({ ok: true, service: "katia-skills", version: "0.2.0", status: "d1-connected" }, 200, cors || {});
     }
-    if (request.method !== "POST" || url.pathname !== "/v1/skills/analyze") {
+
+    const allowedRoute =
+      (request.method === "POST" && [
+        "/v1/skills/analyze",
+        "/v1/skills/install",
+        "/v1/skills/status"
+      ].includes(url.pathname)) ||
+      (request.method === "GET" && url.pathname === "/v1/skills/installed");
+    if (!allowedRoute) {
       return json({ ok: false, error: "Ruta no encontrada." }, 404, cors || {});
     }
+
     if (!env.SKILLS_API_TOKEN) {
       return json({ ok: false, error: "El servicio todavía no está configurado." }, 503, cors || {});
     }
-
     const authorization = request.headers.get("Authorization") || "";
     const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
     if (!(await constantTimeEqual(token, env.SKILLS_API_TOKEN))) {
       return json({ ok: false, error: "No autorizado." }, 401, cors || {});
     }
 
-    const declaredLength = Number(request.headers.get("Content-Length") || 0);
-    if (declaredLength > MAX_REQUEST_BYTES) {
-      return json({ ok: false, error: "Solicitud demasiado grande." }, 413, cors || {});
+    if (url.pathname === "/v1/skills/installed" ||
+        url.pathname === "/v1/skills/install" ||
+        url.pathname === "/v1/skills/status") {
+      if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
+      const userId = trustedUserId(request);
+      if (!userId) return json({ ok: false, error: "Falta la identidad autenticada enviada por Katia Brain." }, 401, cors || {});
+
+      try {
+        if (request.method === "GET") {
+          const skills = await listUserSkills(env.DB, userId);
+          return json({ ok: true, skills }, 200, cors || {});
+        }
+
+        const parsed = await readJsonBody(request);
+        if (parsed.error) return new Response(parsed.error.body, parsed.error);
+        const input = parsed.value;
+        if (!input || typeof input !== "object" || Array.isArray(input)) {
+          return json({ ok: false, error: "El cuerpo debe ser un objeto JSON." }, 400, cors || {});
+        }
+
+        if (url.pathname === "/v1/skills/install") {
+          const result = await recordApprovedInstall(env.DB, {
+            authenticatedUserId: userId,
+            skillId: input.skillId,
+            version: input.version,
+            approvalEventId: input.approvalEventId,
+            installedEventId: input.installedEventId,
+            approved: input.approved,
+            requestedPermissions: input.requestedPermissions,
+            grantedPermissions: input.grantedPermissions
+          });
+          return json({ ok: true, ...result }, 201, cors || {});
+        }
+
+        const result = await setUserSkillStatus(env.DB, {
+          authenticatedUserId: userId,
+          skillId: input.skillId,
+          status: input.status,
+          eventId: input.eventId
+        });
+        return json({ ok: true, ...result }, 200, cors || {});
+      } catch (error) {
+        return json({ ok: false, error: error instanceof Error ? error.message : "No se pudo completar la operación." }, 400, cors || {});
+      }
     }
 
-    let rawBody;
+    const parsed = await readJsonBody(request);
+    if (parsed.error) return new Response(parsed.error.body, parsed.error);
     try {
-      rawBody = await request.text();
-    } catch {
-      return json({ ok: false, error: "No se pudo leer la solicitud." }, 400, cors || {});
-    }
-    if (new TextEncoder().encode(rawBody).byteLength > MAX_REQUEST_BYTES) {
-      return json({ ok: false, error: "Solicitud demasiado grande." }, 413, cors || {});
-    }
-
-    let input;
-    try {
-      input = JSON.parse(rawBody);
-    } catch {
-      return json({ ok: false, error: "JSON inválido." }, 400, cors || {});
-    }
-
-    try {
-      const repository = await readSkillRepository(input, env);
+      const repository = await readSkillRepository(parsed.value, env);
       const analysis = analyzeSkillPackage(repository.files);
       return json({
         ok: analysis.ok,
