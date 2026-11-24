@@ -38,7 +38,7 @@ The Skills API token and HMAC assertions must never be returned to browser JavaS
 - `POST /skills/status`
 
 ## Deployment state (2026-11-24)
-- Brain version 33 is staged in Cloudflare with the proxy and runtime modules; it is not deployed to production.
+- Brain version 34 is staged in Cloudflare with the proxy and runtime modules; it is not deployed to production.
 - Skills Worker version 2 is staged; version 1 is currently deployed.
 - D1 migration 0002 is applied and both device identity tables are present.
 - The four server-side secret bindings are not configured yet. Activation and publication are blocked until they are added and end-to-end checks pass.
