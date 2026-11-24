@@ -1094,6 +1094,18 @@ async function llamarWorker(options = {}){
  if (instruction && typeof instruction === "string" && instruction.trim()) body.instruction = instruction.slice(0, 12000);
  if (documentText && typeof documentText === "string" && documentText.trim()) body.documentText = documentText.slice(0, 50000);
 
+ if (typeof window.katiaCreateChatIdentityProof === "function") {
+  try {
+   const deviceProof = await window.katiaCreateChatIdentityProof({
+    messages: body.messages,
+    task: body.task
+   });
+   if (deviceProof) body.deviceProof = deviceProof;
+  } catch (error) {
+   console.warn("Katia Skills no está disponible para este mensaje; el chat continuará sin Skills.", error?.message || error);
+  }
+ }
+
  const controller = new AbortController();
  const timeoutId = setTimeout(() => controller.abort(), 45000);
 
@@ -1754,7 +1766,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 import {
   getSkillsCatalog,
   requestProtectedSkills,
-  analyzeSkillRepository
+  analyzeSkillRepository,
+  createChatIdentityProof
 } from "./src/device-identity-client.js";
 
 const KATIA_SKILLS_API = "https://katia-braine.gio09062009.workers.dev/";
@@ -1980,6 +1993,7 @@ async function registrarSkillAnalizada() {
   }
 }
 
+window.katiaCreateChatIdentityProof = input => createChatIdentityProof(KATIA_SKILLS_API, input);
 window.katiaSkillsUI = { renderSkills, renderStore, paintSkills, paintStore };
 window.refrescarSkills = refrescarSkills;
 window.refrescarStore = refrescarStore;
