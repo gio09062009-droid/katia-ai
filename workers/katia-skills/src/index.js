@@ -2,6 +2,7 @@ import { analyzeSkillPackage } from "./analyzer.js";
 import { readSkillRepository } from "./github.js";
 import { registerSkillVersion } from "./registry.js";
 import { storeSkillPackage } from "./storage.js";
+import { verifyKatiaIdentity } from "./identity.js";
 import {
   listUserSkills,
   recordApprovedInstall,
@@ -40,15 +41,9 @@ function corsHeaders(request, env) {
   return {
     "access-control-allow-origin": origin,
     "access-control-allow-methods": "GET, POST, OPTIONS",
-    "access-control-allow-headers": "Authorization, Content-Type, X-Katia-User-Id",
+    "access-control-allow-headers": "Authorization, Content-Type, X-Katia-Identity",
     "vary": "Origin"
   };
-}
-
-function trustedUserId(request) {
-  const value = request.headers.get("X-Katia-User-Id") || "";
-  if (!value || value.length > 160 || /[\u0000-\u001f\u007f]/.test(value)) return null;
-  return value;
 }
 
 async function readJsonBody(request) {
@@ -182,8 +177,8 @@ export default {
         url.pathname === "/v1/skills/install" ||
         url.pathname === "/v1/skills/status") {
       if (!env.DB) return json({ ok: false, error: "La base D1 no está vinculada." }, 503, cors || {});
-      const userId = trustedUserId(request);
-      if (!userId) return json({ ok: false, error: "Falta la identidad autenticada enviada por Katia Brain." }, 401, cors || {});
+      const userId = await verifyKatiaIdentity(request, env);
+      if (!userId) return json({ ok: false, error: "Falta una identidad firmada y vigente de Katia Brain." }, 401, cors || {});
 
       try {
         if (request.method === "GET") {
