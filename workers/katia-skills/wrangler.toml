@@ -14,6 +14,7 @@ migrations_dir = "migrations"
 
 # Configure secrets before deployment:
 # npx wrangler secret put SKILLS_API_TOKEN
+# npx wrangler secret put KATIA_IDENTITY_SECRET (only after Brain identity issuance is implemented)
 # Optional, for higher GitHub API rate limits:
 # npx wrangler secret put GITHUB_TOKEN
 
