@@ -49,18 +49,50 @@ function corsHeaders(request, env) {
 }
 
 async function readJsonBody(request) {
-  const declaredLength = Number(request.headers.get("Content-Length") || 0);
-  if (declaredLength > MAX_REQUEST_BYTES) {
-    return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+  const contentLength = request.headers.get("Content-Length");
+  if (contentLength !== null) {
+    if (!/^\\d+$/.test(contentLength)) {
+      return { error: json({ ok: false, error: "Longitud de solicitud inválida." }, 400) };
+    }
+    if (Number(contentLength) > MAX_REQUEST_BYTES) {
+      return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+    }
   }
-  let rawBody;
+
+  const reader = request.body?.getReader();
+  const chunks = [];
+  let totalBytes = 0;
   try {
-    rawBody = await request.text();
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > MAX_REQUEST_BYTES) {
+          await reader.cancel();
+          return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+        }
+        chunks.push(value);
+      }
+    }
   } catch {
     return { error: json({ ok: false, error: "No se pudo leer la solicitud." }, 400) };
+  } finally {
+    reader?.releaseLock();
   }
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_REQUEST_BYTES) {
-    return { error: json({ ok: false, error: "Solicitud demasiado grande." }, 413) };
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  let rawBody;
+  try {
+    rawBody = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return { error: json({ ok: false, error: "El cuerpo no contiene UTF-8 válido." }, 400) };
   }
   try {
     return { value: JSON.parse(rawBody) };
