@@ -201,7 +201,7 @@ test("lists only rows returned for the authenticated subject", async () => {
 });
 
 test("enables an installed Skill and writes an audit event", async () => {
-  const db = makeDb();
+  const db = makeDb({ firstResults: [{ installed: 1 }] });
   const result = await setUserSkillStatus(db, {
     authenticatedUserId: "trusted-user",
     skillId: "sample-skill",
@@ -210,12 +210,15 @@ test("enables an installed Skill and writes an audit event", async () => {
   });
   assert.deepEqual(result, { skillId: "sample-skill", status: "enabled" });
   assert.equal(db.calls.length, 2);
-  assert.match(db.calls[0].sql, /UPDATE user_skill_installs/);
-  assert.match(db.calls[1].sql, /INSERT INTO skill_audit_events/);
+  assert.match(db.calls[0].sql, /SELECT 1 AS installed/);
+  assert.equal(db.calls[1].kind, "batch");
+  assert.equal(db.calls[1].statements.length, 2);
+  assert.match(db.calls[1].statements[0].sql, /UPDATE user_skill_installs/);
+  assert.match(db.calls[1].statements[1].sql, /INSERT INTO skill_audit_events/);
 });
 
 test("does not enable a Skill that is not installed", async () => {
-  const db = makeDb({ updateChanges: 0 });
+  const db = makeDb();
   await assert.rejects(
     () => setUserSkillStatus(db, {
       authenticatedUserId: "trusted-user",
