@@ -9,6 +9,8 @@ All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origin
 - `GET /health` — reports whether the D1 binding is present.
 - `POST /v1/skills/analyze` — accepts `{"owner":"OWNER","repo":"REPOSITORY","ref":"main"}`, reads a bounded GitHub repository and validates its declarative Skill package. Returns an immutable commit SHA and package digest; does not install or execute the package.
 - `POST /v1/skills/register` — requires `approved: true`, the previously analyzed commit SHA and package digest. Re-fetches that exact commit, revalidates it, then registers immutable metadata in D1. If R2 is configured, it also stores a content-addressed package snapshot there; without R2, the exact GitHub commit and SHA-256 digest remain the package source. Packages with warnings or validation errors are not automatically registered.
+- `GET /v1/skills/catalog` — lists registered immutable Skill versions and their manifests for authenticated server-to-server callers.
+- `GET /v1/skills/package/:skillId/:version` — re-fetches the exact pinned Git commit, recalculates SHA-256, revalidates the declarative package, and returns its bounded text files only when the stored digest matches.
 - `GET /v1/skills/installed` — lists installs for the authenticated subject inside the signed `X-Katia-Identity` assertion.
 - `POST /v1/skills/install` — records an explicitly approved install. Requested permissions must exactly match the stored manifest; granted permissions must be a subset. New installs start disabled.
 - `POST /v1/skills/status` — enables or disables an installed Skill for the authenticated subject and records the change in the audit log.
@@ -47,7 +49,7 @@ Optionally configure a GitHub token to improve API rate limits:
 npx wrangler secret put GITHUB_TOKEN
 ```
 
-Do not place either secret in `index.html`, browser JavaScript, local storage, or the public repository. The future frontend must call Katia Brain; Brain will call this Worker server-to-server.
+Do not place either secret in `index.html`, browser JavaScript, local storage, or the public repository. The future frontend must call Katia Brain; Brain will call this Worker server-to-server. The catalog and package endpoints are internal-only and require the server API token; they do not expose a public browser API.
 
 ## Safety and limits
 
