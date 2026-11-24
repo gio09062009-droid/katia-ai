@@ -62,6 +62,10 @@ Do not place either secret in `index.html`, browser JavaScript, local storage, o
 - No production Worker deployment or frontend activation has occurred.
 
 
+## Runtime design proposal
+
+The secure Skill selection and runtime flow is documented in [`docs/SKILL_RUNTIME_DESIGN.md`](./docs/SKILL_RUNTIME_DESIGN.md). It is design-only: Brain does not yet select or inject Skills into live chats, and no Skill instruction is currently executed.
+
 ## Device identity proposal
 
 A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). This is an RFC only: no device keys are generated, no device identifiers are collected, and no identity endpoint is enabled. Implementation is gated on agreeing to the per-browser persistence and recovery tradeoff, followed by security tests.
