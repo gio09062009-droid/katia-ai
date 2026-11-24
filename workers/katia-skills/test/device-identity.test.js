@@ -131,3 +131,21 @@ test("rejects expired challenges", async () => {
     signature: b64url(new Uint8Array(signature))
   }, 2_000_000_301), /no existe|venció|corresponde/i);
 });
+
+test("rejects a proof when the requested action context changes", async () => {
+  const db = fakeDb();
+  const { pair, publicKeySpki } = await createKeyPair();
+  const originalContext = "d".repeat(64);
+  const alteredContext = "e".repeat(64);
+  const challenge = await createDeviceChallenge(db, publicKeySpki, originalContext, 2_000_000_000);
+  const signature = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, pair.privateKey,
+    new TextEncoder().encode(challenge.message)
+  );
+  await assert.rejects(() => verifyDeviceProof(db, {
+    challengeId: challenge.challengeId,
+    publicKeySpki,
+    contextHash: alteredContext,
+    signature: b64url(new Uint8Array(signature))
+  }, 2_000_000_010), /no existe|venció|corresponde/i);
+});
