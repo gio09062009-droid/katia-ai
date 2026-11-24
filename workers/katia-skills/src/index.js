@@ -52,7 +52,7 @@ function corsHeaders(request, env) {
 async function readJsonBody(request) {
   const contentLength = request.headers.get("Content-Length");
   if (contentLength !== null) {
-    if (!/^\\d+$/.test(contentLength)) {
+    if (!/^\d+$/.test(contentLength)) {
       return { error: json({ ok: false, error: "Longitud de solicitud inválida." }, 400) };
     }
     if (Number(contentLength) > MAX_REQUEST_BYTES) {
