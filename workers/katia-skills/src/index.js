@@ -80,7 +80,7 @@ export default {
 
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/health") {
-      return json({ ok: true, service: "katia-skills", version: "0.2.0", status: "d1-connected" }, 200, cors || {});
+      return json({ ok: true, service: "katia-skills", version: "0.2.0", status: env.DB ? "d1-connected" : "d1-missing" }, 200, cors || {});
     }
 
     const allowedRoute =
