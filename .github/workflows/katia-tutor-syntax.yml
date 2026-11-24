@@ -39,7 +39,7 @@ jobs:
 
       - name: Smoke test Tutor Worker version 31
         env:
-          TUTOR_VERSION_URL: https://be99b9a0-katia-braine.gio09062009.workers.dev/tutor
+          TUTOR_VERSION_URL: https://katia-braine.gio09062009.workers.dev/tutor
         run: |
           node --input-type=module <<'NODE'
           const origin = "https://gio09062009-droid.github.io";
@@ -67,7 +67,7 @@ jobs:
 
       - name: End-to-end test of a short Tutor lesson
         env:
-          TUTOR_VERSION_URL: https://be99b9a0-katia-braine.gio09062009.workers.dev/tutor
+          TUTOR_VERSION_URL: https://katia-braine.gio09062009.workers.dev/tutor
         run: |
           node --input-type=module <<'NODE'
           const endpoint = process.env.TUTOR_VERSION_URL;
