@@ -109,6 +109,19 @@ test("declared oversized request is rejected before JSON parsing", async () => {
   assert.equal(response.status, 413);
 });
 
+test("rejects malformed Content-Length values", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/analyze", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "Content-Type": "application/json",
+      "Content-Length": "12x"
+    },
+    body: JSON.stringify({ owner: "test", repo: "sample" })
+  }), env);
+  assert.equal(response.status, 400);
+});
+
 test("chunked oversized request is stopped while streaming without Content-Length", async () => {
   const body = new ReadableStream({
     start(controller) {
