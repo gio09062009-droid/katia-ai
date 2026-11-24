@@ -107,8 +107,8 @@ export default {
     }
 
     if (request.method === "POST" && url.pathname === "/v1/skills/register") {
-      if (!env.DB || !env.SKILLS_BUCKET) {
-        return json({ ok: false, error: "El registro requiere D1 y R2 configurados." }, 503, cors || {});
+      if (!env.DB) {
+        return json({ ok: false, error: "El registro requiere la base D1 configurada." }, 503, cors || {});
       }
       const parsed = await readJsonBody(request);
       if (parsed.error) return parsed.error;
@@ -142,12 +142,16 @@ export default {
 
         const manifestFile = repository.files.find(file => file.path === "katia.skill.json");
         const manifest = JSON.parse(manifestFile.content);
-        const stored = await storeSkillPackage(env.SKILLS_BUCKET, {
-          skillId: analysis.summary.id,
-          version: analysis.summary.version,
-          packageSha256: repository.packageSha256,
-          files: repository.files
-        });
+        // R2 is optional in the no-billing development track. The immutable
+        // Git commit + package digest in D1 remain the authoritative source.
+        const stored = env.SKILLS_BUCKET
+          ? await storeSkillPackage(env.SKILLS_BUCKET, {
+              skillId: analysis.summary.id,
+              version: analysis.summary.version,
+              packageSha256: repository.packageSha256,
+              files: repository.files
+            })
+          : null;
         const registration = await registerSkillVersion(env.DB, {
           skillId: analysis.summary.id,
           version: analysis.summary.version,
@@ -156,7 +160,7 @@ export default {
           sourceRef: typeof input.sourceRef === "string" ? input.sourceRef.slice(0, 120) : input.commitSha,
           sourceCommitSha: repository.repository.commitSha,
           packageSha256: repository.packageSha256,
-          packageR2Key: stored.key,
+          packageR2Key: stored?.key ?? null,
           manifest
         });
         return json({
@@ -165,7 +169,8 @@ export default {
           created: registration.created,
           skillId: registration.skillId,
           version: registration.version,
-          packageR2Key: stored.key,
+          packageR2Key: stored?.key ?? null,
+          packageStoredIn: stored ? "r2" : "github-pinned-commit",
           packageSha256: repository.packageSha256
         }, 201, cors || {});
       } catch (error) {
