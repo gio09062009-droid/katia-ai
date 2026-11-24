@@ -9,7 +9,7 @@ test("health endpoint reports the isolated service", async () => {
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.service, "katia-skills");
-  assert.equal(body.status, "foundation");
+  assert.equal(body.status, "d1-connected");
 });
 
 test("unknown routes return 404", async () => {
@@ -120,4 +120,118 @@ test("analyze endpoint returns a validated report pinned to a commit and digest"
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+
+function registryDb() {
+  const manifest = {
+    id: "sample-skill",
+    version: "1.0.0",
+    permissions: ["files.read"]
+  };
+  return {
+    async batch(statements) {
+      return statements.map(() => ({ success: true }));
+    },
+    prepare(sql) {
+      return {
+        sql,
+        values: [],
+        bind(...values) { this.values = values; return this; },
+        async first() {
+          if (this.sql.includes("SELECT manifest_json")) {
+            return { manifest_json: JSON.stringify(manifest) };
+          }
+          return null;
+        },
+        async all() {
+          return { results: [{
+            skill_id: "sample-skill",
+            version: "1.0.0",
+            status: "disabled",
+            requested_permissions_json: '["files.read"]',
+            granted_permissions_json: '["files.read"]',
+            installed_at: "2026-11-24T00:00:00Z",
+            updated_at: "2026-11-24T00:00:00Z",
+            manifest_json: JSON.stringify(manifest),
+            package_sha256: "b".repeat(64)
+          }] };
+        },
+        async run() {
+          return { success: true, meta: { changes: 1 } };
+        }
+      };
+    }
+  };
+}
+
+test("installed Skills endpoint requires the trusted Brain user identity", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/installed", {
+    headers: { Authorization: "Bearer test-secret" }
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 401);
+});
+
+test("installed Skills endpoint returns only the user-scoped registry", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/installed", {
+    headers: {
+      Authorization: "Bearer test-secret",
+      "X-Katia-User-Id": "authenticated-user-01"
+    }
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.skills.length, 1);
+  assert.equal(body.skills[0].skillId, "sample-skill");
+});
+
+test("install endpoint requires explicit approval and records disabled install", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/install", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "X-Katia-User-Id": "authenticated-user-01",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      skillId: "sample-skill",
+      version: "1.0.0",
+      approvalEventId: "approval-event-01",
+      installedEventId: "installed-event-01",
+      approved: true,
+      requestedPermissions: ["files.read"],
+      grantedPermissions: ["files.read"]
+    })
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 201);
+  const body = await response.json();
+  assert.equal(body.installed, true);
+  assert.equal(body.enabled, false);
+});
+
+test("status endpoint requires the authenticated Brain identity", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/status", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ skillId: "sample-skill", status: "enabled", eventId: "status-event-01" })
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 401);
+});
+
+test("status endpoint enables an installed Skill for the authenticated user", async () => {
+  const response = await worker.fetch(new Request("https://skills.example/v1/skills/status", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer test-secret",
+      "X-Katia-User-Id": "authenticated-user-01",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ skillId: "sample-skill", status: "enabled", eventId: "status-event-02" })
+  }), { ...env, DB: registryDb() });
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.status, "enabled");
 });
