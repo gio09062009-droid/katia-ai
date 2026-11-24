@@ -29,7 +29,7 @@ function extension(path) {
 
 function validatePath(path) {
   if (typeof path !== "string" || !path || path.length > 240) return false;
-  if (path.startsWith("/") || path.includes("\\\\") || path.includes("\0")) return false;
+  if (path.startsWith("/") || path.includes("\\") || path.includes("\0")) return false;
   const parts = path.split("/");
   return parts.every(part => part && part !== "." && part !== "..") &&
     !parts.some(part => part.startsWith(".") && part !== ".well-known");
@@ -37,7 +37,7 @@ function validatePath(path) {
 
 function validSemver(value) {
   return typeof value === "string" &&
-    /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$/.test(value);
+    /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$/.test(value);
 }
 
 function isPlainObject(value) {
@@ -59,7 +59,7 @@ function validateManifest(manifest, filePaths) {
   if (!isPlainObject(manifest.publisher) || typeof manifest.publisher.name !== "string" || !manifest.publisher.name.trim()) errors.push("Editor/publicador inválido.");
 
   if (!Array.isArray(manifest.capabilities) || manifest.capabilities.length < 1 || manifest.capabilities.length > 30 ||
-      manifest.capabilities.some(x => typeof x !== "string" || !/^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_-]*)+$/.test(x))) {
+      manifest.capabilities.some(x => typeof x !== "string" || !/^[a-z][a-z0-9]*(\.[a-z][a-z0-9_-]*)+$/.test(x))) {
     errors.push("Lista de capacidades inválida.");
   }
 
@@ -77,7 +77,7 @@ function validateManifest(manifest, filePaths) {
     errors.push("El punto de entrada debe ser declarativo.");
   } else {
     const entry = manifest.entrypoint.path;
-    if (!validatePath(entry) || !/\\.(md|json)$/i.test(entry)) errors.push("Ruta de punto de entrada no permitida.");
+    if (!validatePath(entry) || !/\.(md|json)$/i.test(entry)) errors.push("Ruta de punto de entrada no permitida.");
     else if (!filePaths.has(entry)) errors.push("No se encontró el archivo de instrucciones declarado.");
   }
 
