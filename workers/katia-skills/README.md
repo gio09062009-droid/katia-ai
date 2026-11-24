@@ -1,6 +1,6 @@
 # Katia Skills Worker
 
-This is an isolated Cloudflare Worker. It does not replace `katia-braine` and has not been deployed.
+This is an isolated Cloudflare Worker. It does not replace `katia-braine`. Version 1 is deployed with D1; version 2 contains the latest tested code and is staged but not deployed.
 
 ## Internal API
 
@@ -15,12 +15,12 @@ All non-health routes require the server-side `SKILLS_API_TOKEN`. Browser origin
 - `POST /v1/skills/install` — records an explicitly approved install. Requested permissions must exactly match the stored manifest; granted permissions must be a subset. New installs start disabled.
 - `POST /v1/skills/status` — enables or disables an installed Skill for the authenticated subject and records the change in the audit log.
 
-User-scoped routes accept only `X-Katia-Identity`: a short-lived HMAC-SHA256 assertion with issuer `katia-braine`, audience `katia-skills`, subject, `skills:user` scope, issue/expiry timestamps (maximum five-minute lifetime), and a unique token ID. The separate `KATIA_IDENTITY_SECRET` must be shared only between the two Workers. `X-Katia-User-Id` is ignored and never trusted. The existing Brain has no general authenticated user session yet, so token issuance and Brain integration remain intentionally disabled until a trustworthy user identity exists.
+User-scoped routes accept only `X-Katia-Identity`: a short-lived HMAC-SHA256 assertion with issuer `katia-braine`, audience `katia-skills`, subject, `skills:user` scope, issue/expiry timestamps (maximum five-minute lifetime), and a unique token ID. The separate `KATIA_IDENTITY_SECRET` must be shared only between the two Workers. `X-Katia-User-Id` is ignored and never trusted. Katia Brain verifies the browser's one-use P-256 proof before it signs an assertion. The browser never receives the internal token or HMAC assertion.
 
 ## Storage
 
 - D1 database: `katia-skills-registry`, bound as `DB` in `wrangler.toml`.
-- D1 tables: `skill_versions`, `user_skill_installs`, `skill_audit_events`, `device_identities`, and `device_challenges` (the latter two are added by migration 0002).
+- D1 tables: `skill_versions`, `user_skill_installs`, `skill_audit_events`, `device_identities`, and `device_challenges`. Migration 0002 has been applied to the connected database.
 - `src/storage.js` implements optional content-addressed immutable R2 storage and verifies SHA-256 on reads.
 - No-billing development mode: D1 stores the immutable GitHub owner/repository/commit and package digest. R2 is optional and can be enabled later; registration does not require a payment method or R2 subscription.
 
@@ -34,14 +34,14 @@ npm test
 
 ## Worker secrets
 
-Before deployment, configure a strong random `SKILLS_API_TOKEN` and a separate random `KATIA_IDENTITY_SECRET` (at least 32 bytes) on this Worker. Katia Brain must receive the same identity secret as a Worker secret only after a verified user identity mechanism is implemented. Never expose either secret in browser code. Configure the API token as follows:
+Before activation, configure a strong random `SKILLS_API_TOKEN` and a separate random `KATIA_IDENTITY_SECRET` (at least 32 bytes) on this Worker. Katia Brain must receive the matching values as Worker secrets. Neither secret may be sent to the browser. Never expose either secret in browser code. Configure the API token as follows:
 
 ```sh
 npx wrangler secret put SKILLS_API_TOKEN
 npx wrangler secret put KATIA_IDENTITY_SECRET
 ```
 
-`KATIA_IDENTITY_SECRET` must be a separate random secret of at least 32 bytes. The same value may be configured on Katia Brain only after Brain has a trustworthy authenticated subject to assert. Do not configure or issue identity assertions before that prerequisite is met.
+`KATIA_IDENTITY_SECRET` must be a separate random secret of at least 32 bytes. The same value is used only by the Brain and Skills Workers to sign and verify short-lived assertions after the browser proof is validated.
 
 Optionally configure a GitHub token to improve API rate limits:
 
@@ -59,7 +59,7 @@ Do not place either secret in `index.html`, browser JavaScript, local storage, o
 - Executable, binary, archive and unsupported file types are rejected.
 - Repository content is untrusted data; no package code is evaluated or executed.
 - Registration pins the exact Git commit and SHA-256 package digest.
-- No production Worker deployment or frontend activation has occurred.
+- Skills Worker version 1 is deployed; version 2 is staged pending secret configuration and final integration checks.\n- The live Katia Brain and GitHub Pages site have not been updated with the staged runtime.
 
 
 ## Runtime design proposal
@@ -69,3 +69,4 @@ The secure Skill selection and runtime flow is documented in [`docs/SKILL_RUNTIM
 ## Device identity proposal
 
 A privacy-preserving anonymous device identity is documented in [`docs/DEVICE_IDENTITY_DESIGN.md`](./docs/DEVICE_IDENTITY_DESIGN.md). The Skills Worker now contains isolated challenge/proof endpoints. Each one-use challenge stores a SHA-256 context hash for the exact requested action and payload; the proof cannot be reused for a different operation. Migration 0002 creates the anonymous device identity and challenge tables. The Brain proxy and browser IndexedDB client are being developed on the same feature branch. None of these changes are deployed or enabled.
+\n\n## Current activation blocker\n\nThe four Worker secret bindings (`SKILLS_API_TOKEN` and `KATIA_IDENTITY_SECRET` on Skills; `KATIA_SKILLS_API_TOKEN` and `KATIA_IDENTITY_SECRET` on Brain) are not configured. The deployment tool rejected the automated secret-write operation, so no secrets were created. Add them through Cloudflare's Worker settings before deploying the staged versions.\n
