@@ -83,5 +83,5 @@
  const originalShow=window.mostrarSelectorVoces;
  if(typeof originalShow==="function")window.mostrarSelectorVoces=function(){originalShow();injectUi();};
  document.addEventListener("DOMContentLoaded",injectUi,{once:true});
- window.katiaDanielaVoice={enable,stop,isEnabled:()=>enabled};
+ window.katiaDanielaVoice={enable,stop,refreshUI:injectUi,isEnabled:()=>enabled};
 })();
