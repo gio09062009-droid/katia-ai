@@ -84,9 +84,9 @@ function mount(){
  const composer=chat.querySelector(".composer");const suggestions=document.createElement("div");suggestions.id="katiaSuggestions";suggestions.className="katia-suggestions";composer?.before(suggestions);
  const originalSettings=window.abrirConfiguracion;if(typeof originalSettings==="function"){window.abrirConfiguracion=function(){openSettings()}}
  const oldAdd=window.agregarMensaje;if(typeof oldAdd==="function"){window.agregarMensaje=function(...args){const result=oldAdd.apply(this,args);if(args[2]!==false){saveCurrent();if(args[0]==="katia")renderSuggestions()}return result}}
- const oldClear=window.limpiarChat;if(typeof oldClear==="function"){window.limpiarChat=function(){const previousId=activeId;oldClear();if(previousId)sessions=sessions.filter(x=>x.id!==previousId);activeId=null;write(KEY,sessions);renderHistory();renderSuggestions()}}
+ window.limpiarChat=function(){if(!confirm("¿Querés borrar esta conversación?"))return;const previousId=activeId;historial=[];guardar(STORAGE.history,historial);if(previousId)sessions=sessions.filter(x=>x.id!==previousId);activeId=null;ultimoMensaje="";if(typeof window.restaurarHistorial==="function")window.restaurarHistorial();write(KEY,sessions);renderHistory();renderSuggestions()}
  const saved=sessions.find(x=>Array.isArray(x.messages)&&x.messages.length);if(currentMessages().length){const same=saved&&JSON.stringify(saved.messages)===JSON.stringify(currentMessages());activeId=same?saved.id:id();saveCurrent()}else if(saved){activeId=saved.id;setLegacyHistory(saved.messages);if(typeof window.restaurarHistorial==="function")window.restaurarHistorial()}
- applyPrefs();injectPromptPrefs();renderHistory();renderSuggestions();
+ const inlineConfig=document.getElementById("configInline");if(inlineConfig)inlineConfig.innerHTML="<p class=\\"small-note\\">Personalizá el aspecto y la forma de responder de Katia desde el panel de configuración.</p><button class=\\"tool-btn\\" style=\\"width:100%\\" onclick=\\"abrirPanel(\'settings\')\\">🎨 Abrir personalización</button>";applyPrefs();injectPromptPrefs();renderHistory();renderSuggestions();
 }
 window.katiaSavePrefs=savePrefs;window.katiaResetPrefs=resetPrefs;
 document.addEventListener("DOMContentLoaded",mount);
