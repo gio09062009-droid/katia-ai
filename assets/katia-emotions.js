@@ -15,14 +15,14 @@
  };
  function detectarEmocion(texto,esRespuesta=false){
   const t=String(texto||"").toLocaleLowerCase("es");
-  if(/\\b(cansad[oa]|tengo sueño|a dormir|descans(ar|á)|agotad[oa])\\b/.test(t))return "cansada";
-  if(/\\b(enojad[oa]|molest[oa]|furios[oa]|idiota|tonta|inútil|estúpida|callate|cállate)\\b/.test(t))return "enojada";
-  if(/\\b(triste|llor(ar|ando)|extrañ(o|ar)|me siento mal|decepcionad[oa])\\b/.test(t))return "triste";
-  if(/\\b(atrevid[oa]|linda|bonita|hermosa|sonroj|qué vergüenza|que vergüenza)\\b/.test(t))return "sonrojada";
-  if(/\\b(¿qué\?|en serio|no puede ser|increíble|sorprend|wow|¿cómo\?)\\b/.test(t))return "sorprendida";
-  if(/\\b(jaja+|jeje+|😂|😏|broma|bromita|travies[oa])\\b/.test(t))return "juguetona";
-  if(!esRespuesta&&(/[?¿]/.test(t)||/\\b(pensá|pensar|explicame|cómo funciona)\\b/.test(t)))return "pensando";
-  if(esRespuesta&&/\\b(creo que|vamos a analizar|veamos|primero|depende)\\b/.test(t))return "pensando";
+  if(/\b(cansad[oa]|tengo sueño|a dormir|descans(ar|á)|agotad[oa])\b/.test(t))return "cansada";
+  if(/\b(enojad[oa]|molest[oa]|furios[oa]|idiota|tonta|inútil|estúpida|callate|cállate)\b/.test(t))return "enojada";
+  if(/\b(triste|llor(ar|ando)|extrañ(o|ar)|me siento mal|decepcionad[oa])\b/.test(t))return "triste";
+  if(/\b(atrevid[oa]|linda|bonita|hermosa|sonroj|qué vergüenza|que vergüenza)\b/.test(t))return "sonrojada";
+  if(/\b(¿qué\?|en serio|no puede ser|increíble|sorprend|wow|¿cómo\?)\b/.test(t))return "sorprendida";
+  if(/\b(jaja+|jeje+|😂|😏|broma|bromita|travies[oa])\b/.test(t))return "juguetona";
+  if(!esRespuesta&&(/[?¿]/.test(t)||/\b(pensá|pensar|explicame|cómo funciona)\b/.test(t)))return "pensando";
+  if(esRespuesta&&/\b(creo que|vamos a analizar|veamos|primero|depende)\b/.test(t))return "pensando";
   return "feliz";
  }
  const agregar=window.agregarMensaje;
