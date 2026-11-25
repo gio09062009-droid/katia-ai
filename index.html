@@ -1690,6 +1690,14 @@ function mostrarGustos(){
 }
 
 /* VOZ */
+// Perfil kawaii: ajustes suaves para una voz más dulce y expresiva.
+// El timbre real sigue dependiendo de las voces instaladas en el dispositivo.
+function aplicarPerfilKawaii(utterance){
+ utterance.rate=0.94;
+ utterance.pitch=1.16;
+ utterance.volume=1;
+ return utterance;
+}
 function cargarVocesDisponibles(){
  const todas = (window.speechSynthesis && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
  vocesDisponibles = todas.filter(v => /^es/i.test(v.lang || ""));
@@ -1737,7 +1745,7 @@ function actualizarVozVisible(){
   elemento.textContent = "🎙️ Voz: automática del navegador";
   return;
  }
- elemento.textContent = "🎙️ Voz: " + (voz.name || "(sin nombre)") + " · " + (voz.lang || "");
+ elemento.textContent = "🎀 Kawaii: " + (voz.name || "voz automática") + " · " + (voz.lang || "") + " · Dulce y alegre";
 }
 function probarVozSeleccionada(){
  if(!("speechSynthesis" in window)){alert("Tu navegador no permite reproducir voz.");return;}
@@ -1746,7 +1754,7 @@ function probarVozSeleccionada(){
  const voz = uri ? buscarVozPorURI(uri) : seleccionarVozPorDefecto();
  speechSynthesis.cancel();
  const utterance = new SpeechSynthesisUtterance("¡Hola! Así se va a escuchar la voz de Katia. ¿Te gusta?");
- utterance.rate = 1; utterance.pitch = 1.0; utterance.volume = 1;
+ aplicarPerfilKawaii(utterance);
  if(voz){utterance.voice = voz;utterance.lang = voz.lang;}else{utterance.lang = "es-ES";}
  utterance.onstart = () => estadoOrb("speaking","🔊 Probando voz...");
  utterance.onend = () => estadoOrb("","🟢 En línea · Lista para hablar");
@@ -1808,7 +1816,8 @@ function abrirConfiguracion(){
  </div>
  <hr style="border-color:#ffffff22;margin:20px 0">
  <div class="provider-box">
-  <label>🎙️ Voz de Katia</label>
+  <label>🎀 Voz de Katia · Perfil Anime Kawaii</label>
+  <div class="provider-info">Voz más dulce y juvenil: velocidad 0.94 y tono 1.16. El timbre depende de las voces disponibles en tu Android.</div>
   <div id="voiceSelectContainer"><div class="provider-info">Cargando voces...</div></div>
  </div>
  <hr style="border-color:#ffffff22;margin:20px 0">
@@ -1854,7 +1863,7 @@ function hablar(texto){
  if(!("speechSynthesis" in window)){alert("Tu navegador no permite reproducir voz.");return;}
  speechSynthesis.cancel();
  const utterance=new SpeechSynthesisUtterance(texto);
- utterance.rate=1;utterance.pitch=1.05;
+ aplicarPerfilKawaii(utterance);
  const voz = obtenerVozActiva();
  if(voz){utterance.voice=voz;utterance.lang=voz.lang;}else{utterance.lang="es-ES";}
  utterance.onstart=()=>estadoOrb("speaking","🔊 Katia está hablando...");
