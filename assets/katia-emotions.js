@@ -1,6 +1,6 @@
-/* Motor emocional Katia — ocho expresiones, detección flexible y render directo */
+/* Katia: ocho expresiones usando recorte directo del sprite */
 (()=>{
- const archivo="assets/katia-emotions.webp";
+ const sprite="assets/katia-emotions.webp?v=3";
  const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
  const patrones={
   cansada:/(cansad[oa]s?|agotad[oa]s?|tengo\s+sueño|mucho\s+sueño|quiero\s+dormir|me\s+voy\s+a\s+dormir|a\s+dormir|descans(ar|á|o)|sin\s+energía)/i,
@@ -11,19 +11,38 @@
   juguetona:/(jaja+|jeje+|🤣|😂|😏|😉|broma|bromita|travies[oa]|chiste|te\s+estoy\s+cargando|era\s+chiste|picardía)/i,
   pensando:/(pensá|pensar|analiz|reflexion|explicame|explicá|cómo\s+funciona|por\s+qué|porque|déjame\s+pensar|dejame\s+pensar|vamos\s+a\s+ver|veamos|\?)/i
  };
- window.cambiarExpresionKatia=(emocion)=>{
-  const wrap=document.querySelector(".katia-avatar-wrap");if(!wrap)return false;
-  const e=posiciones[emocion]?emocion:"feliz";const [col,fila]=posiciones[e];
-  wrap.style.backgroundImage='url("./'+archivo+'?v=2")';wrap.style.backgroundRepeat="no-repeat";
-  wrap.style.backgroundSize="400% 200%";wrap.style.backgroundPosition=(col/3*100)+"% "+(fila*100)+"%";
-  wrap.dataset.emotion=e;wrap.setAttribute("aria-label","Katia: "+e);
-  const img=wrap.querySelector(".katia-avatar");if(img)img.style.display="none";return true;
- };
+ function cambiar(emocion){
+  const wrap=document.querySelector(".katia-avatar-wrap");
+  if(!wrap)return false;
+  const e=posiciones[emocion]?emocion:"feliz";
+  const [col,fila]=posiciones[e];
+  const img=wrap.querySelector("#katiaAvatar")||wrap.querySelector(".katia-avatar");
+  if(!img)return false;
+  wrap.style.position="relative";
+  wrap.style.overflow="hidden";
+  wrap.style.backgroundImage="none";
+  img.src=sprite;
+  img.alt="Katia, expresión "+e;
+  img.style.cssText=[
+   "position:absolute","left:0","top:0","display:block",
+   "width:400%","height:200%","max-width:none","max-height:none",
+   "object-fit:fill","object-position:left top","border:0","border-radius:0",
+   "box-shadow:none","margin:0","padding:0",
+   "transform:translate("+(-col*25)+"%,"+(-fila*50)+"%)",
+   "transition:transform .18s ease"
+  ].join(";");
+  wrap.dataset.emotion=e;
+  wrap.setAttribute("aria-label","Katia: "+e);
+  return true;
+ }
+ window.cambiarExpresionKatia=cambiar;
  window.detectarEmocionKatia=(texto,tipo)=>{
-  const t=String(texto??"").replace(/\s+/g," ").trim();if(!t)return null;
+  const t=String(texto??"").replace(/\s+/g," ").trim();
+  if(!t)return null;
   for(const e of ["cansada","enojada","triste","sonrojada","sorprendida","juguetona","pensando"])if(patrones[e].test(t))return e;
   return tipo==="katia"?"feliz":null;
  };
- document.addEventListener("DOMContentLoaded",()=>window.cambiarExpresionKatia("feliz"));
- window.cambiarExpresionKatia("feliz");
+ const init=()=>cambiar("feliz");
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
+ else init();
 })();
