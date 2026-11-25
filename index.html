@@ -816,6 +816,7 @@ let diario = cargar(STORAGE.diary,[]);
 let gustos = cargar(STORAGE.likes,[]);
 let ultimoMensaje = "";
 let reconociendo = false;
+let entradaPorMicrofono = false;
 let reconocimiento = null;
 let typingElement = null;
 
@@ -1503,7 +1504,7 @@ async function enviarMensaje(){
   input.disabled=false;
   boton.disabled=false;
   mic.disabled=false;
-  input.focus();
+  if(entradaPorMicrofono){entradaPorMicrofono=false;}else{input.focus({preventScroll:true});}
  }
 }
 
@@ -1828,7 +1829,7 @@ function alternarMicrofono(){
  reconocimiento.interimResults=false;
  reconocimiento.continuous=false;
  reconocimiento.onstart=()=>{reconociendo=true;estadoOrb("listening","🎙️ Te estoy escuchando...");document.getElementById("micButton").textContent="⏹️";};
- reconocimiento.onresult=event=>{document.getElementById("userInput").value=event.results[0][0].transcript;enviarMensaje();};
+ reconocimiento.onresult=event=>{document.getElementById("userInput").value=event.results[0][0].transcript;entradaPorMicrofono=true;enviarMensaje();};
  reconocimiento.onerror=event=>console.warn("Error de micrófono:",event.error);
  reconocimiento.onend=()=>{reconociendo=false;document.getElementById("micButton").textContent="🎙️";estadoOrb("","🟢 En línea · Lista para hablar");};
  reconocimiento.start();
@@ -2109,5 +2110,6 @@ document.addEventListener("DOMContentLoaded",()=>{
  actualizarOpcionesCreacion();
 });
 </script>
-  <script src="assets/katia-enhancements.js"></script>\n</body>
+  <script src="assets/katia-enhancements.js"></script>
+  <script src="assets/katia-emotions.js"></script>\n</body>
  </html>

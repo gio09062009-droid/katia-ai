@@ -46,3 +46,22 @@ body.katia-dark .katia-sidebar-toggle{background:#21152f;color:#f3eaff;border-co
 .orb-status strong,.page-header h2,.katia-settings-group h3{color:var(--katia-accent-2)}
 .message.user{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
 .katia-sidebar .ks-primary,.katia-suggestion{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
+
+
+/* ===== KATIA: AVATAR EMOCIONAL Y ENCUADRE MOVIL ===== */
+.katia-avatar-wrap{
+ background-image:url("katia-emotions.webp");
+ background-repeat:no-repeat;
+ background-size:400% 200%;
+ background-position:0% 0%;
+ overflow:hidden;
+ border-radius:46% 46% 38% 38%;
+}
+.katia-avatar-wrap .katia-avatar{display:none}
+.katia-avatar-wrap:before{z-index:2;pointer-events:none}
+.katia-avatar-wrap:after{z-index:3}
+@media(max-width:760px){
+ .katia-avatar-wrap{flex:0 0 auto;transform-origin:center top}
+ .orb-area{overflow:visible;scroll-margin-top:8px}
+ .chat-main,.left{min-width:0}
+}
