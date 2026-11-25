@@ -48,20 +48,39 @@ body.katia-dark .katia-sidebar-toggle{background:#21152f;color:#f3eaff;border-co
 .katia-sidebar .ks-primary,.katia-suggestion{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
 
 
-/* ===== KATIA: AVATAR EMOCIONAL Y ENCUADRE MOVIL ===== */
+
+/* Katia avatar: sprite 4x2 con ocho expresiones */
 .katia-avatar-wrap{
  background-image:url("katia-emotions.webp");
- background-repeat:no-repeat;
- background-size:400% 200%;
- background-position:0% 0%;
- overflow:hidden;
- border-radius:46% 46% 38% 38%;
+ background-repeat:no-repeat;background-size:400% 200%;
+ background-position:0% 0%;background-color:transparent;
+ overflow:hidden;border-radius:46% 46% 38% 38%;
 }
-.katia-avatar-wrap .katia-avatar{display:none}
-.katia-avatar-wrap:before{z-index:2;pointer-events:none}
-.katia-avatar-wrap:after{z-index:3}
+.katia-avatar-wrap .katia-avatar{display:none!important}
 @media(max-width:760px){
- .katia-avatar-wrap{flex:0 0 auto;transform-origin:center top}
- .orb-area{overflow:visible;scroll-margin-top:8px}
- .chat-main,.left{min-width:0}
+ html,body{max-width:100%;overflow-x:hidden}
+ .app{width:100%;max-width:100%;overflow-x:clip}
+ main.chat-main{width:100%;min-width:0;grid-template-columns:minmax(0,1fr);gap:8px;padding:8px 0}
+ .left,.chat-panel{width:100%;min-width:0;max-width:100%}
+ .orb-area{width:100%;min-height:220px;height:220px;overflow:visible}
+ .katia-avatar-wrap{width:190px;height:205px}
+ .orb-ring,.orb-ring.second{display:none}
+ .chat-panel{height:min(480px,58vh);max-height:58vh}
+ .composer{width:100%;min-width:0;box-sizing:border-box}
+ .composer input{width:0;min-width:0;font-size:16px}
+ body.katia-writing .left{
+  position:fixed;top:0;left:0;right:0;z-index:40;height:104px;
+  display:flex;flex-direction:row;justify-content:flex-start;gap:10px;
+  padding:4px 14px;background:var(--bg,#f3eaff);
+  box-shadow:0 5px 18px #35134c22;box-sizing:border-box
+ }
+ body.katia-writing .orb-area{width:92px;height:96px;min-height:96px;flex:0 0 92px}
+ body.katia-writing .katia-avatar-wrap{width:88px;height:94px;animation:none}
+ body.katia-writing .katia-avatar-wrap:before{inset:3px}
+ body.katia-writing .katia-avatar-wrap:after{display:none}
+ body.katia-writing .orb-status{margin:0;text-align:left}
+ body.katia-writing .orb-status strong{font-size:15px}
+ body.katia-writing .orb-status span{font-size:10px;margin-top:3px}
+ body.katia-writing .quick-actions{display:none}
+ body.katia-writing .chat-panel{margin-top:112px}
 }

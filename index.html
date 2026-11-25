@@ -1282,6 +1282,7 @@ function estadoOrb(estado,texto){
  if(!orb||!status)return;
  orb.classList.remove("speaking","listening","thinking");
  if(estado)orb.classList.add(estado);
+ if(estado==="thinking" && window.cambiarExpresionKatia)window.cambiarExpresionKatia("pensando");
  status.textContent=texto||"🟢 En línea";
 }
 
@@ -1314,6 +1315,10 @@ function agregarMensaje(tipo,texto,guardarEnHistorial=true,infoProveedor=null){
   guardar(STORAGE.history,historial);
  }
  if(tipo==="katia")ultimoMensaje=texto;
+ if(window.detectarEmocionKatia && window.cambiarExpresionKatia){
+  const emocion=window.detectarEmocionKatia(texto,tipo);
+  if(emocion)window.cambiarExpresionKatia(emocion);
+ }
  return div;
 }
 
@@ -1508,6 +1513,8 @@ async function enviarMensaje(){
  }
 }
 
+document.getElementById("userInput").addEventListener("focus",()=>{if(window.innerWidth<=760)document.body.classList.add("katia-writing");});
+document.getElementById("userInput").addEventListener("blur",()=>document.body.classList.remove("katia-writing"));
 document.getElementById("userInput").addEventListener("keydown",e=>{
  if(e.key==="Enter")enviarMensaje();
 });
