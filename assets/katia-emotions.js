@@ -1,27 +1,29 @@
-/* Motor emocional de Katia: usa la hoja de ocho retratos */
+/* Motor emocional Katia — ocho expresiones, detección flexible y render directo */
 (()=>{
- const posiciones={
-  feliz:"0% 0%", sonrojada:"33.333% 0%", enojada:"66.667% 0%", triste:"100% 0%",
-  sorprendida:"0% 100%", juguetona:"33.333% 100%", pensando:"66.667% 100%", cansada:"100% 100%"
+ const archivo="assets/katia-emotions.webp";
+ const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
+ const patrones={
+  cansada:/(cansad[oa]s?|agotad[oa]s?|tengo\s+sueño|mucho\s+sueño|quiero\s+dormir|me\s+voy\s+a\s+dormir|a\s+dormir|descans(ar|á|o)|sin\s+energía)/i,
+  enojada:/(enojad[oa]|molest[oa]|furios[oa]|qué\s+pesad[oa]|que\s+pesad[oa]|idiota|tont[oa]|inútil|estúpid[oa]|callate|cállate|me\s+da\s+rabia|me\s+enfada)/i,
+  triste:/(triste|llor(ar|ando|é)|extrañ(o|a|ar)|me\s+siento\s+mal|estoy\s+mal|decepcionad[oa]|qué\s+pena|que\s+pena|me\s+entristece|no\s+estoy\s+bien)/i,
+  sonrojada:/(qué\s+lind[oa]|que\s+lind[oa]|lind[oa]|bonit[oa]|hermos[oa]|guap[oa]|me\s+gustas|te\s+quiero|te\s+adoro|me\s+encantás|me\s+encantas|sonroj|atrevid[oa]|vergüenza)/i,
+  sorprendida:/(en\s+serio|no\s+puede\s+ser|increíble|increible|sorprend|wow|no\s+lo\s+esperaba|¿de\s+verdad|de\s+verdad|no\s+me\s+lo\s+creo)/i,
+  juguetona:/(jaja+|jeje+|🤣|😂|😏|😉|broma|bromita|travies[oa]|chiste|te\s+estoy\s+cargando|era\s+chiste|picardía)/i,
+  pensando:/(pensá|pensar|analiz|reflexion|explicame|explicá|cómo\s+funciona|por\s+qué|porque|déjame\s+pensar|dejame\s+pensar|vamos\s+a\s+ver|veamos|\?)/i
  };
  window.cambiarExpresionKatia=(emocion)=>{
-  const wrap=document.querySelector(".katia-avatar-wrap");
-  if(!wrap)return;
-  const e=posiciones[emocion]?emocion:"feliz";
-  wrap.style.backgroundPosition=posiciones[e];
-  wrap.dataset.emotion=e;
+  const wrap=document.querySelector(".katia-avatar-wrap");if(!wrap)return false;
+  const e=posiciones[emocion]?emocion:"feliz";const [col,fila]=posiciones[e];
+  wrap.style.backgroundImage='url("./'+archivo+'?v=2")';wrap.style.backgroundRepeat="no-repeat";
+  wrap.style.backgroundSize="400% 200%";wrap.style.backgroundPosition=(col/3*100)+"% "+(fila*100)+"%";
+  wrap.dataset.emotion=e;wrap.setAttribute("aria-label","Katia: "+e);
+  const img=wrap.querySelector(".katia-avatar");if(img)img.style.display="none";return true;
  };
  window.detectarEmocionKatia=(texto,tipo)=>{
-  const t=String(texto||"").toLocaleLowerCase("es");
-  if(/\b(cansad[oa]|tengo sueño|me voy a dormir|a dormir|descans(ar|á)|agotad[oa])\b/.test(t))return "cansada";
-  if(/\b(qué pesada|que pesada|enojad[oa]|molest[oa]|furios[oa]|idiota|tonta|inútil|estúpida|callate|cállate|qué tonta|que tonta)\b/.test(t))return "enojada";
-  if(/\b(triste|llor(ar|ando)|extrañ(o|ar)|me siento mal|decepcionad[oa]|estoy mal|qué pena|que pena)\b/.test(t))return "triste";
-  if(/\b(qué linda|que linda|bonita|hermosa|linda|guapa|me gustas|te quiero|sonroj|atrevid[oa]|vergüenza)\b/.test(t))return "sonrojada";
-  if(/\b(en serio|no puede ser|increíble|increible|sorprend|wow|no lo esperaba|me sorprende)\b/.test(t))return "sorprendida";
-  if(/\b(jaja+|jeje+|😂|😏|broma|bromita|travies[oa]|chiste)\b/.test(t))return "juguetona";
-  if(tipo==="user" && (/[?¿]/.test(t)||/\b(pensá|pensar|explicame|cómo funciona|por qué|porque)\b/.test(t)))return "pensando";
-  if(tipo==="katia" && /\b(analicemos|vamos a pensar|veamos|déjame pensar|dejame pensar)\b/.test(t))return "pensando";
-  return tipo==="user"?"feliz":null;
+  const t=String(texto??"").replace(/\s+/g," ").trim();if(!t)return null;
+  for(const e of ["cansada","enojada","triste","sonrojada","sorprendida","juguetona","pensando"])if(patrones[e].test(t))return e;
+  return tipo==="katia"?"feliz":null;
  };
+ document.addEventListener("DOMContentLoaded",()=>window.cambiarExpresionKatia("feliz"));
  window.cambiarExpresionKatia("feliz");
 })();
