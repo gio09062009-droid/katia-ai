@@ -4,135 +4,57 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feature/katia-tutor-1.0]
+    branches: [main, feature/katia-tutor-1.0]
+
+# This workflow only checks source syntax. It must never call the production
+# Worker or consume provider credits from an untrusted pull request.
+permissions:
+  contents: read
+
+concurrency:
+  group: katia-tutor-syntax-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   inline-javascript:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 22
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
       - name: Check inline JavaScript syntax
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
+
           html = Path("index.html").read_text(encoding="utf-8")
-          scripts = re.findall(r"<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script\s*>", html, re.I | re.S)
+          scripts = re.findall(
+              r"<script\\b(?![^>]*\\bsrc=)[^>]*>(.*?)</script\\s*>",
+              html,
+              re.I | re.S,
+          )
           if not scripts:
               raise SystemExit("No inline scripts found")
+
           out = Path("/tmp/katia-inline-scripts")
           out.mkdir(exist_ok=True)
           for i, source in enumerate(scripts, 1):
               (out / f"script-{i}.js").write_text(source, encoding="utf-8")
           print(f"Found {len(scripts)} inline script blocks")
           PY
+
           for file in /tmp/katia-inline-scripts/*.js; do
             echo "Checking $file"
             node --check "$file"
           done
-
-      - name: Smoke test Tutor Worker version 31
-        env:
-          TUTOR_VERSION_URL: https://katia-braine.gio09062009.workers.dev/tutor
-        run: |
-          node --input-type=module <<'NODE'
-          const origin = "https://gio09062009-droid.github.io";
-          const response = await fetch(process.env.TUTOR_VERSION_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Origin": origin,
-              "User-Agent": "KatiaTutor-CI/1.0 (+https://github.com/gio09062009-droid/katia-ai)"
-            },
-            body: JSON.stringify({ operation: "__smoke_invalid_operation__" })
-          });
-          const body = await response.json().catch(() => ({}));
-          if (response.status !== 400) {
-            throw new Error("Expected HTTP 400 for invalid operation; received " + response.status + ": " + JSON.stringify(body));
-          }
-          if (body.code !== "INVALID_OPERATION") {
-            throw new Error("Tutor route did not return INVALID_OPERATION: " + JSON.stringify(body));
-          }
-          if (response.headers.get("access-control-allow-origin") !== origin) {
-            throw new Error("Tutor Worker CORS did not allow the GitHub Pages origin.");
-          }
-          console.log("Tutor Worker v31 route, validation and CORS are responding correctly.");
-          NODE
-
-      - name: End-to-end test of a short Tutor lesson
-        env:
-          TUTOR_VERSION_URL: https://katia-braine.gio09062009.workers.dev/tutor
-        run: |
-          node --input-type=module <<'NODE'
-          const endpoint = process.env.TUTOR_VERSION_URL;
-          const session = { id: "github-actions-tutor-" + Date.now(), startedAt: Date.now() };
-          async function call(payload) {
-            const response = await fetch(endpoint, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Origin": "https://gio09062009-droid.github.io",
-                "User-Agent": "KatiaTutor-CI/1.0 (+https://github.com/gio09062009-droid/katia-ai)"
-              },
-              body: JSON.stringify({ provider: "auto", session, ...payload })
-            });
-            const data = await response.json().catch(() => ({}));
-            console.log("Tutor operation:", payload.operation, "HTTP:", response.status, "URL:", response.url, "Body:", JSON.stringify(data).slice(0, 1000));
-            if (!response.ok || !data.ok || !data.data) {
-              throw new Error(payload.operation + " failed: HTTP " + response.status + " " + JSON.stringify(data));
-            }
-            return data;
-          }
-          const lesson = await call({
-            operation: "start_lesson",
-            topic: "El ciclo del agua",
-            level: "principiante",
-            goal: "Comprender sus etapas principales"
-          });
-          const sections = lesson.data.lesson;
-          if (!Array.isArray(sections) || sections.length < 3) {
-            throw new Error("La mini clase no devolvió al menos tres secciones estructuradas.");
-          }
-          const generated = await call({
-            operation: "generate_question",
-            topic: "El ciclo del agua",
-            level: "principiante",
-            difficulty: 2,
-            previousQuestions: []
-          });
-          const q = generated.data;
-          if (!Array.isArray(q.options) || q.options.length !== 4 || !q.answerToken) {
-            throw new Error("La pregunta no contiene cuatro opciones y un token de respuesta protegido.");
-          }
-          const checked = await call({
-            operation: "check_answer",
-            question: { statement: q.statement, options: q.options },
-            answerToken: q.answerToken,
-            studentAnswer: "A",
-            level: "principiante"
-          });
-          if (!/^[ABCD]$/.test(checked.data.correctLetter || "")) {
-            throw new Error("La corrección no devolvió una respuesta válida.");
-          }
-          const report = await call({
-            operation: "finish_lesson",
-            topic: "El ciclo del agua",
-            level: "principiante",
-            history: [{
-              question: { statement: q.statement, options: q.options },
-              answerToken: q.answerToken,
-              studentAnswer: "A"
-            }]
-          });
-          if (report.data.totalQuestions !== 1 || typeof report.data.percentage !== "number") {
-            throw new Error("El informe final no calculó correctamente el resultado.");
-          }
-          console.log("Tutor E2E OK: mini clase, pregunta, corrección protegida e informe final.");
-          console.log("Proveedor:", lesson.provider, generated.provider, checked.provider, report.provider);
-          NODE
