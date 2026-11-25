@@ -1,6 +1,7 @@
 /* Katia: ocho expresiones usando recorte directo del sprite */
 (()=>{
  const sprite="assets/katia-emotions.webp?v=3";
+ const avatarOriginal="assets/katia-avatar.webp?v=4";
  const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
  const patrones={
   cansada:/(cansad[oa]s?|agotad[oa]s?|tengo\s+sueño|mucho\s+sueño|quiero\s+dormir|me\s+voy\s+a\s+dormir|a\s+dormir|descans(ar|á|o)|sin\s+energía)/i,
@@ -21,6 +22,15 @@
   wrap.style.position="relative";
   wrap.style.overflow="hidden";
   wrap.style.backgroundImage="none";
+  img.onerror=()=>{
+   if(img.dataset.katiaFallback==="1")return;
+   img.dataset.katiaFallback="1";
+   img.onerror=null;
+   img.src=avatarOriginal;
+   img.style.cssText="";
+   img.alt="Katia, imagen principal";
+   wrap.style.overflow="visible";
+  };
   img.src=sprite;
   img.alt="Katia, expresión "+e;
   img.style.cssText=[
