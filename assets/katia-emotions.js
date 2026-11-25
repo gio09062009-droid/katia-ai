@@ -1,6 +1,6 @@
 /* Katia: selector estable de expresiones con carga única y respaldo */
 (()=>{
- const sprite='/katia-ai/assets/katia-emotions.webp?v=6';
+ const sprite='/katia-ai/assets/katia-emotions.webp?v=7';
  const avatar='/katia-ai/assets/katia-avatar.webp?v=6';
  const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
  const patrones={
