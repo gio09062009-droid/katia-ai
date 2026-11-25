@@ -39,3 +39,10 @@ body.katia-dark .katia-suggestions{background:#21152f;border-color:#49305f}
 body.katia-dark .katia-sidebar-toggle{background:#21152f;color:#f3eaff;border-color:#654487}
 @media(min-width:900px){body.katia-sidebar-visible .app{padding-left:24px}}
 @media(max-width:760px){.katia-suggestions{padding:8px;gap:6px}.katia-suggestion{font-size:10px}}
+
+
+.send-btn,.mic-btn,.office-open,.tutor-primary,.office-primary,.drawer button.action{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
+.nav-btn.active,.filter-btn.active{background:linear-gradient(135deg,color-mix(in srgb,var(--katia-accent) 28%,transparent),color-mix(in srgb,var(--katia-accent-2) 38%,transparent));border-color:var(--katia-accent)}
+.orb-status strong,.page-header h2,.katia-settings-group h3{color:var(--katia-accent-2)}
+.message.user{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
+.katia-sidebar .ks-primary,.katia-suggestion{background:linear-gradient(135deg,var(--katia-accent),var(--katia-accent-2))}
