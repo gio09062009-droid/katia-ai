@@ -19,20 +19,20 @@
   const e=posiciones[emocion]?emocion:'feliz';
   const [col,fila]=posiciones[e];
   const img=wrap.querySelector('#katiaAvatar')||wrap.querySelector('.katia-avatar');
-  if(img){img.style.display='block';img.src=avatar;img.alt='Katia, imagen principal';}
+  if(img){img.style.setProperty('display','block','important');img.src=avatar;img.alt='Katia, imagen principal';}
   wrap.style.backgroundImage='none';
   const mostrarSprite=()=>{
    wrap.style.backgroundImage='url("'+sprite+'")';
    wrap.style.backgroundRepeat='no-repeat';
    wrap.style.backgroundSize='400% 200%';
    wrap.style.backgroundPosition=(col*100/3)+'% '+(fila*100)+'%';
-   if(img)img.style.display='none';
+   if(img)img.style.setProperty('display','none','important');
   };
   if(spriteDisponible===true)mostrarSprite();
   else if(spriteDisponible===null){
    const probe=new Image();
    probe.onload=()=>{spriteDisponible=true;mostrarSprite();};
-   probe.onerror=()=>{spriteDisponible=false;wrap.style.backgroundImage='none';if(img){img.style.display='block';img.src=avatar;}};
+   probe.onerror=()=>{spriteDisponible=false;wrap.style.backgroundImage='none';if(img){img.style.setProperty('display','block','important');img.src=avatar;}};
    probe.src=sprite;
   }
   wrap.dataset.emotion=e;
