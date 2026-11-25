@@ -1,7 +1,6 @@
-/* Katia: ocho expresiones usando recorte directo del sprite */
+/* Katia: ocho expresiones mediante el fondo del sprite 4x2 */
 (()=>{
- const sprite="assets/katia-emotions.webp?v=3";
- const avatarOriginal="assets/katia-avatar.webp?v=4";
+ const sprite='assets/katia-emotions.webp?v=4';
  const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
  const patrones={
   cansada:/(cansad[oa]s?|agotad[oa]s?|tengo\s+sueño|mucho\s+sueño|quiero\s+dormir|me\s+voy\s+a\s+dormir|a\s+dormir|descans(ar|á|o)|sin\s+energía)/i,
@@ -13,46 +12,30 @@
   pensando:/(pensá|pensar|analiz|reflexion|explicame|explicá|cómo\s+funciona|por\s+qué|porque|déjame\s+pensar|dejame\s+pensar|vamos\s+a\s+ver|veamos|\?)/i
  };
  function cambiar(emocion){
-  const wrap=document.querySelector(".katia-avatar-wrap");
+  const wrap=document.querySelector('.katia-avatar-wrap');
   if(!wrap)return false;
-  const e=posiciones[emocion]?emocion:"feliz";
+  const e=posiciones[emocion]?emocion:'feliz';
   const [col,fila]=posiciones[e];
-  const img=wrap.querySelector("#katiaAvatar")||wrap.querySelector(".katia-avatar");
-  if(!img)return false;
-  wrap.style.position="relative";
-  wrap.style.overflow="hidden";
-  wrap.style.backgroundImage="none";
-  img.onerror=()=>{
-   if(img.dataset.katiaFallback==="1")return;
-   img.dataset.katiaFallback="1";
-   img.onerror=null;
-   img.src=avatarOriginal;
-   img.style.cssText="";
-   img.alt="Katia, imagen principal";
-   wrap.style.overflow="visible";
-  };
-  img.src=sprite;
-  img.alt="Katia, expresión "+e;
-  img.style.cssText=[
-   "position:absolute","left:0","top:0","display:block",
-   "width:400%","height:200%","max-width:none","max-height:none",
-   "object-fit:fill","object-position:left top","border:0","border-radius:0",
-   "box-shadow:none","margin:0","padding:0",
-   "transform:translate("+(-col*25)+"%,"+(-fila*50)+"%)",
-   "transition:transform .18s ease"
-  ].join(";");
+  wrap.style.backgroundImage='url("'+sprite+'")';
+  wrap.style.backgroundRepeat='no-repeat';
+  wrap.style.backgroundSize='400% 200%';
+  wrap.style.backgroundPosition=(col*100/3)+'% '+(fila*100)+'%';
+  wrap.style.backgroundColor='transparent';
+  wrap.style.overflow='hidden';
+  const img=wrap.querySelector('#katiaAvatar')||wrap.querySelector('.katia-avatar');
+  if(img){img.style.display='none';img.alt='Katia, expresión '+e;}
   wrap.dataset.emotion=e;
-  wrap.setAttribute("aria-label","Katia: "+e);
+  wrap.setAttribute('aria-label','Katia: '+e);
   return true;
  }
  window.cambiarExpresionKatia=cambiar;
  window.detectarEmocionKatia=(texto,tipo)=>{
-  const t=String(texto??"").replace(/\s+/g," ").trim();
+  const t=String(texto??'').replace(/\s+/g,' ').trim();
   if(!t)return null;
-  for(const e of ["cansada","enojada","triste","sonrojada","sorprendida","juguetona","pensando"])if(patrones[e].test(t))return e;
-  return tipo==="katia"?"feliz":null;
+  for(const e of ['cansada','enojada','triste','sonrojada','sorprendida','juguetona','pensando'])if(patrones[e].test(t))return e;
+  return tipo==='katia'?'feliz':null;
  };
- const init=()=>cambiar("feliz");
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
+ const init=()=>cambiar('feliz');
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
 })();
