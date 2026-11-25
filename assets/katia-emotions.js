@@ -1,6 +1,7 @@
-/* Katia: ocho expresiones mediante el fondo del sprite 4x2 */
+/* Katia: expresiones con respaldo visible si el sprite no carga */
 (()=>{
- const sprite='assets/katia-emotions.webp?v=4';
+ const sprite='/katia-ai/assets/katia-emotions.webp?v=5';
+ const avatar='/katia-ai/assets/katia-avatar.webp?v=5';
  const posiciones={feliz:[0,0],sonrojada:[1,0],enojada:[2,0],triste:[3,0],sorprendida:[0,1],juguetona:[1,1],pensando:[2,1],cansada:[3,1]};
  const patrones={
   cansada:/(cansad[oa]s?|agotad[oa]s?|tengo\s+sueño|mucho\s+sueño|quiero\s+dormir|me\s+voy\s+a\s+dormir|a\s+dormir|descans(ar|á|o)|sin\s+energía)/i,
@@ -11,19 +12,29 @@
   juguetona:/(jaja+|jeje+|🤣|😂|😏|😉|broma|bromita|travies[oa]|chiste|te\s+estoy\s+cargando|era\s+chiste|picardía)/i,
   pensando:/(pensá|pensar|analiz|reflexion|explicame|explicá|cómo\s+funciona|por\s+qué|porque|déjame\s+pensar|dejame\s+pensar|vamos\s+a\s+ver|veamos|\?)/i
  };
+ let spriteDisponible=null;
  function cambiar(emocion){
   const wrap=document.querySelector('.katia-avatar-wrap');
   if(!wrap)return false;
   const e=posiciones[emocion]?emocion:'feliz';
   const [col,fila]=posiciones[e];
-  wrap.style.backgroundImage='url("'+sprite+'")';
-  wrap.style.backgroundRepeat='no-repeat';
-  wrap.style.backgroundSize='400% 200%';
-  wrap.style.backgroundPosition=(col*100/3)+'% '+(fila*100)+'%';
-  wrap.style.backgroundColor='transparent';
-  wrap.style.overflow='hidden';
   const img=wrap.querySelector('#katiaAvatar')||wrap.querySelector('.katia-avatar');
-  if(img){img.style.display='none';img.alt='Katia, expresión '+e;}
+  if(img){img.style.display='block';img.src=avatar;img.alt='Katia, imagen principal';}
+  wrap.style.backgroundImage='none';
+  const mostrarSprite=()=>{
+   wrap.style.backgroundImage='url("'+sprite+'")';
+   wrap.style.backgroundRepeat='no-repeat';
+   wrap.style.backgroundSize='400% 200%';
+   wrap.style.backgroundPosition=(col*100/3)+'% '+(fila*100)+'%';
+   if(img)img.style.display='none';
+  };
+  if(spriteDisponible===true)mostrarSprite();
+  else if(spriteDisponible===null){
+   const probe=new Image();
+   probe.onload=()=>{spriteDisponible=true;mostrarSprite();};
+   probe.onerror=()=>{spriteDisponible=false;wrap.style.backgroundImage='none';if(img){img.style.display='block';img.src=avatar;}};
+   probe.src=sprite;
+  }
   wrap.dataset.emotion=e;
   wrap.setAttribute('aria-label','Katia: '+e);
   return true;
