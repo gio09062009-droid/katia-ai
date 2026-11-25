@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, feature/katia-tutor-1.0]
+    branches: [main, feature/katia-tutor-1.0, security/hardening-2026-11-25]
 
 # This workflow only checks source syntax. It must never call the production
 # Worker or consume provider credits from an untrusted pull request.
