@@ -28,7 +28,7 @@ function renderHistory(filter=""){
   row.append(b,del);root.append(row);
  });
 }
-function setLegacyHistory(messages){window.historial=messages;const storageKey=window.STORAGE&&STORAGE.history||"katia_history_4";write(storageKey,messages)}
+function setLegacyHistory(messages){historial=messages;guardar(STORAGE.history,messages)}
 function loadChat(chatId){
  saveCurrent();const item=sessions.find(x=>x.id===chatId);if(!item)return;activeId=item.id;setLegacyHistory(item.messages.slice());if(typeof window.restaurarHistorial==="function")window.restaurarHistorial();renderHistory();closeSidebar();renderSuggestions();
 }
@@ -84,8 +84,8 @@ function mount(){
  const composer=chat.querySelector(".composer");const suggestions=document.createElement("div");suggestions.id="katiaSuggestions";suggestions.className="katia-suggestions";composer?.before(suggestions);
  const originalSettings=window.abrirConfiguracion;if(typeof originalSettings==="function"){window.abrirConfiguracion=function(){openSettings()}}
  const oldAdd=window.agregarMensaje;if(typeof oldAdd==="function"){window.agregarMensaje=function(...args){const result=oldAdd.apply(this,args);if(args[2]!==false){saveCurrent();if(args[0]==="katia")renderSuggestions()}return result}}
- const oldClear=window.limpiarChat;if(typeof oldClear==="function"){window.limpiarChat=function(){oldClear();activeId=null;sessions=sessions.filter(x=>x.id!==activeId);renderHistory();renderSuggestions()}}
- const saved=sessions.find(x=>Array.isArray(x.messages)&&x.messages.length);if(saved){activeId=saved.id;saveCurrent()}else if(currentMessages().length){activeId=id();saveCurrent()}
+ const oldClear=window.limpiarChat;if(typeof oldClear==="function"){window.limpiarChat=function(){const previousId=activeId;oldClear();if(previousId)sessions=sessions.filter(x=>x.id!==previousId);activeId=null;write(KEY,sessions);renderHistory();renderSuggestions()}}
+ const saved=sessions.find(x=>Array.isArray(x.messages)&&x.messages.length);if(currentMessages().length){const same=saved&&JSON.stringify(saved.messages)===JSON.stringify(currentMessages());activeId=same?saved.id:id();saveCurrent()}else if(saved){activeId=saved.id;setLegacyHistory(saved.messages);if(typeof window.restaurarHistorial==="function")window.restaurarHistorial()}
  applyPrefs();injectPromptPrefs();renderHistory();renderSuggestions();
 }
 window.katiaSavePrefs=savePrefs;window.katiaResetPrefs=resetPrefs;
