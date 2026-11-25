@@ -52,12 +52,75 @@ function injectPromptPrefs(){
  if(typeof window.construirPayloadChat!=="function"||window.__katiaPrefsWrapped)return;
  const original=window.construirPayloadChat;window.construirPayloadChat=function(){const payload=original();payload.context=(payload.context||"")+"\n\nPREFERENCIAS DEL USUARIO:\n- Tono: "+prefs.tone+".\n- Nivel de detalle: "+prefs.detail+".\n- Idioma: "+prefs.language+".\nRespondé respetando estas preferencias sin sacrificar claridad ni precisión.";return payload};window.__katiaPrefsWrapped=true;
 }
-function settingsMarkup(){return '<div class="katia-settings-group"><h3>🎨 Apariencia</h3><label for="kpTheme">Tema</label><select id="kpTheme"><option value="light">Claro</option><option value="dark">Oscuro</option></select><label for="kpColor">Color principal</label><select id="kpColor"><option value="lavender">Lavanda</option><option value="blue">Azul</option><option value="mint">Menta</option><option value="rose">Rosa</option><option value="amber">Ámbar</option></select><label for="kpFont">Tamaño de letra: <span id="kpFontValue"></span></label><input id="kpFont" type="range" min="12" max="20" value="14"></div><div class="katia-settings-group"><h3>💜 Cómo responde Katia</h3><label for="kpTone">Personalidad y tono</label><select id="kpTone"><option value="cercano">Cercano y amigable</option><option value="profesional">Profesional</option><option value="tranquilo">Tranquilo y paciente</option><option value="entusiasta">Entusiasta y dinámico</option></select><label for="kpDetail">Nivel de explicación</label><select id="kpDetail"><option value="adaptativo">Adaptativo según la pregunta</option><option value="breve">Breve y directo</option><option value="paso a paso">Paso a paso y con ejemplos</option><option value="profundo">Detallado y profundo</option></select><label for="kpLanguage">Idioma</label><select id="kpLanguage"><option value="es">Español</option><option value="es-PY">Español paraguayo</option><option value="en">English</option><option value="gn">Guaraní (cuando sea posible)</option></select><label><input id="kpSuggestions" type="checkbox" style="width:auto"> Mostrar sugerencias inteligentes</label></div><div class="katia-settings-actions"><button onclick="window.katiaResetPrefs()">Restablecer</button><button class="save" onclick="window.katiaSavePrefs()">Guardar preferencias</button></div><p id="kpSaved" class="small-note" role="status"></p>'}
+function settingsMarkup(){
+ return `
+  <div class="katia-settings-group">
+   <h3>🎨 Apariencia</h3>
+   <label for="kpTheme">Tema</label>
+   <select id="kpTheme"><option value="light">Claro</option><option value="dark">Oscuro</option></select>
+   <label for="kpColor">Color principal</label>
+   <select id="kpColor"><option value="lavender">Lavanda</option><option value="blue">Azul</option><option value="mint">Menta</option><option value="rose">Rosa</option><option value="amber">Ámbar</option></select>
+   <label for="kpFont">Tamaño de letra: <span id="kpFontValue"></span></label>
+   <input id="kpFont" type="range" min="12" max="20" value="14">
+  </div>
+  <div class="katia-settings-group">
+   <h3>💜 Cómo responde Katia</h3>
+   <label for="kpTone">Personalidad y tono</label>
+   <select id="kpTone"><option value="cercano">Cercano y amigable</option><option value="profesional">Profesional</option><option value="tranquilo">Tranquilo y paciente</option><option value="entusiasta">Entusiasta y dinámico</option></select>
+   <label for="kpDetail">Nivel de explicación</label>
+   <select id="kpDetail"><option value="adaptativo">Adaptativo según la pregunta</option><option value="breve">Breve y directo</option><option value="paso a paso">Paso a paso y con ejemplos</option><option value="profundo">Detallado y profundo</option></select>
+   <label for="kpLanguage">Idioma</label>
+   <select id="kpLanguage"><option value="es">Español</option><option value="es-PY">Español paraguayo</option><option value="en">English</option><option value="gn">Guaraní (cuando sea posible)</option></select>
+   <label><input id="kpSuggestions" type="checkbox" style="width:auto"> Mostrar sugerencias inteligentes</label>
+  </div>
+  <div class="katia-settings-group">
+   <h3>🎀 Voz de Katia</h3>
+   <p class="small-note">Elegí una voz instalada en tu dispositivo o activá la voz neuronal Daniela. La primera descarga de Daniela requiere conexión y aproximadamente 114 MB.</p>
+   <div id="voiceSelectContainer"><p class="small-note">Cargando voces disponibles...</p></div>
+  </div>
+  <div class="katia-settings-group">
+   <h3>🧠 Inteligencia de Katia</h3>
+   <label for="providerSelect">Proveedor de IA</label>
+   <select id="providerSelect">
+    <option value="auto">Automático (Groq + Gemini)</option>
+    <option value="groq">Groq</option>
+    <option value="gemini">Gemini</option>
+   </select>
+   <button class="tool-btn" type="button" onclick="guardarProveedor()">Guardar proveedor</button>
+   <p class="small-note">Automático usa el sistema de selección y respaldo del Worker.</p>
+   <label for="brainV2Select">Cerebro de Katia</label>
+   <select id="brainV2Select">
+    <option value="off">Katia 3.1 (V1) — original</option>
+    <option value="on">Brain V2 — experimental</option>
+   </select>
+   <button class="tool-btn" type="button" onclick="guardarBrainV2()">Guardar cerebro</button>
+   <button class="tool-btn" type="button" onclick="verSystemPromptUsado()">🔍 Ver último system preparado</button>
+  </div>
+  <div class="katia-settings-group">
+   <h3>👤 Tu perfil</h3>
+   <label for="userNameInput">¿Cómo querés que te llame Katia?</label>
+   <input id="userNameInput" placeholder="Tu nombre">
+   <button class="tool-btn" type="button" onclick="guardarNombre()">Guardar nombre</button>
+  </div>
+  <div class="katia-settings-actions">
+   <button type="button" onclick="window.katiaResetPrefs()">Restablecer preferencias visuales</button>
+   <button class="save" type="button" onclick="window.katiaSavePrefs()">Guardar preferencias</button>
+  </div>
+  <div class="katia-settings-group">
+   <button class="tool-btn" type="button" onclick="exportarDatos()">📥 Exportar mis datos</button>
+  </div>
+  <p id="kpSaved" class="small-note" role="status"></p>
+ `;
+}
 function openSettings(){
  const content=document.getElementById("panelContent");const title=document.getElementById("panelTitle");
  if(!content)return;title.textContent="🎨 Personalización de Katia";content.innerHTML=settingsMarkup();
  document.getElementById("kpTheme").value=prefs.theme;document.getElementById("kpColor").value=prefs.color;document.getElementById("kpFont").value=prefs.fontSize;document.getElementById("kpTone").value=prefs.tone;document.getElementById("kpDetail").value=prefs.detail;document.getElementById("kpLanguage").value=prefs.language;document.getElementById("kpSuggestions").checked=prefs.suggestions;
  const range=document.getElementById("kpFont");const value=document.getElementById("kpFontValue");range.oninput=()=>value.textContent=range.value+" px";value.textContent=range.value+" px";
+ const nameInput=document.getElementById("userNameInput");if(nameInput&&typeof nombreUsuario==="function")nameInput.value=nombreUsuario();
+ const provider=document.getElementById("providerSelect");if(provider&&typeof obtenerProveedor==="function")provider.value=obtenerProveedor();
+ const brain=document.getElementById("brainV2Select");if(brain&&typeof brainV2Activo==="function")brain.value=brainV2Activo()?"on":"off";
+ if(typeof window.mostrarSelectorVoces==="function")window.mostrarSelectorVoces();
 }
 function resetPrefs(){prefs={...defaults};write(PREF,prefs);applyPrefs();openSettings();injectPromptPrefs()}
 function suggestionSet(){
