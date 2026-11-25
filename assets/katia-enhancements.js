@@ -7,7 +7,7 @@ let prefs={...defaults,...read(PREF,{})}, sessions=read(KEY,[]), activeId=null, 
 function read(k,f){try{const x=JSON.parse(localStorage.getItem(k)||"null");return x??f}catch(e){return f}}
 function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){console.warn("Katia: no se pudo guardar",e)}}
 function id(){return "chat_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7)}
-function currentMessages(){return Array.isArray(window.historial)?window.historial:[]}
+function currentMessages(){return Array.isArray(historial)?historial:[]}
 function titleFor(messages){const first=messages.find(x=>x&&x.role==="user"&&x.content);return first?String(first.content).slice(0,48):"Nueva conversación"}
 function saveCurrent(){
  const msgs=currentMessages();if(!msgs.length)return;
