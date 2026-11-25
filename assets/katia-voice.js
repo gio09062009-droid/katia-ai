@@ -23,7 +23,7 @@
   speechTask++;
   const audio=currentAudio,done=currentAudioDone;
   currentAudioDone=null;
-  if(audio){try{audio.pause();}catch(e){}}
+  if(done){done();}else if(audio){try{audio.pause();}catch(e){}}
   clearAudio();
   if(window.speechSynthesis)speechSynthesis.cancel();
  }
