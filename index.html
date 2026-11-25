@@ -1772,7 +1772,7 @@ function mostrarSelectorVoces(){
  const opciones = vocesDisponibles.map(v => {
   const uri = v.voiceURI || "";
   const seleccionada = (uri === vozSeleccionadaURI) ? " selected" : "";
-  return `<option value="\( {uri.replace(/"/g,'&quot;')}" \){seleccionada}>${v.name||"(sin nombre)"} · ${v.lang||""}</option>`;
+  return `<option value="${uri.replace(/"/g,'&quot;')}"${seleccionada}>${v.name||"(sin nombre)"} · ${v.lang||""}</option>`;
  }).join("");
  contenedor.innerHTML = `
   <select id="voiceSelect">
