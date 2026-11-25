@@ -1537,6 +1537,7 @@ async function enviarMensaje(){
   quitarTyping();
   agregarMensaje("katia",respuesta,true,{provider:ultimoProveedorRespuesta,fallback:ultimoFallback});
   await actualizarEmocionContextual();
+  if(window.katiaDanielaVoice&&window.katiaDanielaVoice.isEnabled())hablar(respuesta);
   estadoOrb("","🟢 En línea · Lista para hablar");
  }catch(error){
   quitarTyping();
