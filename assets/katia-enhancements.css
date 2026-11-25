@@ -49,12 +49,15 @@ body.katia-dark .katia-sidebar-toggle{background:#21152f;color:#f3eaff;border-co
 
 
 
-/* Katia avatar: sprite 4x2 con ocho expresiones */
+/* Katia avatar: el sprite se administra exclusivamente desde katia-emotions.js */
 .katia-avatar-wrap{
- background-image:url("katia-emotions.webp");
- background-repeat:no-repeat;background-size:400% 200%;
- background-position:0% 0%;background-color:transparent;
- overflow:hidden;border-radius:46% 46% 38% 38%;
+ background-image:none;
+ background-repeat:no-repeat;
+ background-size:400% 200%;
+ background-position:0% 0%;
+ background-color:transparent;
+ overflow:hidden;
+ border-radius:46% 46% 38% 38%;
 }
 .katia-avatar-wrap .katia-avatar{display:block}
 @media(max-width:760px){
