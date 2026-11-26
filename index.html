@@ -2244,8 +2244,11 @@ document.addEventListener("DOMContentLoaded",()=>{
  async function sendEvent(event){
   if(!visitState)return;
   const body={event,visitorId:visitState.visitorId,visitId:visitState.visitId};
+  if(event==="exit"&&navigator.sendBeacon){
+   try{navigator.sendBeacon(VISITOR_API_KATIA,new Blob([JSON.stringify(body)],{type:"text/plain;charset=UTF-8"}));return;}catch(e){}
+  }
   try{
-   await fetch(VISITOR_API_KATIA,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),keepalive:event==="exit",mode:"cors"});
+   await fetch(VISITOR_API_KATIA,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),keepalive:false,mode:"cors"});
   }catch(e){}
  }
  function finishVisit(){
