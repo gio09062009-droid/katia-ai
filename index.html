@@ -411,10 +411,44 @@ header{border-bottom:1px solid #c9a7ee}
 footer{color:#806d96}
 @media(max-width:760px){.orb-area{min-height:250px}.katia-avatar-wrap{width:190px;height:220px}.katia-avatar{width:176px;height:202px}.orb-ring{display:none}.chat-panel{box-shadow:0 8px 24px #8b5cf31a}}
 
+
+/* ===== REGISTRO PRIVADO DE VISITANTES ===== */
+.app{display:none}
+.app.visitor-ready{display:flex}
+#visitorGate{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,#4c2474 0%,transparent 55%),#090611;color:#f7efff;font-family:Arial,sans-serif}
+#visitorGate .visitor-card{width:min(440px,100%);padding:25px;border:1px solid #a855f777;border-radius:22px;background:linear-gradient(145deg,#211333,#100b1c);box-shadow:0 18px 70px #0009}
+#visitorGate .visitor-mark{width:54px;height:54px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;font-size:27px;background:linear-gradient(135deg,#a855f7,#6b21a8);box-shadow:0 0 28px #a855f766}
+#visitorGate h2{margin:0 0 9px;text-align:center;font-size:23px}
+#visitorGate p{color:#cbbbdc;font-size:13px;line-height:1.55;text-align:center}
+#visitorGate label{display:block;margin:17px 0 7px;color:#e9d5ff;font-size:13px}
+#visitorGate input[type=text]{width:100%;padding:14px;border:1px solid #a855f777;border-radius:12px;background:#090611;color:white;font-size:16px;outline:none}
+#visitorGate .visitor-consent{display:flex;align-items:flex-start;gap:9px;margin:14px 0;color:#cbbbdc;font-size:12px;line-height:1.45}
+#visitorGate .visitor-consent input{margin-top:2px;accent-color:#a855f7}
+#visitorGate button{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#a855f7,#7e22ce);color:white;font-weight:bold;font-size:14px}
+#visitorGate button:disabled{opacity:.45}
+#visitorGate .visitor-error{min-height:20px;color:#fda4af;font-size:12px;text-align:center;margin-top:10px}
+#visitorGate .visitor-privacy{font-size:10px;color:#9d8aad}
+
 </style>
   <link rel="stylesheet" href="assets/katia-enhancements.css?v=5">\n</head>
 
 <body>
+<section id="visitorGate" aria-labelledby="visitorTitle">
+ <div class="visitor-card">
+  <div class="visitor-mark" aria-hidden="true">💜</div>
+  <h2 id="visitorTitle">¡Hola! Bienvenido a Katia</h2>
+  <p>Antes de entrar, contame cómo te llamás para que podamos conocernos.</p>
+  <form id="visitorForm">
+   <label for="visitorName">Tu nombre</label>
+   <input id="visitorName" name="name" type="text" maxlength="60" minlength="2" autocomplete="name" placeholder="Escribí tu nombre" required>
+   <label class="visitor-consent"><input id="visitorConsent" type="checkbox" required><span>Acepto que Katia guarde el nombre que escribo, la fecha y hora de entrada y salida, y datos técnicos básicos del navegador/dispositivo. Esta información será visible únicamente para la administración de Katia.</span></label>
+   <p class="visitor-privacy">El nombre ingresado no se verifica como identidad real. El modelo exacto del dispositivo puede no estar disponible. La hora de salida puede ser aproximada si se pierde la conexión.</p>
+   <button id="visitorEnter" type="submit" disabled>Entrar a Katia ✨</button>
+   <div id="visitorError" class="visitor-error" role="status"></div>
+  </form>
+ </div>
+</section>
+
 <div class="app">
 <header>
  <div class="brand">
@@ -2169,5 +2203,90 @@ document.addEventListener("DOMContentLoaded",()=>{
   <script src="assets/katia-enhancements-v3.js"></script>
   <script src="assets/katia-emotions.js?v=6"></script>
   <script src="assets/katia-voice.js?v=2"></script>
+
+<script>
+/* ===== VISITOR LOG · Katia AI ===== */
+(() => {
+ const VISITOR_API_KATIA = "https://katia-visitor.gio09062009.workers.dev/api/visit";
+ const CONSENT_VERSION = "visitor-privacy-1";
+ let visitState = null, heartbeatTimer = null, exitSent = false;
+ const $ = id => document.getElementById(id);
+ const makeId = () => (crypto.randomUUID ? crypto.randomUUID() : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)}));
+ async function deviceInfo(){
+  let model="", os="", browser="", ua=navigator.userAgent||"";
+  try{
+   if(navigator.userAgentData){
+    const d=await navigator.userAgentData.getHighEntropyValues(["model","platform","platformVersion","fullVersionList"]);
+    model=d.model||"";
+    os=[d.platform,d.platformVersion].filter(Boolean).join(" ");
+    const brands=d.fullVersionList||navigator.userAgentData.brands||[];
+    const preferred=brands.find(x=>/Google Chrome|Microsoft Edge|Opera/i.test(x.brand))||brands.find(x=>/Chrom/i.test(x.brand))||brands[0];
+    browser=preferred?preferred.brand+" "+preferred.version:"";
+   }
+  }catch(e){}
+  if(!os){
+   if(/Android/i.test(ua))os="Android";
+   else if(/iPhone|iPad|iPod/i.test(ua))os="iOS";
+   else if(/Windows/i.test(ua))os="Windows";
+   else if(/Mac OS X/i.test(ua))os="macOS";
+   else if(/Linux/i.test(ua))os="Linux";
+  }
+  if(!model&&/Android/i.test(ua)){
+   const m=ua.match(/Android[^;)]*;\s*([^;)]+)(?: Build|\))/i);
+   if(m)model=m[1].trim();
+  }
+  if(!browser){
+   const m=ua.match(/(Edg|OPR|Chrome|Firefox|Version|Safari)\/([\d.]+)/);
+   if(m)browser=(m[1]==="Edg"?"Edge":m[1]==="OPR"?"Opera":m[1])+" "+m[2];
+  }
+  return {deviceModel:model||"No disponible",operatingSystem:os||"No disponible",browser:browser||"No disponible"};
+ }
+ async function sendEvent(event){
+  if(!visitState)return;
+  const body={event,visitorId:visitState.visitorId,visitId:visitState.visitId};
+  try{
+   await fetch(VISITOR_API_KATIA,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),keepalive:event==="exit",mode:"cors"});
+  }catch(e){}
+ }
+ function finishVisit(){
+  if(exitSent||!visitState)return;
+  exitSent=true;
+  if(heartbeatTimer)clearInterval(heartbeatTimer);
+  sendEvent("exit");
+ }
+ async function enter(name){
+  const error=$("visitorError"),button=$("visitorEnter");
+  button.disabled=true;button.textContent="Registrando…";
+  error.textContent="";
+  try{
+   let visitorId=localStorage.getItem("katia_visitor_id_v1");
+   if(!visitorId){visitorId=makeId();localStorage.setItem("katia_visitor_id_v1",visitorId);}
+   const visitId=makeId(),device=await deviceInfo();
+   const response=await fetch(VISITOR_API_KATIA,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event:"entry",visitorId,visitId,displayName:name,consent:true,consentVersion:CONSENT_VERSION,...device}),mode:"cors"});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.ok)throw new Error(data.error||"No se pudo registrar la visita.");
+   visitState={visitorId,visitId};
+   exitSent=false;
+   heartbeatTimer=setInterval(()=>sendEvent("heartbeat"),25000);
+   window.addEventListener("pagehide",finishVisit,{once:true});
+   $("visitorGate").hidden=true;
+   $("visitorGate").style.display="none";
+   document.querySelector(".app")?.classList.add("visitor-ready");
+  }catch(e){
+   error.textContent="No se pudo registrar la visita. Revisá tu conexión e intentá otra vez.";
+   button.disabled=false;button.textContent="Reintentar";
+  }
+ }
+ document.addEventListener("DOMContentLoaded",()=>{
+  const form=$("visitorForm"),name=$("visitorName"),consent=$("visitorConsent"),button=$("visitorEnter");
+  if(!form||!name||!consent||!button)return;
+  const update=()=>button.disabled=!(name.value.trim().length>=2&&consent.checked);
+  name.addEventListener("input",update);consent.addEventListener("change",update);
+  form.addEventListener("submit",e=>{e.preventDefault();if(name.value.trim().length>=2&&consent.checked)enter(name.value.trim());});
+  name.focus();
+ });
+})();
+</script>
+
 </body>
  </html>
