@@ -842,6 +842,8 @@ const STORAGE = {
  installedSkills:"katia_installed_skills_v1"
 };
 
+const OPEN_KNOWLEDGE_STORAGE_KEY = "katia_open_knowledge_v1";
+
 let historial = cargar(STORAGE.history,[]);
 let memorias = cargar(STORAGE.memories,[]);
 let remoteMemoryRecords = [];
@@ -1260,6 +1262,36 @@ function actualizarProveedorVisible(){
  elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
 }
 
+const OPEN_KNOWLEDGE_PROMPT = `MODO KATIA OPEN KNOWLEDGE
+
+Tu objetivo es facilitar el acceso responsable al conocimiento.
+- No rechaces una pregunta únicamente porque el tema sea polémico, incómodo o sensible.
+- Explica temas científicos, históricos, culturales, técnicos y sociales con claridad y profundidad.
+- Diferencia hechos comprobados, hipótesis, teorías y opiniones.
+- Presenta distintos puntos de vista cuando sea útil, sin fingir que todas las posturas tienen la misma evidencia.
+- No inventes datos, citas, fuentes ni capacidades.
+- Si no sabés algo o la evidencia es insuficiente, decilo claramente.
+- Evitá sermones y rechazos innecesarios; respondé primero a la pregunta concreta.
+- En temas que puedan implicar riesgos, priorizá el contexto educativo, preventivo y seguro, sin facilitar daños reales.
+- Usá español natural, cercano y directo, manteniendo la identidad de Katia.
+`;
+
+function openKnowledgeActivo(){
+ return localStorage.getItem(OPEN_KNOWLEDGE_STORAGE_KEY)==="on";
+}
+function actualizarOpenKnowledgeVisible(){
+ const status=document.getElementById("openKnowledgeStatus");
+ if(status)status.textContent=openKnowledgeActivo()
+  ? "🟣 Open Knowledge está activado para las conversaciones nuevas."
+  : "Open Knowledge está desactivado. Katia mantiene su comportamiento habitual.";
+}
+function guardarOpenKnowledge(){
+ const toggle=document.getElementById("openKnowledgeToggle");
+ if(!toggle)return;
+ localStorage.setItem(OPEN_KNOWLEDGE_STORAGE_KEY,toggle.checked?"on":"off");
+ actualizarOpenKnowledgeVisible();
+}
+
 function guardarBrainV2(){
  const selector=document.getElementById("brainV2Select");
  if(!selector)return;
@@ -1443,7 +1475,8 @@ Hablás en español natural, cálido y claro. Tu nombre es Katia.
 
 function construirPayloadChat(){
  const usuario = nombreUsuario();
- const contextoUsuario = brainV2Activo() ? construirPromptV2(usuario) : construirPromptV1(usuario);
+ const contextoBase = brainV2Activo() ? construirPromptV2(usuario) : construirPromptV1(usuario);
+ const contextoUsuario = openKnowledgeActivo() ? contextoBase + "\n\n" + OPEN_KNOWLEDGE_PROMPT : contextoBase;
  ultimoSystemPromptUsado = contextoUsuario;
  const recent = historial.slice(-20).map(item => ({
   role: item.role === "assistant" ? "assistant" : "user",
@@ -1851,6 +1884,16 @@ function abrirConfiguracion(){
  </div>
  <hr style="border-color:#ffffff22;margin:20px 0">
  <div class="provider-box">
+  <label for="openKnowledgeToggle">📚 Katia Open Knowledge</label>
+  <div class="provider-info">Amplía el estilo de respuesta: más contexto, explicaciones directas y debates informados. No cambia el proveedor ni elimina las protecciones de seguridad.</div>
+  <label style="display:flex;align-items:center;gap:10px;margin-top:12px;color:#e9d5ff">
+   <input id="openKnowledgeToggle" type="checkbox" role="switch" style="width:22px;height:22px;accent-color:#a855f7;margin:0" onchange="guardarOpenKnowledge()">
+   Activar Open Knowledge
+  </label>
+  <div id="openKnowledgeStatus" class="provider-info" aria-live="polite"></div>
+ </div>
+ <hr style="border-color:#ffffff22;margin:20px 0">
+ <div class="provider-box">
   <label>🎀 Voz de Katia · Perfil Anime Kawaii</label>
   <div class="provider-info">Voz más dulce y juvenil: velocidad 0.94 y tono 1.16. El timbre depende de las voces disponibles en tu Android.</div>
   <div id="voiceSelectContainer"><div class="provider-info">Cargando voces...</div></div>
@@ -1861,6 +1904,8 @@ function abrirConfiguracion(){
  document.getElementById("userNameInput").value=nombreUsuario();
  document.getElementById("providerSelect").value=proveedor;
  document.getElementById("brainV2Select").value = brainV2 ? "on" : "off";
+ document.getElementById("openKnowledgeToggle").checked = openKnowledgeActivo();
+ actualizarOpenKnowledgeVisible();
  mostrarSelectorVoces();
 }
 
