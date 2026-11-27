@@ -70,3 +70,11 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
 })();
+
+/* Carga de la presentación cinematográfica de Katia */
+(()=>{
+ const script=document.createElement('script');
+ script.src='/katia-ai/assets/katia-intro.js?v=1';
+ script.async=true;
+ document.head.appendChild(script);
+})();
