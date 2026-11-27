@@ -96,7 +96,7 @@ Ubicá estas líneas existentes:
 
 ```js
 const url = new URL(request.url);
-const path = url.pathname.replace(/\\/+$/, "") || "/";
+const path = url.pathname.replace(/\/+$/, "") || "/";
 ```
 
 Inmediatamente después, antes de `handleSkillsRoute`, insertá:
