@@ -2,7 +2,32 @@
 (()=> {
  "use strict";
  const STYLE_ID="katia-cinematic-intro-style";
- let started=false;
+ let started=false,audioContext=null,audioUnlocked=false;
+ function unlockAudio(){
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx)return;
+  try{
+   if(!audioContext)audioContext=new AudioCtx();
+   const result=audioContext.resume();
+   if(result&&typeof result.then==="function")result.then(()=>{audioUnlocked=audioContext.state==="running"}).catch(()=>{});
+   else audioUnlocked=audioContext.state==="running";
+  }catch(e){}
+ }
+ // Desbloquea el audio directamente durante el gesto real del usuario,
+ // antes de que el registro remoto termine y lance la introducción.
+ function bindAudioUnlock(){
+  const unlockFromGesture=e=>{
+   const target=e.target;
+   if(target&&target.closest&&target.closest("#visitorEnter"))unlockAudio();
+  };
+  document.addEventListener("pointerdown",unlockFromGesture,true);
+  document.addEventListener("touchstart",unlockFromGesture,{capture:true,passive:true});
+  document.addEventListener("click",unlockFromGesture,true);
+  document.addEventListener("keydown",e=>{
+   if((e.key==="Enter"||e.key===" ")&&e.target&&e.target.closest&&e.target.closest("#visitorEnter"))unlockAudio();
+  },true);
+ }
+ bindAudioUnlock();
  const css=`
  #katiaCinematicIntro{position:fixed;inset:0;z-index:100001;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#24103f 0%,#10091f 43%,#05030b 100%);opacity:1;transition:opacity .8s ease}
  #katiaCinematicIntro.kci-leaving{opacity:0;pointer-events:none}
@@ -24,39 +49,35 @@
   const layer=document.createElement("div");layer.id="katiaCinematicIntro";layer.setAttribute("role","img");layer.setAttribute("aria-label","Presentación animada de KATIA");
   layer.innerHTML='<div class="kci-stars"></div><div class="kci-glow"></div><canvas aria-hidden="true"></canvas>';
   document.body.appendChild(layer);
-  // Sonido ambiental de viento generado localmente con Web Audio API.
-  // Se intenta iniciar tras el toque del usuario en "Entrar a Katia".
-  let soundStarted=false,audioContext=null;
+  // Viento ambiental: se reproduce usando el AudioContext desbloqueado
+  // en el toque de "Entrar a Katia", sin depender del autoplay del navegador.
   function playWind(){
-   if(soundStarted)return;
    const AudioCtx=window.AudioContext||window.webkitAudioContext;
    if(!AudioCtx)return;
    try{
-    audioContext=audioContext||new AudioCtx();
-    const ctxAudio=audioContext;
-    const begin=()=>{
-     if(soundStarted||ctxAudio.state!=="running")return;
-     soundStarted=true;
-     const nowAudio=ctxAudio.currentTime;
-     const buffer=ctxAudio.createBuffer(1,Math.floor(ctxAudio.sampleRate*4.9),ctxAudio.sampleRate);
-     const data=buffer.getChannelData(0);
-     for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.55;
-     const noise=ctxAudio.createBufferSource();noise.buffer=buffer;
-     const low=ctxAudio.createBiquadFilter();low.type="lowpass";low.frequency.setValueAtTime(260,nowAudio);low.frequency.exponentialRampToValueAtTime(1050,nowAudio+2.7);low.frequency.exponentialRampToValueAtTime(180,nowAudio+4.7);
-     const high=ctxAudio.createBiquadFilter();high.type="highpass";high.frequency.value=110;
-     const volume=ctxAudio.createGain();volume.gain.setValueAtTime(0.001,nowAudio);volume.gain.linearRampToValueAtTime(0.105,nowAudio+0.65);volume.gain.setValueAtTime(0.085,nowAudio+2.8);volume.gain.exponentialRampToValueAtTime(0.001,nowAudio+4.8);
-     noise.connect(low);low.connect(high);high.connect(volume);volume.connect(ctxAudio.destination);
-     noise.start(nowAudio);noise.stop(nowAudio+4.85);
-     noise.onended=()=>{try{ctxAudio.close()}catch(e){}};
+    if(!audioContext)audioContext=new AudioCtx();
+    const ac=audioContext;
+    const startSound=()=>{
+     if(ac.state!=="running"||layer.dataset.windPlayed==="yes")return;
+     layer.dataset.windPlayed="yes";audioUnlocked=true;
+     const t=ac.currentTime;
+     const buffer=ac.createBuffer(1,Math.floor(ac.sampleRate*4.9),ac.sampleRate);
+     const samples=buffer.getChannelData(0);
+     for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*0.65;
+     const noise=ac.createBufferSource();noise.buffer=buffer;
+     const low=ac.createBiquadFilter();low.type="lowpass";low.frequency.setValueAtTime(180,t);low.frequency.exponentialRampToValueAtTime(950,t+2.4);low.frequency.exponentialRampToValueAtTime(150,t+4.7);
+     const band=ac.createBiquadFilter();band.type="bandpass";band.frequency.value=420;band.Q.value=.55;
+     const gain=ac.createGain();gain.gain.setValueAtTime(.0001,t);gain.gain.linearRampToValueAtTime(.16,t+.8);gain.gain.linearRampToValueAtTime(.12,t+2.8);gain.gain.exponentialRampToValueAtTime(.0001,t+4.8);
+     noise.connect(low);low.connect(band);band.connect(gain);gain.connect(ac.destination);
+     noise.start(t);noise.stop(t+4.85);
+     noise.onended=()=>{try{ac.close()}catch(e){}};
     };
-    const resume=ctxAudio.state==="running"?Promise.resolve():ctxAudio.resume();
-    resume.then(begin).catch(()=>{});
-    // Algunos navegadores Android exigen un gesto directo para habilitar audio.
-    if(ctxAudio.state!=="running"){
-     const unlock=()=>{ctxAudio.resume().then(begin).catch(()=>{});};
+    if(ac.state==="running")startSound();
+    else{
+     ac.resume().then(startSound).catch(()=>{});
+     const unlock=()=>ac.resume().then(startSound).catch(()=>{});
      layer.addEventListener("pointerdown",unlock,{once:true});
      layer.addEventListener("touchstart",unlock,{once:true,passive:true});
-     layer.addEventListener("keydown",unlock,{once:true});
     }
    }catch(e){}
   }
