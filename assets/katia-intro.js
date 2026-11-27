@@ -24,6 +24,43 @@
   const layer=document.createElement("div");layer.id="katiaCinematicIntro";layer.setAttribute("role","img");layer.setAttribute("aria-label","Presentación animada de KATIA");
   layer.innerHTML='<div class="kci-stars"></div><div class="kci-glow"></div><canvas aria-hidden="true"></canvas>';
   document.body.appendChild(layer);
+  // Sonido ambiental de viento generado localmente con Web Audio API.
+  // Se intenta iniciar tras el toque del usuario en "Entrar a Katia".
+  let soundStarted=false,audioContext=null;
+  function playWind(){
+   if(soundStarted)return;
+   const AudioCtx=window.AudioContext||window.webkitAudioContext;
+   if(!AudioCtx)return;
+   try{
+    audioContext=audioContext||new AudioCtx();
+    const ctxAudio=audioContext;
+    const begin=()=>{
+     if(soundStarted||ctxAudio.state!=="running")return;
+     soundStarted=true;
+     const nowAudio=ctxAudio.currentTime;
+     const buffer=ctxAudio.createBuffer(1,Math.floor(ctxAudio.sampleRate*4.9),ctxAudio.sampleRate);
+     const data=buffer.getChannelData(0);
+     for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.55;
+     const noise=ctxAudio.createBufferSource();noise.buffer=buffer;
+     const low=ctxAudio.createBiquadFilter();low.type="lowpass";low.frequency.setValueAtTime(260,nowAudio);low.frequency.exponentialRampToValueAtTime(1050,nowAudio+2.7);low.frequency.exponentialRampToValueAtTime(180,nowAudio+4.7);
+     const high=ctxAudio.createBiquadFilter();high.type="highpass";high.frequency.value=110;
+     const volume=ctxAudio.createGain();volume.gain.setValueAtTime(0.001,nowAudio);volume.gain.linearRampToValueAtTime(0.105,nowAudio+0.65);volume.gain.setValueAtTime(0.085,nowAudio+2.8);volume.gain.exponentialRampToValueAtTime(0.001,nowAudio+4.8);
+     noise.connect(low);low.connect(high);high.connect(volume);volume.connect(ctxAudio.destination);
+     noise.start(nowAudio);noise.stop(nowAudio+4.85);
+     noise.onended=()=>{try{ctxAudio.close()}catch(e){}};
+    };
+    const resume=ctxAudio.state==="running"?Promise.resolve():ctxAudio.resume();
+    resume.then(begin).catch(()=>{});
+    // Algunos navegadores Android exigen un gesto directo para habilitar audio.
+    if(ctxAudio.state!=="running"){
+     const unlock=()=>{ctxAudio.resume().then(begin).catch(()=>{});};
+     layer.addEventListener("pointerdown",unlock,{once:true});
+     layer.addEventListener("touchstart",unlock,{once:true,passive:true});
+     layer.addEventListener("keydown",unlock,{once:true});
+    }
+   }catch(e){}
+  }
+  playWind();
   const canvas=layer.querySelector("canvas"),ctx=canvas.getContext("2d");
   const W=760,H=250,D=Math.min(window.devicePixelRatio||1,1.5);
   canvas.width=W*D;canvas.height=H*D;ctx.scale(D,D);
