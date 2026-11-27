@@ -42,9 +42,29 @@
    const elapsed=now-start,progress=reduced?1:Math.min(1,Math.max(0,(elapsed-250)/2450));
    ctx.clearRect(0,0,W,H);
    const ease=1-Math.pow(1-progress,3);
+   // Ráfagas diagonales de viento que acompañan la llegada de las partículas.
+   const windPower=Math.max(0,1-progress)*Math.max(0,Math.min(1,(elapsed-100)/500));
+   ctx.save();ctx.globalCompositeOperation="lighter";
+   for(let i=0;i<34;i++){
+    const seed=i*97.3;
+    const speed=0.22+(i%5)*0.055;
+    const travel=((now*speed+seed)%(W+220))-110;
+    const y=28+((i*53)%194)+Math.sin(now/420+i)*9;
+    const length=24+(i%6)*13;
+    const alpha=(0.08+(i%4)*0.025)*windPower;
+    const gust=ctx.createLinearGradient(travel-length,y+length*.22,travel+length,y-length*.22);
+    gust.addColorStop(0,"rgba(170,110,255,0)");
+    gust.addColorStop(.5,"rgba(220,190,255,"+alpha+")");
+    gust.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.strokeStyle=gust;ctx.lineWidth=1+(i%3)*.35;
+    ctx.beginPath();ctx.moveTo(travel-length,y+length*.22);ctx.quadraticCurveTo(travel,y,travel+length,y-length*.22);ctx.stroke();
+   }
+   ctx.restore();
    for(const p of particles){
-    const drift=Math.sin(now/650+p.phase)*2*(1-progress);
-    const x=p.x+(p.tx-p.x)*ease,y=p.y+(p.ty-p.y)*ease+drift;
+    const gust=Math.max(0,1-progress);
+    const drift=Math.sin(now/650+p.phase)*2*gust + Math.sin(now/360+p.phase)*5*gust;
+    const windX=-22*gust + Math.sin(now/500+p.phase)*3*gust;
+    const x=p.x+(p.tx-p.x)*ease+windX,y=p.y+(p.ty-p.y)*ease+drift;
     ctx.beginPath();ctx.arc(x,y,p.r,0,Math.PI*2);ctx.fillStyle="rgba(210,157,255,"+(.45+.55*progress)+")";ctx.shadowBlur=progress>0.75?13:7;ctx.shadowColor="#b65cff";ctx.fill();
    }
    ctx.shadowBlur=0;
