@@ -1269,12 +1269,16 @@ function guardarProveedor(){
 function actualizarProveedorVisible(){
  const elemento=document.getElementById("activeProvider");
  if(!elemento)return;
+ if(katiaMalvadaToken()){
+  elemento.textContent="😈 Motor activo: VENICE AI · Katia Malvada";
+  return;
+ }
  const nombres={groq:"GROQ",gemini:"GEMINI",auto:"AUTOMÁTICO"};
  elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
 }
 
 function katiaMalvadaToken(){try{return sessionStorage.getItem(MALVADA_SESSION_TOKEN_KEY)||"";}catch(e){return "";}}
-function actualizarKatiaMalvadaVisible(){const b=document.getElementById("malvadaButton");if(!b)return;const active=!!katiaMalvadaToken();b.classList.toggle("malvada-active",active);b.title=active?"Desactivar Katia Malvada":"Activar Katia Malvada";b.setAttribute("aria-label",b.title);}
+function actualizarKatiaMalvadaVisible(){const b=document.getElementById("malvadaButton");const active=!!katiaMalvadaToken();if(b){b.classList.toggle("malvada-active",active);b.title=active?"Desactivar Katia Malvada":"Activar Katia Malvada";b.setAttribute("aria-label",b.title);}actualizarProveedorVisible();}
 function abrirKatiaMalvada(){const o=document.getElementById("malvadaOverlay"),i=document.getElementById("malvadaPassword"),s=document.getElementById("malvadaStatus");if(!o)return;if(s)s.textContent="";o.classList.add("open");o.setAttribute("aria-hidden","false");if(i){i.value="";setTimeout(()=>i.focus(),50);}}
 function cerrarKatiaMalvada(){const o=document.getElementById("malvadaOverlay");if(o){o.classList.remove("open");o.setAttribute("aria-hidden","true");}}
 function alternarKatiaMalvada(){if(katiaMalvadaToken()){try{sessionStorage.removeItem(MALVADA_SESSION_TOKEN_KEY);}catch(e){}actualizarKatiaMalvadaVisible();alert("Katia volvió a su personalidad habitual. 💜");return;}abrirKatiaMalvada();}
