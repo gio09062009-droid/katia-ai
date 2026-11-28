@@ -429,8 +429,10 @@ footer{color:#806d96}
 #visitorGate .visitor-error{min-height:20px;color:#fda4af;font-size:12px;text-align:center;margin-top:10px}
 #visitorGate .visitor-privacy{font-size:10px;color:#9d8aad}
 
+ .malvada-active{background:linear-gradient(135deg,#7f1d1d,#be123c)!important;color:#fff!important;border-color:#fb7185!important;box-shadow:0 0 18px #e11d4855}
 </style>
-  <link rel="stylesheet" href="assets/katia-enhancements.css?v=5">\n</head>
+  <link rel="stylesheet" href="assets/katia-enhancements.css?v=5">
+</head>
 
 <body>
 <section id="visitorGate" aria-labelledby="visitorTitle">
@@ -456,11 +458,21 @@ footer{color:#806d96}
   <div><h1>KATIA AI</h1><small>YOUR VIRTUAL COMPANION</small></div>
  </div>
  <div class="header-actions">
+  <button class="icon-btn" id="malvadaButton" onclick="alternarKatiaMalvada()" title="Activar Katia Malvada" aria-label="Activar Katia Malvada" style="font-size:19px">😈</button>
   <button class="office-open" onclick="abrirOffice()">🏢 Office Studio</button>
   <button class="icon-btn" onclick="abrirPanel('memory')">🧠</button>
   <button class="icon-btn" onclick="abrirPanel('settings')">⚙️</button>
  </div>
 </header>
+
+<div id="malvadaOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="malvadaTitle" aria-hidden="true">
+ <div class="drawer" style="max-width:420px;margin:12vh auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 id="malvadaTitle" style="margin:0;color:#f0abfc">😈 Katia Malvada</h2><button type="button" class="office-close" onclick="cerrarKatiaMalvada()" aria-label="Cerrar">✕</button></div>
+  <p class="provider-info">Acceso privado · Motor Venice AI. La contraseña se verifica en el servidor y no se guarda en el navegador.</p>
+  <form onsubmit="autenticarKatiaMalvada(event)"><label for="malvadaPassword">Contraseña</label><input id="malvadaPassword" type="password" autocomplete="current-password" maxlength="200" required placeholder="Escribí la contraseña"><button id="malvadaLoginButton" class="action" type="submit">Desbloquear</button></form>
+  <div id="malvadaStatus" class="provider-info" role="status" aria-live="polite"></div>
+ </div>
+</div>
 
 <!-- ==================== SECCIÓN CHAT ==================== -->
 <section id="section-chat" class="section active">
@@ -841,6 +853,8 @@ const STORAGE = {
  voice:"katia_voice_uri",
  installedSkills:"katia_installed_skills_v1"
 };
+
+const MALVADA_SESSION_TOKEN_KEY = "katia_malvada_token_v1";
 
 let historial = cargar(STORAGE.history,[]);
 let memorias = cargar(STORAGE.memories,[]);
@@ -1256,9 +1270,20 @@ function guardarProveedor(){
 function actualizarProveedorVisible(){
  const elemento=document.getElementById("activeProvider");
  if(!elemento)return;
+ if(katiaMalvadaToken()){
+  elemento.textContent="😈 Motor activo: VENICE AI · Katia Malvada";
+  return;
+ }
  const nombres={groq:"GROQ",gemini:"GEMINI",auto:"AUTOMÁTICO"};
  elemento.textContent="Modo seleccionado: "+(nombres[obtenerProveedor()]||"AUTOMÁTICO");
 }
+
+function katiaMalvadaToken(){try{return sessionStorage.getItem(MALVADA_SESSION_TOKEN_KEY)||"";}catch(e){return "";}}
+function actualizarKatiaMalvadaVisible(){const b=document.getElementById("malvadaButton");const active=!!katiaMalvadaToken();if(b){b.classList.toggle("malvada-active",active);b.title=active?"Desactivar Katia Malvada":"Activar Katia Malvada";b.setAttribute("aria-label",b.title);}actualizarProveedorVisible();}
+function abrirKatiaMalvada(){const o=document.getElementById("malvadaOverlay"),i=document.getElementById("malvadaPassword"),s=document.getElementById("malvadaStatus");if(!o)return;if(s)s.textContent="";o.classList.add("open");o.setAttribute("aria-hidden","false");if(i){i.value="";setTimeout(()=>i.focus(),50);}}
+function cerrarKatiaMalvada(){const o=document.getElementById("malvadaOverlay");if(o){o.classList.remove("open");o.setAttribute("aria-hidden","true");}}
+function alternarKatiaMalvada(){if(katiaMalvadaToken()){try{sessionStorage.removeItem(MALVADA_SESSION_TOKEN_KEY);}catch(e){}actualizarKatiaMalvadaVisible();alert("Katia volvió a su personalidad habitual. 💜");return;}abrirKatiaMalvada();}
+async function autenticarKatiaMalvada(event){if(event)event.preventDefault();const i=document.getElementById("malvadaPassword"),b=document.getElementById("malvadaLoginButton"),s=document.getElementById("malvadaStatus"),password=i?.value||"";if(!password.trim()){if(s)s.textContent="Escribí la contraseña.";return;}if(b){b.disabled=true;b.textContent="⏳ Verificando...";}if(s)s.textContent="Comprobando el acceso...";try{const r=await fetch(KATIA_API.replace(/\/+$/,"")+"/malvada/auth",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},cache:"no-store",body:JSON.stringify({password})});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok!==true||typeof d.token!=="string")throw Error(d.error||"No se pudo validar la contraseña.");sessionStorage.setItem(MALVADA_SESSION_TOKEN_KEY,d.token);actualizarKatiaMalvadaVisible();cerrarKatiaMalvada();alert("😈 Katia Malvada está activada en esta pestaña.");}catch(e){if(s)s.textContent="❌ "+e.message;}finally{if(b){b.disabled=false;b.textContent="Desbloquear";}if(i)i.value="";}}
 
 function guardarBrainV2(){
  const selector=document.getElementById("brainV2Select");
@@ -1443,7 +1468,8 @@ Hablás en español natural, cálido y claro. Tu nombre es Katia.
 
 function construirPayloadChat(){
  const usuario = nombreUsuario();
- const contextoUsuario = brainV2Activo() ? construirPromptV2(usuario) : construirPromptV1(usuario);
+ const contextoBase = brainV2Activo() ? construirPromptV2(usuario) : construirPromptV1(usuario);
+ const contextoUsuario = contextoBase;
  ultimoSystemPromptUsado = contextoUsuario;
  const recent = historial.slice(-20).map(item => ({
   role: item.role === "assistant" ? "assistant" : "user",
@@ -1475,6 +1501,7 @@ async function llamarWorker(options = {}){
   task: ["chat","document_analyze","document_question","document_modify","document_create"].includes(task) ? task : "chat"
  };
  if (context && typeof context === "string" && context.trim()) body.context = context.slice(0, 30000);
+ if (task === "chat" && katiaMalvadaToken()) body.malvadaToken = katiaMalvadaToken();
  if (instruction && typeof instruction === "string" && instruction.trim()) body.instruction = instruction.slice(0, 12000);
  if (documentText && typeof documentText === "string" && documentText.trim()) body.documentText = documentText.slice(0, 50000);
  if (task === "chat") {
@@ -1494,7 +1521,10 @@ async function llamarWorker(options = {}){
   });
   clearTimeout(timeoutId);
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.error || ("Error del servidor: " + response.status));
+  if (!response.ok) {
+   if (response.status === 401 && data?.code === "MALVADA_TOKEN_INVALID") { try{sessionStorage.removeItem(MALVADA_SESSION_TOKEN_KEY);}catch(e){} actualizarKatiaMalvadaVisible(); }
+   throw new Error(data?.error || ("Error del servidor: " + response.status));
+  }
   if (data.error) throw new Error(data.error);
   ultimoProveedorRespuesta = typeof data.provider === "string" ? data.provider : "";
   ultimoFallback = data.fallback === true;
@@ -1850,6 +1880,7 @@ function abrirConfiguracion(){
   <button class="action" onclick="verSystemPromptUsado()">🔍 Ver último system preparado</button>
  </div>
  <hr style="border-color:#ffffff22;margin:20px 0">
+
  <div class="provider-box">
   <label>🎀 Voz de Katia · Perfil Anime Kawaii</label>
   <div class="provider-info">Voz más dulce y juvenil: velocidad 0.94 y tono 1.16. El timbre depende de las voces disponibles en tu Android.</div>
@@ -2187,6 +2218,7 @@ document.addEventListener("DOMContentLoaded",()=>{
  tutorRenderHistory();
  actualizarProveedorVisible();
  actualizarBrainV2Visible();
+ actualizarKatiaMalvadaVisible();
  actualizarPerfil();
  if(window.pdfjsLib){
   pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
